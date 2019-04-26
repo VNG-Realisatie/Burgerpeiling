@@ -15,3 +15,13 @@ Als u de burgerpeiling gaat of laat uitvoeren, moet u ook beslissen of u de mode
 Aanvullende informatie
 
 Meer informatie over de Burgerpeiling is beschikbaar in het Burgerpeiling forum (https://forum.vng.nl). U kunt zich als gemeente aanmelden voor het forum en aangeven dat u lid wilt worden van het Burgerpeiling forum. In het forum vindt u naast informatie over de burgerpeiling ook een lijst met onderzoeksbureaus en praktijkvoorbeelden van andere gemeenten. 
+
+Rapportage Burgerpeiling
+https://www.waarstaatjegemeente.nl/Jive/ViewerReportContents.ashx?report=wsjg_bp&inp_geo=gemeente_166
+
+Verdiepende rapportage 'Vitaliteit en veerkracht'
+https://www.waarstaatjegemeente.nl/Jive/ViewerReportContents.ashx?report=wsjg_bp_benchmark&inp_geo=gemeente_166
+
+Dashboard Burgerpeiling
+https://www.waarstaatjegemeente.nl/dashboard/Burgerpeiling/
+
