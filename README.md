@@ -12,6 +12,6 @@ U kunt als gemeente de Burgerpeiling zelf uitvoeren of uitbesteden aan een onder
 
 Als u de burgerpeiling gaat of laat uitvoeren, moet u ook beslissen of u de modelvragenlijst wilt gebruiken of dat u deze wilt aanvullen met de modules 'dienstverlening met de menselijke maat', 'tevredenheid met het leven' en 'samenredzaamheid' of met eigen vragen. Daarnaast is het van belang dat u een keuze maakt voor het al dan niet uitvoeren van het onderzoek in de kernen en wijken van uw gemeente. Laat u goed adviseren over de keuzemogelijkheden in de Burgerpeiling.
 
-##Aanvullende informatie
+Aanvullende informatie
 
 Meer informatie over de Burgerpeiling is beschikbaar in het Burgerpeiling forum (https://forum.vng.nl). U kunt zich als gemeente aanmelden voor het forum en aangeven dat u lid wilt worden van het Burgerpeiling forum. In het forum vindt u naast informatie over de burgerpeiling ook een lijst met onderzoeksbureaus en praktijkvoorbeelden van andere gemeenten. 
