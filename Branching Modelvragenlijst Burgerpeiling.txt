@@ -1,0 +1,11 @@
+Branching information 'Modelvragenlijst Burgerpeiling'
+
+• If ([dv02] Heeft u de afgelopen 12 maanden contact gehad met ... = nee) then Skip to dv08
+
+• If [dv13] [SUGGESTIE] Mogen we u enkele vragen voorle... = nee then Skip to dv08 
+ 
+• If [dv02] Heeft u de afgelopen 12 maanden contact gehad met ... = nee then Skip to dv08
+
+• If [zw06.3] In welke mate heeft u zic... | vrijwilligerswerk is one of [intensief, incidenteel] then Skip zw08
+
+• If [zw06.0] In welke mate heeft u zic... | zorg aan een hulpbehoevende naaste (mantelzorg) = (vrijwel) nooit then Skip zw09
