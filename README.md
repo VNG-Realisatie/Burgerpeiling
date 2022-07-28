@@ -1,8 +1,11 @@
 # Burgerpeiling
 
+--------------------------------------------------------------------------------------------------------------------------------------
+
 Let op: Per 1 augustus 2022 is er een aangepaste versie van de Burgerpeiling beschikbaar (versie 2022). De vragenlijst is dichter bij het taalniveau B1 gebracht, en er zijn optimalisaties doorgevoerd omwille van leesbaarheid en toegankelijkheid.
 De vragenlijst uit 2019 komt te vervallen. 
 
+--------------------------------------------------------------------------------------------------------------------------------------
 
 Als gemeente wilt u uw beleid en dienstverlening zo goed mogelijk afstemmen op de wensen van uw inwoners. Daarvoor is het van belang dat u weet wat er leeft in de gemeenschap. Om hier inzicht in te krijgen kunt u gebruik maken van de Burgerpeiling.
 
