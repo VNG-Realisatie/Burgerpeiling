@@ -2,7 +2,7 @@
 
 --------------------------------------------------------------------------------------------------------------------------------------
 
-Let op: Per 28 juli 2022 is er een aangepaste versie van de Burgerpeiling beschikbaar (versie 2022). De vragenlijst is dichter bij het taalniveau B1 gebracht, en er zijn optimalisaties doorgevoerd omwille van leesbaarheid en toegankelijkheid.
+Let op: Per 28 juli 2022 is er een aangepaste versie van de modelvragenlijst Burgerpeiling beschikbaar (versie 2022). Deze versie van de vragenlijst is dichter bij het taalniveau B1 gebracht, en er zijn optimalisaties doorgevoerd omwille van leesbaarheid en toegankelijkheid.
 De vragenlijst uit 2019 komt daarmee te vervallen. Enkel de onderzoeksresultaten die voortkomen uit deze versie worden gepubliceerd op WaarStaatjeGemeente.nl.
 
 --------------------------------------------------------------------------------------------------------------------------------------
