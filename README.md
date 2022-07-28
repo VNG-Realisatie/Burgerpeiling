@@ -3,7 +3,7 @@
 --------------------------------------------------------------------------------------------------------------------------------------
 
 Let op: Per 1 augustus 2022 is er een aangepaste versie van de Burgerpeiling beschikbaar (versie 2022). De vragenlijst is dichter bij het taalniveau B1 gebracht, en er zijn optimalisaties doorgevoerd omwille van leesbaarheid en toegankelijkheid.
-De vragenlijst uit 2019 komt te vervallen. 
+De vragenlijst uit 2019 komt daarmee te vervallen. 
 
 --------------------------------------------------------------------------------------------------------------------------------------
 
