@@ -56,7 +56,10 @@ packages <- c(
   'gtsummary',
   'survey',
   'srvyr',
-  'fs'
+  'fs',
+  #chart creation
+  'esquisse',
+  'multidplyr', 'furr','parallel'
 )
 
 #install packages which are not available on the computing setup

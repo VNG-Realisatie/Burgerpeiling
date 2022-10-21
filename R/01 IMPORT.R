@@ -9,7 +9,7 @@
 
 #see'Beschrijving' directory for specification of the variables.
 
-#last update 2022-10-19 (alpha version)
+#last update 2022-10-21 (alpha version)
 
 #-----------------------------------------------------------------------------------------------
 
@@ -46,6 +46,11 @@ df<- map_df(set_names(files), function(file) {
     #Weight 
     filter(weging<5) 
 })
+
+#-----------------------------------------------------------------------------------------------
+
+#pipeline timer
+start_time<-Sys.time()
 
 #-----------------------------------------------------------------------------------------------
 
@@ -205,7 +210,7 @@ vt<-NULL
 #-----------------------------------------------------------------------------------------------
 #MEAN (gemeente, jaar)
 
-mean_cols<-c("wl01","wl16","bo06","dv01","dv06","dv10","zw00","zw02","zw12","sc02")
+#mean_cols<-c("wl01","wl16","bo06","dv01","dv06","dv10","zw00","zw02","zw12","sc02")
 
 df_aggr_mn<- df_weight %>%
   group_by(GEOITEM,PERIOD) %>%
@@ -238,8 +243,8 @@ df_aggr_mn<- df_weight %>%
       #.names="{col}_"
     #)
   #) %>% 
-  #mutate_all(~ifelse(is.nan(.) | is.infinite(.), NA, .)) %>%
-  #mutate_all(~replace(., .== 0, NA)) 
+  #mutate_at(.,vars(-group_cols()),~ifelse(is.nan(.) | is.infinite(.), NA, .)) %>%
+  #mutate_at(.,vars(-group_cols()),~replace(., .== 0, NA)) 
 
 
 #-----------------------------------------------------------------------------------------------
@@ -381,12 +386,12 @@ df_aggr_pin<- df_weight %>%
    wl14_2=(survey_total((wl14==2), na.rm=T) / n()*100),
    wl14_3=(survey_total((wl14==3), na.rm=T) / n()*100),
    #wl14_4=(survey_total((wl14==4), na.rm=T) / n()*100), 
-   dv04_pin1=(survey_total((dv04==1), na.rm=T) / n()*100),
-   dv04_pin2=(survey_total((dv04==2), na.rm=T) / n()*100),
-   dv04_pin3=(survey_total((dv04==3), na.rm=T) / n()*100),
-   dv04_pin4=(survey_total((dv04==4), na.rm=T) / n()*100),
-   dv04_pin5=(survey_total((dv04==5), na.rm=T) / n()*100),
-   dv04_pin6=(survey_total((dv04==6), na.rm=T) / n()*100),
+   #dv04_pin1=(survey_total((dv04==1), na.rm=T) / n()*100),
+   #dv04_pin2=(survey_total((dv04==2), na.rm=T) / n()*100),
+   #dv04_pin3=(survey_total((dv04==3), na.rm=T) / n()*100),
+   #dv04_pin4=(survey_total((dv04==4), na.rm=T) / n()*100),
+   #dv04_pin5=(survey_total((dv04==5), na.rm=T) / n()*100),
+   #dv04_pin6=(survey_total((dv04==6), na.rm=T) / n()*100),
    wl06_pin1=(survey_total((wl06==1), na.rm=T) / n()*100),
    wl06_pin2=(survey_total((wl06==2), na.rm=T) / n()*100),
    wl06_pin3=(survey_total((wl06==3), na.rm=T) / n()*100),
@@ -499,16 +504,16 @@ df_aggr_pin<- df_weight %>%
    zw04_rv=(survey_total((zw04>=1 & zw04<=1), na.rm=T) / n()*100),
    zw04=(survey_total((zw04>=3 & zw04<=4), na.rm=T) / n()*100),
    sc02_pin=(survey_total((sc02>=1 & sc02<=5), na.rm=T) / n()*100)  
-  )  %>%
-    mutate_all(~ifelse(is.nan(.) | is.infinite(.), NA, .)) %>%
-    mutate_all(~replace(., .== 0, NA))
+  ) %>%
+    mutate_at(.,vars(-group_cols()),~ifelse(is.nan(.) | is.infinite(.), NA, .)) %>%
+    mutate_at(.,vars(-group_cols()),~replace(., .== 0, NA))
   
   cols_to_remove<- grep("_se", names(df_aggr_pin))
-  df_aggr_pin<-df_aggr_pin %>% select(-cols_to_remove)
   
-  #reorder variables
-  df_aggr_pin<- df_aggr_pin %>%
+  df_aggr_pin<-df_aggr_pin %>% select(-cols_to_remove) %>%
+    #reorder variables
     select(sort(names(.))) %>% 
+    #move gemeente and metingsjaar to the front
     relocate(any_of(c('GEOITEM', 'PERIOD')), .before=bo01)
   
    
@@ -518,11 +523,22 @@ df_aggr_pin<- df_weight %>%
 
 #-----------------------------------------------------------------------------------------------
 
+#schaalscore definitions
+#https://www.waarstaatjegemeente.nl/Jive/ViewerReportContents.ashx?report=wsjg_bp_bijlage
+ 
 #rowwise operations
-df_ss<- df %>% 
+#parallel processing
+
+cluster <- multidplyr::new_cluster(parallel::detectCores() - 2)
+multidplyr::cluster_library(cluster, c('tidyverse', 'furrr'))
+e <- 10
+multidplyr::cluster_copy(cluster, "e")
+  
+  
+df_ss<-  df %>% 
   rowwise(id) %>% 
+  multidplyr::partition(cluster) %>% 
   mutate(
-        
         #actief in de buurt
         act_neigh=ifelse(wl13==1, 1,
                            ifelse(is.na(wl13), NA, 0)),
@@ -609,6 +625,7 @@ df_ss<- df %>%
         bep_lich_neg=ifelse(mb_fys>0, 0,
                           ifelse(is.na(mb_fys), NA, 1)),
         
+        #meervoudige beperkingen
         mb=sum(bep_gez,bep_fys,bep_men,bep_cul,bep_ink,bep_uit,bep_and,mz_ob,na.rm=TRUE),
         
         #beperkingen afwezig
@@ -754,6 +771,7 @@ zw10_1_cross_wei=ifelse(zw10_1==1, 4,
                                         ifelse(is.na(zw10_1), NA, NA)))),
 
 samenredzaam_ss=mean(c(wl03_1_cross_wei,wl11_0_cross_wei,wl12_0_cross_wei,wl13_cross_wei, zw06_1_cross_wei, zw10_1_cross_wei),na.rm=TRUE) * (10/4),
+
 
 #_______________________________________________________________________
 #Schaalscore sociale relaties
@@ -1219,8 +1237,9 @@ qol_score=sum(c(health,bep_lich_neg,bep_soc_neg,alone_neg,pleasant_neigh,safegua
 
 #_______________________________________________________________________
   ) %>%
-  mutate_all(~ifelse(is.nan(.) | is.infinite(.), NA, .)) %>%
-  mutate_all(~replace(., .== 0, NA)) %>% 
+  collect()  %>%
+  mutate_at(.,vars(-group_cols()),~ifelse(is.nan(.) | is.infinite(.), NA, .)) %>%
+  mutate_at(.,vars(-group_cols()),~replace(., .== 0, NA)) %>% 
   ungroup() %>% 
   select(-GEMEENTE)
 
@@ -1427,4 +1446,26 @@ merged$GEOLEVEL<-"gemeente344"
 #report buurten
 merged$bp_wijk<-0
 
-write.table(merged, file="BP.csv",quote=TRUE, sep=";", row.names=FALSE)
+
+#-----------------------------------------------------------------------------------------------
+
+# EXPORT
+
+#-----------------------------------------------------------------------------------------------
+
+
+out.file<-paste0(output.dir,"/BP.csv")
+write.table(merged, file=out.file,quote=TRUE, sep=";", dec = ",", row.names=FALSE)
+
+
+#----------------------------------------------------------------------------------------------
+
+#Debugging
+
+#----------------------------------------------------------------------------------------------
+
+rlang::last_error()
+rlang::last_trace()
+
+end_time<-Sys.time()
+end_time - start_time

@@ -13,22 +13,19 @@ system <- Sys.info()['sysname']
 # encoding
 Sys.getlocale()
 
-options(encoding = "UTF-8")
 #getOption("encoding")
 
-options(OutDec=",")
 
 #turn-off R’s automatic conversion of strings into factors
-options(stringsAsFactors = FALSE)
-
 #prevent exponential / scientific notation.
-options(scipen = 999)
-
+#decimal delimiter
+#encoding
 #warnings
-options(warn = 0)
-
 #turn-off dplyr's summarise notifications
-options(dplyr.summarise.inform = FALSE)
+
+options(scipen = 999, digits = 4, OutDec=",", stringsAsFactors = FALSE, encoding = "UTF-8",
+        warn = 0,dplyr.summarise.inform = FALSE)
+
 
 #R root
 r_root <- here::here()
