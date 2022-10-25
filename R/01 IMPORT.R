@@ -1,11 +1,11 @@
 #-----------------------------------------------------------------------------------------------
 
-# Burgerpeiling Waarstaatjegemeente.nl
+# Burgerpeiling Waar Staat Je Gemeente?
 
 #-----------------------------------------------------------------------------------------------
 
 #this procedure is to check the results of the Burgerpeiling as presented on
-#Waarstaatjegemeente.nl
+#Waarstaatjegemeente.nl 
 
 #see'Beschrijving' directory for specification of the variables.
 
@@ -27,7 +27,7 @@ source(here::here('SRC/globals.R'))
 
 #-----------------------------------------------------------------------------------------------
 
-# Import 
+# IMPORT 
 
 #-----------------------------------------------------------------------------------------------
 
@@ -42,10 +42,9 @@ df<- map_df(set_names(files), function(file) {
   file %>% 
     map_df(
       ~ haven::read_sav(file) %>% as_tibble()
-    ) %>% 
-    #Weight 
-    filter(weging<5) 
+    ) 
 })
+
 
 #-----------------------------------------------------------------------------------------------
 
@@ -106,7 +105,7 @@ df<- df %>%
 
 #-----------------------------------------------------------------------------------------------
 
-# Factors levels
+# FACTORS AND LEVELS
 
 #-----------------------------------------------------------------------------------------------
 
@@ -136,7 +135,35 @@ df<-df %>%
 
 #-----------------------------------------------------------------------------------------------
 
-# Recode
+# IDENTIFIER
+
+#-----------------------------------------------------------------------------------------------
+
+#set sequence number
+df$seq<-row.names(df)
+
+#set unique identifier
+df$id<-paste0("BP",df$GEOITEM,"Y",df$PERIOD,"S",df$seq)
+
+#out.file<-paste0(output.dir,"/BP-combined.RData")
+#save(df, file = out.file)
+
+
+#-----------------------------------------------------------------------------------------------
+
+# SUBSETTING
+
+#-----------------------------------------------------------------------------------------------
+
+df<-df %>% 
+  #Weight 
+  filter(weging<5) # %>%
+#filter(jr>2021)
+
+
+#-----------------------------------------------------------------------------------------------
+
+# RECODE
 
 #-----------------------------------------------------------------------------------------------
 
@@ -145,7 +172,7 @@ mr<-c("dv03_0","dv03_1","dv03_2","dv03_3","dv03_4","dv03_5","dv03_6",
       "zw05_0","zw05_1","zw05_2","zw05_3","zw05_4","zw05_5",
       "zw08_0","zw08_1","zw08_2","zw08_3","zw08_4","zw08_5","zw08_6",
       "zw13_0","zw13_1","zw13_2","zw13_3","zw13_4","zw13_5","zw13_6","zw13_7","zw13_8"
-      )
+)
 df<-df %>% mutate(across(all_of(mr), ~replace_na(.,0)))
 
 #Buurtparticipatie, vrijwilligerswerk.
@@ -156,44 +183,32 @@ df<-df %>% mutate(across(all_of(mr), ~replace_na(.,0)))
 
 df<- df %>% 
   mutate(wl14_dum=ifelse(
-         wl14== 4,NA,wl14),
-          zw07_dum=ifelse(
-          zw07== 4,NA,zw07),
-          zw05_rc= ifelse(
-           zw05_4== 0,1,NA),
-         #buurtparticipatie
-         part_brt=ifelse(wl13<3 & wl14_dum<3, 1,
-                        ifelse(wl13<3 & wl14_dum==3, 2,
-                               ifelse(wl13==3 & wl14_dum<3, 3,
-                                      ifelse(wl13==3 & wl14_dum==3, 4, 0)))),
-         #vrijwilligerswerk
-         part_vw=ifelse(zw06_3<3 & zw07_dum<3, 1,
-                           ifelse(zw06_3<3 & zw07_dum==3, 2,
-                                  ifelse(zw06_3==3 & zw07_dum<3, 3,
-                                         ifelse(zw06_3==3 & zw07_dum==3, 4, 0)))),
-         #leeftijd
-         lft_cy=ifelse(ch02==2, 1,
-                         ifelse(ch02==3, 2,
-                                ifelse(ch02==4, 2,
-                                       ifelse(ch02==5, 3,
-                                              ifelse(ch02==6, 4,0)))))
-         ) 
+    wl14== 4,NA,wl14),
+    zw07_dum=ifelse(
+      zw07== 4,NA,zw07),
+    zw05_rc= ifelse(
+      zw05_4== 0,1,NA),
+    #buurtparticipatie
+    part_brt=ifelse(wl13<3 & wl14_dum<3, 1,
+                    ifelse(wl13<3 & wl14_dum==3, 2,
+                           ifelse(wl13==3 & wl14_dum<3, 3,
+                                  ifelse(wl13==3 & wl14_dum==3, 4, 0)))),
+    #vrijwilligerswerk
+    part_vw=ifelse(zw06_3<3 & zw07_dum<3, 1,
+                   ifelse(zw06_3<3 & zw07_dum==3, 2,
+                          ifelse(zw06_3==3 & zw07_dum<3, 3,
+                                 ifelse(zw06_3==3 & zw07_dum==3, 4, 0)))),
+    #leeftijd
+    lft_cy=ifelse(ch02==2, 1,
+                  ifelse(ch02==3, 2,
+                         ifelse(ch02==4, 2,
+                                ifelse(ch02==5, 3,
+                                       ifelse(ch02==6, 4,0)))))
+  ) 
 
 #-----------------------------------------------------------------------------------------------
 
-# Respondent ID
-
-#-----------------------------------------------------------------------------------------------
-
-#set sequence number
-df$seq<-row.names(df)
-
-#set unique identifier
-df$id<-paste0("BP",df$GEOITEM,"Y",df$PERIOD,"S",df$seq)
-
-#-----------------------------------------------------------------------------------------------
-
-# Aggregate
+# AGGREGATE
 
 #-----------------------------------------------------------------------------------------------
 
@@ -519,7 +534,7 @@ df_aggr_pin<- df_weight %>%
    
 #-----------------------------------------------------------------------------------------------
 
-# Schaalscores
+# SCALE SCORES
 
 #-----------------------------------------------------------------------------------------------
 
@@ -1389,8 +1404,8 @@ df_ss_type_aggr<- df_ss_weight %>%
     alone_ss_mean=survey_mean(alone_ss,na.rm=TRUE, vartype=vt),
     vangnet_ss_mean=survey_mean(vangnet_ss,na.rm=TRUE, vartype=vt),
     vitaliteitwelzijn_ss=survey_mean(vitaliteitwelzijn_ss,na.rm=TRUE, vartype=vt),
-    vitaliteit_ss=survey_mean(vitaliteit_ss,na.rm=TRUE, vartype=vt),
-    welzijn_ss=survey_mean(welzijn_ss,na.rm=TRUE, vartype=vt),
+    #vitaliteit_ss=survey_mean(vitaliteit_ss,na.rm=TRUE, vartype=vt),
+    #welzijn_ss=survey_mean(welzijn_ss,na.rm=TRUE, vartype=vt),
     gezond_mean=survey_mean(zw02,na.rm=TRUE, vartype=vt),
     geluk_mean=survey_mean(zw00,na.rm=TRUE, vartype=vt),
     wl01_mean=survey_mean(wl01,na.rm=TRUE, vartype=vt),
@@ -1435,16 +1450,27 @@ df_ss_age_aggr<- df_ss_weight %>%
 
 #-----------------------------------------------------------------------------------------------
 
-merged<- Reduce(function(x, y) merge(x, y, all=TRUE), 
+df_merged<- Reduce(function(x, y) merge(x, y, all=TRUE), 
                  list(df_aggr_mn,df_aggr_pin,df_ss_aggr,df_ss_type_aggr,df_ss_age_aggr,df_ss_vital))
-merged[complete.cases(merged), ]
+df_merged[complete.cases(df_merged), ]
 
 #keep valid columns
 #merged<-merged %>% select(-contains(c("_cy0", "_cyNA", ".NA")))
 
-merged$GEOLEVEL<-"gemeente344"
+#-----------------------------------------------------------------------------------------------
+
+# WSJG 
+
+#-----------------------------------------------------------------------------------------------
+
+#missing values
+df_export <- merged %>% replace(is.na(.), -99998)
+
+#geolevel
+df_export$GEOLEVEL<-"gemeente344"
+
 #report buurten
-merged$bp_wijk<-0
+df_export$bp_wijk<-0
 
 
 #-----------------------------------------------------------------------------------------------
@@ -1453,9 +1479,13 @@ merged$bp_wijk<-0
 
 #-----------------------------------------------------------------------------------------------
 
-
+#regular export
 out.file<-paste0(output.dir,"/BP.csv")
-write.table(merged, file=out.file,quote=TRUE, sep=";", dec = ",", row.names=FALSE)
+write.table(df_merged, file=out.file,quote=TRUE, sep=";", dec = ",", row.names=FALSE)
+
+#wsjg export
+wsjg.file<-paste0(output.dir,"/BP_WSJG.csv")
+write.table(df_export, file=wsjg.file,quote=TRUE, sep=";", dec = ",", row.names=FALSE)
 
 
 #----------------------------------------------------------------------------------------------
