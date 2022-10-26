@@ -39,8 +39,11 @@ r_root <- here::here()
 #location data
 data.dir <- here::here("DATA")
 
-#location plots
+#location output
 output.dir <- here::here("OUTPUT")
+
+#location plots
+plots.dir <- here::here("PLOTS")
 
 #location data
 report.dir <- here::here("REPORT")
@@ -63,9 +66,17 @@ lapply(locations, function(x) {
 # remove the files
 #file.remove(f)
 
+#seed
+seed<-90210
+
 #dimension and quality plots
 graph_height <- 6
 png_height <- 400
 aspect_ratio <- 1
 dpi <- 180 #retina(320)
 sub_title<-''
+
+#set color pallettes
+coolBlueHotRed <- function(n, alpha = 1) {rainbow(n, end=4/6, alpha=alpha)[n:1]}
+
+pretty_palette <- c("#1f77b4","#ff7f0e","#2ca02c", "#d62728","#9467bd","#8c564b","#e377c2")

@@ -59,7 +59,12 @@ packages <- c(
   'fs',
   #chart creation
   'esquisse',
-  'multidplyr', 'furr','parallel'
+  #parallel processing
+  'multidplyr', 'furr','parallel',
+  #imputation
+  'mice',
+  #self-organised maps
+  'kohonen'
 )
 
 #install packages which are not available on the computing setup

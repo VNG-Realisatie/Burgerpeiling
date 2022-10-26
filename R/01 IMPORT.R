@@ -1,3 +1,4 @@
+
 #-----------------------------------------------------------------------------------------------
 
 # Burgerpeiling Waar Staat Je Gemeente?
@@ -9,7 +10,7 @@
 
 #see'Beschrijving' directory for specification of the variables.
 
-#last update 2022-10-21 (alpha version)
+#last update 2022-10-26 (alpha version)
 
 #-----------------------------------------------------------------------------------------------
 
@@ -156,7 +157,7 @@ df$id<-paste0("BP",df$GEOITEM,"Y",df$PERIOD,"S",df$seq)
 #-----------------------------------------------------------------------------------------------
 
 df<-df %>% 
-  #Weight 
+  #Weight lower than 5
   filter(weging<5) # %>%
 #filter(jr>2021)
 
@@ -538,7 +539,7 @@ df_aggr_pin<- df_weight %>%
 
 #-----------------------------------------------------------------------------------------------
 
-#schaalscore definitions
+#scalescore definitions
 #https://www.waarstaatjegemeente.nl/Jive/ViewerReportContents.ashx?report=wsjg_bp_bijlage
  
 #rowwise operations
@@ -1337,7 +1338,7 @@ group_by(GEOITEM,PERIOD) %>%
 
 
 #_______________________________________________________________________  
-#MEAN Schaalscores (gemeente, jaar)
+#MEAN scales cores (gemeente, jaar)
 
 df_ss_aggr<- df_ss_weight %>%
   ungroup() %>%
@@ -1379,7 +1380,7 @@ df_ss_aggr<- df_ss_weight %>%
 #	hostman_pin1	
 
 #_______________________________________________________________________  
-#MEAN Schaalscores (gemeente, jaar, typologie)
+#MEAN scale scores (gemeente, jaar, typologie)
 
 df_ss_type_aggr<- df_ss_weight %>%
   ungroup() %>%
@@ -1417,7 +1418,7 @@ df_ss_type_aggr<- df_ss_weight %>%
 
 
 #_______________________________________________________________________  
-#MEAN Schaalscores (gemeente, jaar, leeftijd)
+#MEAN scale scores (gemeente, jaar, leeftijd)
 
 df_ss_age_aggr<- df_ss_weight %>%
   ungroup() %>%
@@ -1450,9 +1451,13 @@ df_ss_age_aggr<- df_ss_weight %>%
 
 #-----------------------------------------------------------------------------------------------
 
-df_merged<- Reduce(function(x, y) merge(x, y, all=TRUE), 
+#respondent level
+df_respond<- cbind(df,df_ss)
+
+#gemeente level
+df_munic<- Reduce(function(x, y) merge(x, y, all=TRUE), 
                  list(df_aggr_mn,df_aggr_pin,df_ss_aggr,df_ss_type_aggr,df_ss_age_aggr,df_ss_vital))
-df_merged[complete.cases(df_merged), ]
+df_munic[complete.cases(df_munic), ]
 
 #keep valid columns
 #merged<-merged %>% select(-contains(c("_cy0", "_cyNA", ".NA")))
@@ -1464,7 +1469,7 @@ df_merged[complete.cases(df_merged), ]
 #-----------------------------------------------------------------------------------------------
 
 #missing values
-df_export <- merged %>% replace(is.na(.), -99998)
+df_export <- df_munic %>% replace(is.na(.), -99998)
 
 #geolevel
 df_export$GEOLEVEL<-"gemeente344"
@@ -1480,13 +1485,27 @@ df_export$bp_wijk<-0
 #-----------------------------------------------------------------------------------------------
 
 #regular export
-out.file<-paste0(output.dir,"/BP.csv")
-write.table(df_merged, file=out.file,quote=TRUE, sep=";", dec = ",", row.names=FALSE)
+#csv
+munic.csv<-paste0(output.dir,"/BP_munic.csv")
+write.table(df_munic, file=munic.csv,quote=TRUE, sep=";", dec = ",", row.names=FALSE)
 
+#rdata gemeente
+munic.df<-paste0(output.dir,"/BP_munic.RData")
+save(df_munic, file = munic.df)
+
+#rdata
+resp.df<-paste0(output.dir,"/BP_respond.RData")
+save(df_respond, file = resp.df)
+
+#-----------------------------------------------------------------------------------------------
 #wsjg export
-wsjg.file<-paste0(output.dir,"/BP_WSJG.csv")
-write.table(df_export, file=wsjg.file,quote=TRUE, sep=";", dec = ",", row.names=FALSE)
+#csv
+wsjg.csv<-paste0(output.dir,"/BP_WSJG.csv")
+write.table(df_export, file=wsjg.csv,quote=TRUE, sep=";", dec = ",", row.names=FALSE)
 
+#rdata
+wsjg.df<-paste0(output.dir,"/BP_WSJG.RData")
+save(df_export, file = wsjg.df)
 
 #----------------------------------------------------------------------------------------------
 
