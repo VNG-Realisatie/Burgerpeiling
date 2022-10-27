@@ -41,7 +41,7 @@ packages <- c(
   #Relative paths
   'here',
   #Essentials
-  'tidyverse',
+  'tidyverse','janitor',
   #datafraem extension
   'data.table',
   #spss
@@ -60,7 +60,9 @@ packages <- c(
   #chart creation
   'esquisse',
   #parallel processing
-  'multidplyr', 'furr','parallel',
+  'multidplyr', 
+  #'furr',
+  'parallel',
   #imputation
   'mice',
   #self-organised maps
@@ -75,7 +77,11 @@ lapply(packages,library,character.only = TRUE
        ,quietly = TRUE
 )
 
-
+#combine purrr’s family of mapping functions with future’s parallel processing capabilities
+#furr is not (yet) available for the most recent R version
+install.packages("furr")
+#remotes::install_github("DavisVaughan/furrr")
+library(furrr)
 
 #-----------------------------------------------------------------------------------------------
 
