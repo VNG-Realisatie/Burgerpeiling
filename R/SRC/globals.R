@@ -71,9 +71,9 @@ seed<-90210
 
 #dimension and quality plots
 graph_height <- 6
-png_height <- 400
+png_height <- 960
 aspect_ratio <- 1
-dpi <- 180 #retina(320)
+dpi <- 300 #retina(320)
 sub_title<-''
 
 #set color pallettes

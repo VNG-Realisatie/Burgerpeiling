@@ -41,13 +41,13 @@ packages <- c(
   #Relative paths
   'here',
   #Essentials
-  'tidyverse','janitor',
+  'tidyverse','janitor','scales',
   #datafraem extension
   'data.table',
   #spss
   'haven', 
   'stats',
-  'rbin',
+  #colour scheme
   'viridis',
   #layout plots
   #'patchwork',
@@ -80,7 +80,7 @@ lapply(packages,library,character.only = TRUE
 #combine purrr’s family of mapping functions with future’s parallel processing capabilities
 #furr is not (yet) available for the most recent R version
 install.packages("furr")
-#remotes::install_github("DavisVaughan/furrr")
+#devtools::install_github("DavisVaughan/furrr")
 library(furrr)
 
 #-----------------------------------------------------------------------------------------------

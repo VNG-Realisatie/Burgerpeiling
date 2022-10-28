@@ -1244,9 +1244,12 @@ hostman_ss=mean(c(mm01_0_wei, mm01_1_wei, mm01_2_wei, mm01_3_wei, mm01_4_wei, mm
 #_______________________________________________________________________
 #schaalscore vitaliteit en welzijn
 
-welzijn_ss=mean(c(ses_ss,socrel_ss,zw02,kunnen_ss,bereid_ss,par_ss,vangnet_ss),na.rm=TRUE),
+#person
+welzijn_ss=mean(c(ses_ss,socrel_ss,zw02,zw00,kunnen_ss,bereid_ss,par_ss,vangnet_ss,sv_ss),na.rm=TRUE),
+#environment/community
 vitaliteit_ss=mean(c(wl01,verbonden_ss,samenredzaam_ss,safe_ss,fk_ss,voorzieningen_ss,betrouwbaar_ss),na.rm=TRUE),
-vitaliteitwelzijn_ss=mean(c(wl01,verbonden_ss,samenredzaam_ss,safe_ss,fk_ss,voorzieningen_ss,betrouwbaar_ss,ses_ss,socrel_ss,zw02,kunnen_ss,bereid_ss,par_ss,vangnet_ss), na.rm=TRUE),  
+#combined
+vitaliteitwelzijn_ss=mean(c(welzijn_ss,vitaliteit_ss), na.rm=TRUE),  
 
 #_______________________________________________________________________
 #maatschappelijke participatie (breedte-maat)

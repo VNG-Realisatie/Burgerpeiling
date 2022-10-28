@@ -38,21 +38,46 @@ df_respond <-  as.tibble(sapply(df_respond, haven::zap_labels))
 #keep track of respondent id
 response_id<-df_respond$id
   
-# well-being and vitality scalescores
-vars_som<-c("welzijn_ss","vitaliteit_ss","sv_ss","kunnen_ss","par_ss","vangnet_ss","ses_ss",
-            "socrel_ss","bereid_ss", "verbonden_ss","zw00","zw02")
+# GEOITEM, well-being and vitality scalescores
+vars_som<-c(
+  #well-being (person)
+  "ses_ss","socrel_ss","zw02","zw00","kunnen_ss","bereid_ss","par_ss","vangnet_ss", "sv_ss",
+  
+  #vitality (#environment/community)
+  "wl01","verbonden_ss", "samenredzaam_ss","safe_ss","fk_ss", "voorzieningen_ss","betrouwbaar_ss",
+  
+  "welzijn_ss","vitaliteit_ss"
+  
+)
 
-#number of variables
+
+#number of scale score variables
 ss_len<-length(vars_som)
 ss_len
 
+#filter by municipality ids
+#all municipalities in dataframe
+munics<-unique(df_respond$GEOITEM)
+#or, subset
+#munics<-c(147,384)
+
+#number of municipalities
+munics_len<-length(munics)
+
 #scale scores set for SOM (Self-Organising Maps)
-df_scores <- df_respond %>%
+df_respond <- df_respond %>%
   #relevant scale scores
-  select(all_of(vars_som)) %>% 
+  select(all_of(c(vars_som, "GEOITEM"))) %>% 
   #all numeric
-  mutate_all(., function(x) as.numeric(as.character(x)))
+  mutate_all(., function(x) as.numeric(as.character(x))) %>%
+  #filter by municipality id
+  filter(GEOITEM %in% munics)
   
+#remove GEOITEM, ... etc.(keep scale scores)
+#df_scores$GEOITEM<-NULL
+df_scores<-df_respond[,!names(df_respond) %in% c("GEOITEM")]
+
+
 
 #-----------------------------------------------------------------------------------------------
 
@@ -86,7 +111,8 @@ ini <- mice(df_scores,pred=quickpred(df_scores, mincor=.35),seed=seed, print=F)
 
 #first run (low number of iterations)
 #method: Predictive mean matching (pmm)
-imp_data <- mice(df_scores,method = "pmm", pred=pred,m=5,maxit=10,seed=500, print=T)
+imp_data <- mice(df_scores[,!names(df_scores) %in% c("GEOITEM")],method = "pmm", 
+                 pred=pred,m=5,maxit=10,seed=500, print=T)
 summary(imp_data)
 
 #convergence
@@ -94,7 +120,7 @@ summary(imp_data)
 #it is important that convergence takes effect towards the end of the iteration process
 plot.nme = paste0('convergence_imputation_iterations_first_run.png')
 plot.store <-paste0(plots.dir,'/',plot.nme)
-png(filename=plot.store,height = png_height,width = png_height * aspect_ratio)
+png(filename=plot.store,height = png_height,width = png_height)
 cplot_1 <- plot(imp_data)
 cplot_1
 dev.off()
@@ -105,7 +131,7 @@ imp_ext <- mice.mids(imp_data, maxit=15, print=F)
 
 plot.nme = paste0('convergence_imputation_iterations_second_run.png')
 plot.store <-paste0(plots.dir,'/',plot.nme)
-png(filename=plot.store,height = png_height,width = png_height * 3)
+png(filename=plot.store,height = png_height,width = png_height)
 cplot_2 <- plot(imp_ext)
 cplot_2
 dev.off()
@@ -126,13 +152,6 @@ df_scores <- complete(imp_data)
 
 #stats on missing values (post-imputation). All gone!
 sapply(df_scores, function(x) sum(is.na(x)))
-
-
-#-----------------------------------------------------------------------------------------------
-
-# SEGMENTATION ROUTE I: SOM HCLUS KMEANS
-
-#-----------------------------------------------------------------------------------------------
 
 
 #-----------------------------------------------------------------------------------------------
@@ -184,15 +203,18 @@ png(file=som.nme, width = 960, height = 960, units = "px")
 plot(som_model, type="codes")
 dev.off()
 
+
 #-----------------------------------------------------------------------------------------------
 
 
 #plot Kohonen heatmap for each feature i.c. scale score
 for(i in 1:ss_len) {
+  
 # Kohonen Heatmap creation
-khm.nme<-paste0(plots.dir,'/som_heatmap_',i,'.png')
+khm.nme<-paste0(plots.dir,'/som_heatmap_',vars_som[i],'.png')
 png(file=khm.nme, width = 960, height = 960, units = "px")
-plot(som_model, type = "property", property = getCodes(som_model)[,i], main=colnames(getCodes(som_model))[i], palette.name=coolBlueHotRed)
+plot(som_model, type = "property", property = getCodes(som_model)[,i], 
+     main=colnames(getCodes(som_model))[i], palette.name=coolBlueHotRed)
 dev.off()
 }
 
@@ -202,7 +224,7 @@ dev.off()
 #optimal number of clusters
 som_data <- getCodes(som_model)
 
-#Calculate the Within-Cluster-Sum of Squared Errors (WSS) for different values of i, 
+#Calculate the Within-Cluster-Sum of Squared Errors (WSS) for different values of i (number of clusters), 
 #and choose the i for which WSS becomes first starts to diminish
 wss <- (nrow(som_data)-1)*sum(apply(som_data,2,var)) 
 
@@ -211,7 +233,7 @@ for (i in 2:15) {
 }
 plot(wss)
 
-#set number of clusters (based on i)
+#set 'optimal' number of clusters (based on i)
 k<-8
 
 # Visualising cluster results
@@ -243,13 +265,11 @@ df_respond$cluster_assignment <- cluster_assignment
 
 #-----------------------------------------------------------------------------------------------
 
-#distribution of cluster assignment
-plot.nme<-paste0(plots.dir,'/clusters_assignment_distribution.png')
-png(file=plot.nme,height = png_height,width = png_height * 2)
-ggplot(df_scores) +
+#distribution of cluster assignment (abs)
+cluster_dis_abs<-ggplot(df_scores) +
   geom_histogram(aes(x = cluster_assignment,
                  y = after_stat(density)),
-                 bins = k, fill = "#112446"
+                 bins = k , fill = "#112446"
                  , color="white") +
   stat_bin(
     aes(x = cluster_assignment,
@@ -262,14 +282,39 @@ ggplot(df_scores) +
     y = "n",
     title = "Incidentie naar cluster"
   ) +
-  theme_minimal()
-dev.off()
+  theme_minimal() + 
+  theme(legend.position = "none") 
+cluster_dis_abs
+plot.nme<-paste0('/clusters_assignment_distribution_abs.png')
+plot.store <-paste0(plots.dir,plot.nme)
+ggsave(plot.store, height = graph_height, width = graph_height * 2, dpi=dpi)
 
-#vitaliteit by cluster (colour represents perceived health)
-plot.nme<-paste0(plots.dir,'/clusters_vitaliteit_gezondheid.png')
-png(file=plot.nme,height = png_height,width = png_height * 2)
-ggplot(df_scores) +
- aes(x = cluster_assignment, y = vitaliteit_ss, colour = zw02) +
+
+#distribution of cluster assignment (rel)
+plot.title = paste0('Incidentie naar cluster')
+cluster_dis_rel<-ggplot(df_scores, aes(factor(cluster_assignment), fill=factor(cluster_assignment))) + 
+  geom_bar(aes(y = (..count..)/sum(..count..)), fill = "#112446"
+           , color="white") + 
+  scale_y_continuous(labels=scales::percent) +
+  labs(x = "cluster", y="(%)",title=plot.title, subtitle = paste0(''), fill="cluster_assignment" ) +
+  theme_minimal() + 
+  theme(legend.position = "none") 
+cluster_dis_rel
+plot.nme = paste0('/clusters_assignment_distribution_rel.png')
+plot.store <-paste0(plots.dir,plot.nme)
+ggsave(plot.store, height = graph_height, width = graph_height * 2, dpi=dpi)
+
+
+#-----------------------------------------------------------------------------------------------
+
+## VITALITY NEIGHBOURHOOD
+
+#-----------------------------------------------------------------------------------------------
+
+
+#vitaliteit buurt by cluster (colour represents ses)
+vit_ses<-ggplot(df_scores) +
+ aes(x = cluster_assignment, y = vitaliteit_ss, colour = ses) +
  geom_point(shape = "circle", 
  size = 1.5) +
   geom_jitter() +
@@ -277,17 +322,18 @@ ggplot(df_scores) +
   labs(
     x = "cluster",
     y = "vitaliteit (schaalscore)",
-    color = "ervaren gezondheid"
+    color = "ses"
   ) +
  theme_minimal()
-dev.off()
+vit_ses
+plot.nme = paste0('/clusters_vitaliteit_ses.png')
+plot.store <-paste0(plots.dir,plot.nme)
+ggsave(plot.store, height = graph_height, width = graph_height * 2, dpi=dpi)
 
 
-plot.nme<-paste0(plots.dir,'/clusters_vitaliteit_socialeveerkracht.png')
-png(file=plot.nme,height = png_height,width = png_height * 2)
-
-ggplot(df_scores) +
-  aes(x = cluster_assignment, y = vitaliteit_ss, colour = sv_ss) +
+#vitaliteit buurt by cluster (colour represents cohesion)
+vit_coh<-ggplot(df_scores) +
+  aes(x = cluster_assignment, y = vitaliteit_ss, colour = verbonden_ss) +
   geom_point(shape = "circle", 
              size = 1.5) +
   geom_jitter() +
@@ -295,15 +341,43 @@ ggplot(df_scores) +
   labs(
     x = "cluster",
     y = "vitaliteit (schaalscore)",
-    color = "sociale veerkracht"
+    color = "sociale samenhang"
   ) +
   theme_minimal()
-dev.off()
+vit_coh
+plot.nme = paste0('/clusters_vitaliteit_socialesamenhang.png')
+plot.store <-paste0(plots.dir,plot.nme)
+ggsave(plot.store, height = graph_height, width = graph_height * 2, dpi=dpi)
 
-plot.nme<-paste0(plots.dir,'/clusters_welzijn_sess.png')
-png(file=plot.nme,height = png_height,width = png_height * 2)
 
-ggplot(df_scores) +
+#vitaliteit buurt by cluster (colour represents participation)
+vit_par<-ggplot(df_scores) +
+  aes(x = cluster_assignment, y = vitaliteit_ss, colour = par_ss) +
+  geom_point(shape = "circle", 
+             size = 1.5) +
+  geom_jitter() +
+  scale_color_viridis(discrete = FALSE) +
+  labs(
+    x = "cluster",
+    y = "vitaliteit buurt (schaalscore)",
+    color = "mtsch. participatie"
+  ) +
+  theme_minimal()
+vit_par
+plot.nme = paste0('/clusters_vitaliteit_mtschparticipatie.png')
+plot.store <-paste0(plots.dir,plot.nme)
+ggsave(plot.store, height = graph_height, width = graph_height * 2, dpi=dpi)
+
+
+#-----------------------------------------------------------------------------------------------
+
+## PERSONAL WELL-BEING
+
+#-----------------------------------------------------------------------------------------------
+
+
+#personal well-being by cluster (colour represents ses)
+well_ses<-ggplot(df_scores) +
   aes(x = cluster_assignment, y = welzijn_ss, colour = ses_ss) +
   geom_point(shape = "circle", 
              size = 1.5) +
@@ -311,11 +385,105 @@ ggplot(df_scores) +
   scale_color_viridis(discrete = FALSE) +
   labs(
     x = "cluster",
-    y = "welzijn (schaalscore)",
+    y = "persoonlijk welzijn (schaalscore)",
     color = "SES"
   ) +
   theme_minimal()
-dev.off()
+well_ses
+plot.nme = paste0('/clusters_welzijn_ses.png')
+plot.store <-paste0(plots.dir,plot.nme)
+ggsave(plot.store, height = graph_height, width = graph_height * 2, dpi=dpi)
+
+
+#personal well-being by cluster (colour represents social resilience)
+well_sv<-ggplot(df_scores) +
+  aes(x = cluster_assignment, y = welzijn_ss, colour = sv_ss) +
+  geom_point(shape = "circle", 
+             size = 1.5) +
+  geom_jitter() +
+  scale_color_viridis(discrete = FALSE) +
+  labs(
+    x = "cluster",
+    y = "persoonlijk welzijn (schaalscore)",
+    color = "sociale veerkracht"
+  ) +
+  theme_minimal()
+well_sv
+plot.nme = paste0('/clusters_welzijn_socveerkracht.png')
+plot.store <-paste0(plots.dir,plot.nme)
+ggsave(plot.store, height = graph_height, width = graph_height * 2, dpi=dpi)
+
+
+#personal well-being by cluster (colour represents participation)
+well_par<-ggplot(df_scores) +
+  aes(x = cluster_assignment, y = welzijn_ss, colour = sv_ss) +
+  geom_point(shape = "circle", 
+             size = 1.5) +
+  geom_jitter() +
+  scale_color_viridis(discrete = FALSE) +
+  labs(
+    x = "cluster",
+    y = "persoonlijk welzijn (schaalscore)",
+    color = "mtsch. participatie"
+  ) +
+  theme_minimal()
+well_par
+plot.nme = paste0('/clusters_welzijn_mtschparticipatie.png')
+plot.store <-paste0(plots.dir,plot.nme)
+ggsave(plot.store, height = graph_height, width = graph_height * 2, dpi=dpi)
+
+#-----------------------------------------------------------------------------------------------
+
+#Dispersion of vitality
+plot.title = paste0('Vitaliteit buurt naar cluster')
+dp1<-ggplot(df_scores, aes(x = factor(cluster_assignment), y =vitaliteit_ss,fill=factor(cluster_assignment))) + 
+  geom_boxplot(width=0.6) + 
+  stat_summary(fun=mean, geom="point", shape=5, size=4) +
+  scale_fill_viridis_d() +
+  theme_minimal() + 
+  theme(legend.position = "none") +
+  labs(title=plot.title, subtitle=paste0(''), fill="cluster_assignment" ) +
+  xlab("cluster") +
+  ylab("vitaliteit buurt (schaalscore)")
+dp1
+plot.nme = paste0('/clusters_vitaliteit_dispersion.png')
+plot.store <-paste0(plots.dir,plot.nme)
+ggsave(plot.store, height = graph_height, width = graph_height * aspect_ratio, dpi=dpi)
+
+
+#Dispersion of well-being
+plot.title = paste0('Persoonlijk welzijn naar cluster')
+dp2<-ggplot(df_scores, aes(x = factor(cluster_assignment), y =welzijn_ss,fill=factor(cluster_assignment))) + 
+  geom_boxplot(width=0.6) + 
+  stat_summary(fun=mean, geom="point", shape=5, size=4) +
+  scale_fill_viridis_d() +
+  theme_minimal() + 
+  theme(legend.position = "none") +
+  labs(title=plot.title, subtitle=paste0(''), fill="cluster_assignment" ) +
+  xlab("cluster") +
+  ylab("persoonlijk welzijn (schaalscore)")
+dp2
+plot.nme = paste0('/clusters_welzijn_dispersion.png')
+plot.store <-paste0(plots.dir,plot.nme)
+ggsave(plot.store, height = graph_height, width = graph_height * aspect_ratio, dpi=dpi)
+
+
+#Dispersion of social resilience
+plot.title = paste0('Sociale veerkracht naar cluster')
+dp3<-ggplot(df_scores, aes(x = factor(cluster_assignment), y =sv_ss,fill=factor(cluster_assignment))) + 
+  geom_boxplot(width=0.6) + 
+  stat_summary(fun=mean, geom="point", shape=5, size=4) +
+  scale_fill_viridis_d() +
+  theme_minimal() + 
+  theme(legend.position = "none") +
+  labs(title=plot.title, subtitle=paste0(''), fill="cluster_assignment" ) +
+  xlab("cluster") +
+  ylab("sociale veerkracht (schaalscore)")
+dp3
+plot.nme = paste0('/clusters_socveerkracht_dispersion.png')
+plot.store <-paste0(plots.dir,plot.nme)
+ggsave(plot.store, height = graph_height, width = graph_height * aspect_ratio, dpi=dpi)
+
 
 
 #-----------------------------------------------------------------------------------------------
@@ -334,10 +502,3 @@ corrs<-df_respond %>%
 #END OF SOM
 
 
-#-----------------------------------------------------------------------------------------------
-
-# ROUTE II UMAP KMEANS
-
-#-----------------------------------------------------------------------------------------------
-
-#.....
