@@ -34,18 +34,17 @@ if(proj_env == TRUE) {
 packages <- c(
   #external packages (not-being from cran-repo or similar)
   'devtools',
-  #Python interface
-  #'reticulate'
   #Functions for Base Types and Core R and 'Tidyverse' Features
   'rlang',
   #Relative paths
   'here',
-  #Essentials
+  #sssentials
   'tidyverse','janitor','scales',
   #datafraem extension
   'data.table',
   #spss
   'haven', 
+  #statistical calculations
   'stats',
   #colour scheme
   'viridis',
@@ -53,20 +52,28 @@ packages <- c(
   #'patchwork',
   #read xlsx
   'openxlsx',
+  #publication-ready analytical and summary tables
   'gtsummary',
+  #survey data-processing
   'survey',
   'srvyr',
+  #file system operations
   'fs',
   #chart creation
   'esquisse',
   #parallel processing
   'multidplyr', 
+  #mapping functions for parallel processing
   #'furr',
   'parallel',
   #imputation
   'mice',
   #self-organised maps
-  'kohonen'
+  'kohonen',
+  #ensemble clustering
+  'diceR',
+  #optimal binning
+  'optbin'
 )
 
 #install packages which are not available on the computing setup

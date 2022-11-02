@@ -10,7 +10,7 @@
 
 #see'Beschrijving' directory for specification of the variables.
 
-#last update 2022-10-26 (alpha version)
+#last update 2022-10-31 (beta version)
 
 #-----------------------------------------------------------------------------------------------
 
@@ -38,7 +38,6 @@ file_type<-'sav'
 qry<-paste0("*",file_type)
 files<- fs::dir_ls(glob=qry, path=data.dir)
 
-
 df<- map_df(set_names(files), function(file) {
   file %>% 
     map_df(
@@ -53,7 +52,6 @@ df<- map_df(set_names(files), function(file) {
 
 #pipeline timer
 start_time<-Sys.time()
-
 
 
 #-----------------------------------------------------------------------------------------------
@@ -162,8 +160,9 @@ df$id<-paste0("BP",df$GEOITEM,"Y",df$PERIOD,"S",df$seq)
 
 df<-df %>% 
   #Weight lower than 5
-  filter(weging<5) # %>%
-#filter(jr>2021)
+  filter(weging<5) %>%
+  #year
+  filter(jr>2020)
 
 
 #-----------------------------------------------------------------------------------------------
@@ -197,18 +196,18 @@ df<- df %>%
     part_brt=ifelse(wl13<3 & wl14_dum<3, 1,
                     ifelse(wl13<3 & wl14_dum==3, 2,
                            ifelse(wl13==3 & wl14_dum<3, 3,
-                                  ifelse(wl13==3 & wl14_dum==3, 4, 0)))),
+                                  ifelse(wl13==3 & wl14_dum==3, 4, NA)))),
     #vrijwilligerswerk
     part_vw=ifelse(zw06_3<3 & zw07_dum<3, 1,
                    ifelse(zw06_3<3 & zw07_dum==3, 2,
                           ifelse(zw06_3==3 & zw07_dum<3, 3,
-                                 ifelse(zw06_3==3 & zw07_dum==3, 4, 0)))),
+                                 ifelse(zw06_3==3 & zw07_dum==3, 4, NA)))),
     #leeftijd
     lft_cy=ifelse(ch02==2, 1,
                   ifelse(ch02==3, 2,
                          ifelse(ch02==4, 2,
                                 ifelse(ch02==5, 3,
-                                       ifelse(ch02==6, 4,0)))))
+                                       ifelse(ch02==6, 4, NA)))))
   ) 
 
 #-----------------------------------------------------------------------------------------------
@@ -549,11 +548,10 @@ df_aggr_pin<- df_weight %>%
 #rowwise operations
 #parallel processing
 
-cluster <- multidplyr::new_cluster(parallel::detectCores() - 2)
+cluster <- multidplyr::new_cluster(parallel::detectCores() - 1)
 multidplyr::cluster_library(cluster, c('tidyverse', 'furrr'))
 e <- 10
 multidplyr::cluster_copy(cluster, "e")
-  
   
 df_ss<-  df %>% 
   rowwise(id) %>% 
@@ -570,7 +568,6 @@ df_ss<-  df %>%
         act_hlp=ifelse(zw06_1==1, 1,
                         ifelse(zw06_1==2, 1,
                                ifelse(is.na(zw06_1), NA, 0))),
-        
         #actief in aandacht zorgwekkende situatie
         act_zw=ifelse(zw06_2==1, 1,
                          ifelse(zw06_2==2, 1,
@@ -591,61 +588,62 @@ df_ss<-  df %>%
         #actief sociale contacten / zeker voldoende sociale contacten
         act_soc=ifelse(zw03==1, 1,
                          ifelse(is.na(zw03), NA, 0)),
-        
         #affectieve hulp en zorg
         act_ih=ifelse(act_mz==1 | act_zw==1, 1, 0),
-    
-        #Lichamelijke gezondheid
+        
+        #lichamelijke gezondheid
         bep_gez=ifelse(zw01_0==3 | zw01_0==4, 1,
                          ifelse(is.na(zw01_0), NA, 0)),
         
-        #Fysiek functioneren
+        #fysiek functioneren
         bep_fys=ifelse(zw01_1==3 | zw01_1==4, 1,
                          ifelse(is.na(zw01_1), NA, 0)),
         
-        #Mentale gezondheid
+        #mentale gezondheid
         bep_men=ifelse(zw01_2==3 | zw01_2==4, 1,
                          ifelse(is.na(zw01_2), NA, 0)),
         
-        #Taal / cultuur
+        #taal / cultuur
         bep_cul=ifelse(zw01_3==3 | zw01_3==4, 1,
                          ifelse(is.na(zw01_3), NA, 0)),
         
-        #Laag inkomen
+        #laag inkomen
         bep_ink=ifelse(zw01_4==3 | zw01_4==4, 1,
                          ifelse(is.na(zw01_4), NA, 0)),
         
-        #Uitsluiting
+        #uitsluiting
         bep_uit=ifelse(zw01_5==3 | zw01_5==4, 1,
                          ifelse(is.na(zw01_5), NA, 0)),
         
-        #Andere beperking
+        #andere beperking
         bep_and=ifelse(zw01_6==3 | zw01_6==4, 1,
                          ifelse(is.na(zw01_6), NA, 0)),
         
-        #Mantelzorg overbelasting
+        #mantelzorg overbelasting
         mz_ob=ifelse(zw09==4 | act_mz==1, 1,
                          ifelse(is.na(zw09), NA, 0)),
         
+        #niveau sociale beperkingen
         mb_soc=sum(c(bep_men,bep_cul,bep_ink,bep_uit,mz_ob),na.rm=TRUE),
         
-        #Sociale beperking
+        #sociale beperking
         bep_soc=ifelse(mb_soc>0, 1,
                          ifelse(is.na(mb_soc), NA, 0)),
-        
+        #sociale beperking afwezig
         bep_soc_neg=ifelse(mb_soc>0, 0,
                          ifelse(is.na(mb_soc), NA, 1)),
         
-        #Lichamelijke beperking
+        #lichamelijke beperking
         mb_fys=sum(bep_gez,bep_fys,bep_and,na.rm=TRUE),
         
         bep_lich=ifelse(mb_fys>0, 1,
                        ifelse(is.na(mb_fys), NA, 0)),
         
+        #lichamelijke beperking afwezig
         bep_lich_neg=ifelse(mb_fys>0, 0,
                           ifelse(is.na(mb_fys), NA, 1)),
         
-        #meervoudige beperkingen
+        #niveau meervoudige beperkingen
         mb=sum(bep_gez,bep_fys,bep_men,bep_cul,bep_ink,bep_uit,bep_and,mz_ob,na.rm=TRUE),
         
         #beperkingen afwezig
@@ -664,7 +662,7 @@ df_ss<-  df %>%
         pleasant_neigh=ifelse(wl01>=6, 1,
                         ifelse(is.na(wl01), NA, 0)),
         
-        #Vangnet familie, vrienden of buurtgenoten
+        #vangnet familie, vrienden of buurtgenoten
         safeguard_fam=ifelse(zw10_0<3, 1,
                               ifelse(is.na(zw10_0), NA, 0)),
         
@@ -683,11 +681,33 @@ df_ss<-  df %>%
                            ifelse(zw04==5, NA,
                                   ifelse(is.na(zw04), NA, 1))),
         
+        #eenzaamheid afwezigheid
         alone_neg=ifelse(zw04<3, 1,
                            ifelse(zw04==5, NA,
                             ifelse(is.na(zw04), NA, 0))),
-
         
+        #sociale veeerkracht
+        sv_0=ifelse(zw19_0<3, 1,
+                    ifelse(is.na(zw19_0), NA, 0)),
+        
+        sv_1=ifelse(zw19_1<3, 1,
+                    ifelse(is.na(zw19_1), NA, 0)),
+        
+        sv_2=ifelse(zw19_2<3, 1,
+                    ifelse(is.na(zw19_2), NA, 0)),
+        
+        sv_3=ifelse(zw19_3<3, 1,
+                    ifelse(is.na(zw19_3), NA, 0)),
+        
+        sv_4=ifelse(zw19_4<3, 1,
+                    ifelse(is.na(zw19_4), NA, 0)),
+        
+        #niveau sociale veerkracht
+        sv=sum(sv_0,sv_1,sv_2,sv_3,sv_4,na.rm=TRUE),
+        
+        #veerkrachtige inwoner
+        sv_pos=ifelse(sv>2, 1,
+                      ifelse(is.na(sv), NA, 0)),
 #_______________________________________________________________________
 #Schaalscore sociaal-economische status
 
@@ -737,7 +757,6 @@ wl14_wei=ifelse(wl14==1, 4,
                   ifelse(wl14==2, 2,
                          ifelse(wl14==3, 0,
                                 ifelse(is.na(wl14), NA, NA)))),
-
 
 #inzet voor vrijwilligerswerk toekomst
 zw07_wei=ifelse(zw07==1, 4,
@@ -1148,8 +1167,10 @@ bep_and_wei=ifelse(zw01_6==1, 4,
                                           ifelse(zw01_6==5, NA,
                                                  ifelse(is.na(zw01_6), NA, NA)))))),
 
-bep_dim1_ss=min(c(bep_gez_wei,bep_fys_wei),na.rm=TRUE),
-bep_dim2_ss=min(c(bep_men_wei,bep_cul_wei,bep_ink_wei,bep_uit_wei,bep_and_wei),na.rm=TRUE),
+#dimensie beperkingen op het vlak van gezondheid en fysiek functioneren
+bep_dim1_ss=min(c(bep_gez_wei,bep_fys_wei,bep_and_wei),na.rm=TRUE),
+#dimensie soc-cult-econ beperkingen 
+bep_dim2_ss=min(c(bep_men_wei,bep_cul_wei,bep_ink_wei,bep_uit_wei),na.rm=TRUE),
 kunnen_ss=mean(c(bep_dim1_ss,bep_dim2_ss),na.rm=TRUE)*5/2,
 
 
@@ -1253,42 +1274,55 @@ vitaliteitwelzijn_ss=mean(c(welzijn_ss,vitaliteit_ss), na.rm=TRUE),
 
 #_______________________________________________________________________
 #maatschappelijke participatie (breedte-maat)
-
 part_score=sum(c(act_ver,act_vw,act_neigh,act_opl,act_arb,act_soc,act_ih,act_hlp), na.rm=TRUE),
 #individueel welzijn (breedte-maat)
-qol_score=sum(c(health,bep_lich_neg,bep_soc_neg,alone_neg,pleasant_neigh,safeguard), na.rm=TRUE)
+qol_score=sum(c(health,bep_lich_neg,bep_soc_neg,alone_neg,sv_pos,pleasant_neigh,safeguard), na.rm=TRUE)
 
 #_______________________________________________________________________
   ) %>%
   collect()  %>%
   mutate_at(.,vars(-group_cols()),~ifelse(is.nan(.) | is.infinite(.), NA, .)) %>%
-  mutate_at(.,vars(-group_cols()),~replace(., .== 0, NA)) %>% 
+  #mutate_at(.,vars(-group_cols()),~replace(., .== 0, NA)) %>% 
   ungroup() %>% 
   select(-GEMEENTE)
 
 #_______________________________________________________________________  
 #typology
   
+
+#boundaries are based on all Burgerpeilingen during the last 3 years 
+#optimal binning 
+#qol_bin <- optbin(df_ss$qol_score, 4,na.rm = T, metric=c('mse'), max.cache=6^31)
+#part_bin <- optbin(df_ss$part_score, 4,na.rm = T, metric=c('mse'), max.cache=6^31)
+
+#hist(qol_bin)
+#summary(qol_bin)
+
+#hist(part_bin)
+#summary(part_bin)
+
+#access to threshold
+#qol_bin[["thr"]][1]
+
+
 df_ss<-df_ss %>%
   mutate(
-    #boundaries are based on all Burgerpeilingen during the last 5 years 
-    qol_score_bin=ifelse(qol_score<2.40927414725913, 1,
-                        ifelse(qol_score<4.20313840002851, 2,
-                               ifelse(qol_score<5.99700265279790, 3,
-                                                    ifelse(is.na(qol_score), NA, 4)))),
-    
-    part_score_bin=ifelse(part_score<1.59205816281436, 1,
-                           ifelse(part_score<3.36697460609428, 2,
-                                  ifelse(part_score<5.14189104937421, 3,
+    qol_score_bin=ifelse(qol_score<=3, 1,
+                        ifelse(qol_score<=5, 2,
+                               ifelse(qol_score<=6, 3,
+                                  ifelse(is.na(qol_score), NA, 4)))),
+    part_score_bin=ifelse(part_score<=2, 1,
+                           ifelse(part_score<=3, 2,
+                                  ifelse(part_score<=4, 3,
                                          ifelse(is.na(part_score), NA, 4)))),
     
-    typology=ifelse(part_score_bin>2 & qol_score_bin>2 , 1,
+    typology=ifelse(part_score_bin>2 & qol_score_bin>2, 1,
                            ifelse(part_score_bin<3 & qol_score_bin>2, 2,
                                   ifelse(part_score_bin>2 & qol_score_bin<3 , 3,
                                          ifelse(part_score_bin<3 & qol_score_bin<3 , 4,
                                               ifelse(is.na(part_score_bin), NA, NA))))),
     
-    zorwekkend=ifelse(part_score_bin<2 & qol_score_bin<2 , 1,
+    zorwekkend=ifelse(part_score_bin<2 & qol_score_bin<2, 1,
                                            ifelse(is.na(part_score_bin) | is.na(qol_score_bin) , NA, 0)),
     zelfredzaam=ifelse(typology>2, 0,
                          ifelse(typology>0, 1,
@@ -1330,7 +1364,6 @@ df_ss_weight<- df_ss %>%
   srvyr::as_survey_design(ids=1, # 1 for no cluster ids 
                           weights=weging, # weight added
                           strata=NULL) # sampling was simple (no strata)
-
 
 #typolody weerbaarheid
 df_ss_vital<-df_ss_weight %>%
@@ -1382,7 +1415,6 @@ df_ss_aggr<- df_ss_weight %>%
   ) %>%  
   mutate_at(.,vars(-group_cols()),~ifelse(is.nan(.) | is.infinite(.), NA, .)) %>%
   mutate_at(.,vars(-group_cols()),~replace(., .== 0, NA))  
-
 
 #	hostman_pin1	
 
@@ -1466,14 +1498,16 @@ df_munic<- Reduce(function(x, y) merge(x, y, all=TRUE),
                  list(df_aggr_mn,df_aggr_pin,df_ss_aggr,df_ss_type_aggr,df_ss_age_aggr,df_ss_vital))
 df_munic[complete.cases(df_munic), ]
 
-#keep valid columns
-#merged<-merged %>% select(-contains(c("_cy0", "_cyNA", ".NA")))
+#keep valid columns (remove indicators by age where age is missing)
+#df_munic<-df_munic %>% select(-contains(c("_cy0", "_cyNA", ".NA")))
 
 #-----------------------------------------------------------------------------------------------
 
 # WSJG 
 
 #-----------------------------------------------------------------------------------------------
+
+#VNG use only...
 
 #missing values
 df_export <- df_munic %>% replace(is.na(.), -99998)
@@ -1500,7 +1534,7 @@ write.table(df_munic, file=munic.csv,quote=TRUE, sep=";", dec = ",", row.names=F
 munic.df<-paste0(output.dir,"/BP_munic.RData")
 save(df_munic, file = munic.df)
 
-#rdata
+#rdata respondent
 resp.df<-paste0(output.dir,"/BP_respond.RData")
 save(df_respond, file = resp.df)
 
