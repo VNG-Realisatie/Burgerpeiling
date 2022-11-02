@@ -129,8 +129,6 @@ gem_levels<-gemeenten_meta$Gemeentecode
 gem_labels<-gemeenten_meta$Gemeentenaam
 
 df$GEMEENTE<- factor(df$GEOITEM, levels=gem_levels, labels=gem_labels)
-#df$GEOITEM<- factor(df$GEOITEM)
-#df$jr<- factor(df$jr)
 
 df<-df %>%
   relocate(any_of(c('GEMEENTE')), .before=GEOITEM)
@@ -162,7 +160,7 @@ df<-df %>%
   #Weight lower than 5
   filter(weging<5) %>%
   #year
-  filter(jr>2020)
+  filter(PERIOD>2020)
 
 
 #-----------------------------------------------------------------------------------------------
@@ -1374,7 +1372,8 @@ group_by(GEOITEM,PERIOD) %>%
     typology_pin3=(survey_total((typology==3), na.rm=T, vartype=vt) / n()*100),
     typology_pin4=(survey_total((typology==4), na.rm=T, vartype=vt) / n()*100),
     zorgwekkend_pin1=(survey_total((zorwekkend==1), na.rm=T, vartype=vt) / n()*100)   
-)
+) %>%
+mutate_at(.,vars(-group_cols()),~replace(., .== 0, NA))  
 
 
 #_______________________________________________________________________  
@@ -1508,6 +1507,16 @@ df_munic[complete.cases(df_munic), ]
 #-----------------------------------------------------------------------------------------------
 
 #VNG use only...
+
+#remove records that failed typology
+typology_check<-c("typology_pin1","typology_pin2","typology_pin3","typology_pin4")
+
+df_export<-df_export %>%
+  drop_na(typology_check)
+
+#-----------------------------------------------------------------------------------------------
+
+#specific notation for WSJG
 
 #missing values
 df_export <- df_munic %>% replace(is.na(.), -99998)
