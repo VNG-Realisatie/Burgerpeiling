@@ -5,12 +5,14 @@
 
 #-----------------------------------------------------------------------------------------------
 
-#this procedure is to check the results of the Burgerpeiling as (will) presented on
-#Waarstaatjegemeente.nl 
+#this procedure is to check the results of the Burgerpeiling as (will be) presented on
+#Waarstaatjegemeente.nl (VNG)
 
 #see'Beschrijving' directory for specification of the variables.
 
-#last update 2022-10-31 (beta version)
+#last update 2022-11-11 (beta version)
+
+#questions? contact Mark Henry Gremmen mark.gremmen@vng.nl
 
 #-----------------------------------------------------------------------------------------------
 
@@ -59,6 +61,10 @@ start_time<-Sys.time()
 # MISSINGS
 
 #-----------------------------------------------------------------------------------------------
+
+#weight available?
+weight.exists<-any(colnames(df) == "weging")
+if(weight.exists==FALSE) { stop("no weight available!") }
 
 #missing values analysis
 colSums(is.na(df))
@@ -115,7 +121,7 @@ df<- df %>%
 #read municipality names
 file_type<-'xlsx'
 qry<-paste0("*",file_type)
-files<- fs::dir_ls(glob=qry, path="CBS")
+files<- fs::dir_ls(glob=qry, path="DATA/CBS")
 
 gemeenten_meta<- map_df(set_names(files), function(file) {
   file %>% 
@@ -132,6 +138,13 @@ df$GEMEENTE<- factor(df$GEOITEM, levels=gem_levels, labels=gem_labels)
 
 df<-df %>%
   relocate(any_of(c('GEMEENTE')), .before=GEOITEM)
+
+
+#reporting municipalities
+munic.active<-levels(factor(df$GEMEENTE))
+
+cat("reporting municipalities: ", munic.active)
+
 
 
 #-----------------------------------------------------------------------------------------------
@@ -1500,6 +1513,8 @@ df_munic<- Reduce(function(x, y) merge(x, y, all=TRUE),
                  list(df_aggr_mn,df_aggr_pin,df_ss_aggr,df_ss_type_aggr,df_ss_age_aggr,df_ss_vital))
 df_munic[complete.cases(df_munic), ]
 
+#df_munic <- list(df_aggr_mn,df_aggr_pin,df_ss_aggr,df_ss_type_aggr,df_ss_age_aggr,df_ss_vital) |> purrr::reduce(rbind)
+
 #keep valid columns (remove indicators by age where age is missing)
 #df_munic<-df_munic %>% select(-contains(c("_cy0", "_cyNA", ".NA")))
 
@@ -1568,6 +1583,17 @@ write.table(df_export, file=wsjg.csv,quote=TRUE, sep=";", dec = ",", row.names=F
 #rdata
 wsjg.df<-paste0(output.dir,"/BP_WSJG.RData")
 save(df_export, file = wsjg.df)
+
+
+#----------------------------------------------------------------------------------------------
+
+#Plotting typology
+
+#----------------------------------------------------------------------------------------------
+
+
+#source(here::here('SRC/plotting_typology.R'))
+
 
 #----------------------------------------------------------------------------------------------
 

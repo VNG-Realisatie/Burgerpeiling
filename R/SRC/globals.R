@@ -48,8 +48,12 @@ plots.dir <- here::here("PLOTS")
 #location data
 report.dir <- here::here("REPORT")
 
+#CBS data
+cbs.dir<- here::here(data.dir, "CBS")
+
 #create locations if not exist
 locations <- c(data.dir,
+               cbs.dir,
                output.dir,
                report.dir)
 
@@ -65,6 +69,9 @@ lapply(locations, function(x) {
 
 # remove the files
 #file.remove(f)
+
+#shut-up dplyr
+suppressPackageStartupMessages(library(dplyr))
 
 #seed
 seed<-90210

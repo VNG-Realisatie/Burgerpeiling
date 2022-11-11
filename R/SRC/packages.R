@@ -50,8 +50,8 @@ packages <- c(
   'viridis',
   #layout plots
   #'patchwork',
-  #read xlsx
-  'openxlsx',
+  #read and write xlsx
+  'openxlsx', 
   #publication-ready analytical and summary tables
   'gtsummary',
   #survey data-processing
@@ -59,6 +59,10 @@ packages <- c(
   'srvyr',
   #file system operations
   'fs',
+  #CBS api
+  'cbsodataR',
+  #scales
+  'scales',
   #chart creation
   'esquisse',
   #parallel processing
