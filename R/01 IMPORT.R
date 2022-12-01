@@ -6,11 +6,11 @@
 #-----------------------------------------------------------------------------------------------
 
 #this procedure is to check the results of the Burgerpeiling as (will be) presented on
-#Waarstaatjegemeente.nl (VNG)
+#Waarstaatjegemeente.nl (VNG), as well as to generate additional visualisations
 
 #see'Beschrijving' directory for specification of the variables.
 
-#last update 2022-11-11 (beta version)
+#last update 2022-12-01 (beta version)
 
 #questions? contact Mark Henry Gremmen mark.gremmen@vng.nl
 
@@ -34,7 +34,7 @@ source(here::here('SRC/globals.R'))
 
 #-----------------------------------------------------------------------------------------------
 
-#read Spss sav-file(s)
+#read multiple Spss sav-files
 file_type<-'sav'
 
 qry<-paste0("*",file_type)
@@ -47,14 +47,52 @@ df<- map_df(set_names(files), function(file) {
     ) 
 })
 
+#-----------------------------------------------------------------------------------------------
+
+#eliminate previous generated variables
+df$GEOITEM<-NULL
+df$PERIOD<-NULL
+
+#check data structure
+var_nms<-colnames((df))
+var_len<-length(var_nms)
+
+var.loc<-here::here("DATA/REF/var_df.RData")
+#var_df<-as_tibble(var_nms)
+#save(var_df,file="DATA/REF/var_df.RData")
+
+if(var_len>196) { stop("dataframe contains illegal variables!") }
+
+
+
 #get duplicates
 #get_dupes(df,-c(id,respondent))
+
 
 #-----------------------------------------------------------------------------------------------
 
 #pipeline timer
 start_time<-Sys.time()
 
+#-----------------------------------------------------------------------------------------------
+
+# SUBSETTING
+
+#-----------------------------------------------------------------------------------------------
+
+df<-df %>% 
+  #Weight lower than 5
+  filter(weging<5) %>%
+  #year
+  filter(jr>2019)
+
+#get vector with valid variables
+load(var.loc)
+var_vec<-as.vector(var_df)
+
+#select vars
+df<-df %>%
+  select(all_of((var_vec[["value"]])))
 
 #-----------------------------------------------------------------------------------------------
 
@@ -121,8 +159,9 @@ df<- df %>%
 #read municipality names
 file_type<-'xlsx'
 qry<-paste0("*",file_type)
-files<- fs::dir_ls(glob=qry, path="DATA/CBS")
+files<- fs::dir_ls(glob=qry, path=cbs.dir)
 
+#read xls-sheets 
 gemeenten_meta<- map_df(set_names(files), function(file) {
   file %>% 
     map_df(
@@ -146,7 +185,6 @@ munic.active<-levels(factor(df$GEMEENTE))
 cat("reporting municipalities: ", munic.active)
 
 
-
 #-----------------------------------------------------------------------------------------------
 
 # IDENTIFIER
@@ -161,19 +199,6 @@ df$id<-paste0("BP",df$GEOITEM,"Y",df$PERIOD,"S",df$seq)
 
 #out.file<-paste0(output.dir,"/BP-combined.RData")
 #save(df, file = out.file)
-
-
-#-----------------------------------------------------------------------------------------------
-
-# SUBSETTING
-
-#-----------------------------------------------------------------------------------------------
-
-df<-df %>% 
-  #Weight lower than 5
-  filter(weging<5) %>%
-  #year
-  filter(PERIOD>2020)
 
 
 #-----------------------------------------------------------------------------------------------
@@ -221,6 +246,9 @@ df<- df %>%
                                        ifelse(ch02==6, 4, NA)))))
   ) 
 
+
+
+
 #-----------------------------------------------------------------------------------------------
 
 # AGGREGATE
@@ -231,7 +259,8 @@ df<- df %>%
 df_weight<- df %>% 
   srvyr::as_survey_design(ids=1, # 1 for no cluster ids 
                           weights=weging, # weight added
-                          strata=NULL) # sampling was simple (no strata)
+                          strata=NULL) # sampling was simple (no strata) 
+                         
 
 #Report variability as one or more of: standard error ("se", default), 
 #confidence interval ("ci"), variance ("var") or coefficient of variation ("cv").
@@ -261,7 +290,7 @@ df_aggr_mn<- df_weight %>%
     sa03=survey_mean(sa01_2,na.rm=TRUE, vartype=vt)
     ) %>% 
     mutate_at(.,vars(-group_cols()),~ifelse(is.nan(.) | is.infinite(.), NA, .)) %>%
-    mutate_at(.,vars(-group_cols()),~replace(., .== 0, NA))  
+    mutate_at(.,vars(-group_cols()),~replace(., .<2, NA))  
   
 #df_aggr_mn2<- df_weight %>%
   #group_by(GEOITEM,PERIOD) %>%
@@ -279,273 +308,275 @@ df_aggr_mn<- df_weight %>%
 
 #-----------------------------------------------------------------------------------------------
 #PIN (gemeente, jaar)
+
+
 df_aggr_pin<- df_weight %>%
   group_by(GEOITEM,PERIOD) %>%
   srvyr::summarise(
-    wl01_pin=(survey_total((wl01>=1 & wl01<=5), na.rm=TRUE,vartype=vt) / n()*100),
-    wl01_pin_1=(survey_total((wl01>=1 & wl01<=5), na.rm=TRUE,vartype=vt) / n()*100),
-    wl01_pin_2=(survey_total((wl01==6), na.rm=TRUE,vartype=vt) / n()*100),
-    wl01_pin_3=(survey_total((wl01==7), na.rm=TRUE,vartype=vt) / n()*100),
-    wl01_pin_4=(survey_total((wl01==8), na.rm=TRUE,vartype=vt) / n()*100),
-    wl01_pin_5=(survey_total((wl01 %in% c(9,10)), na.rm=TRUE,vartype=vt) / n()*100),
-    wl16_pin=(survey_total((wl16>=1 & wl16<=5), na.rm=TRUE,vartype=vt) / n()*100),
-    wl16_pin_1=(survey_total((wl16>=1 & wl16<=5), na.rm=TRUE,vartype=vt) / n()*100),
-    wl16_pin_2=(survey_total((wl16==6), na.rm=TRUE,vartype=vt) / n()*100),
-    wl16_pin_3=(survey_total((wl16==7), na.rm=TRUE,vartype=vt) / n()*100),
-    wl16_pin_4=(survey_total((wl16==8), na.rm=TRUE,vartype=vt) / n()*100),
-    wl16_pin_5=(survey_total((wl16 %in% c(9,10)), na.rm=TRUE,vartype=vt) / n()*100),
-    bo06_pin=(survey_total((bo06>=1 & bo06<=5), na.rm=TRUE,vartype=vt) / n()*100),
-    bo06_pin_1=(survey_total((bo06>=1 & bo06<=5), na.rm=TRUE,vartype=vt) / n()*100),
-    bo06_pin_2=(survey_total((bo06==6), na.rm=TRUE,vartype=vt) / n()*100),
-    bo06_pin_3=(survey_total((bo06==7), na.rm=TRUE,vartype=vt) / n()*100),
-    bo06_pin_4=(survey_total((bo06==8), na.rm=TRUE,vartype=vt) / n()*100),
-    bo06_pin_5=(survey_total((bo06 %in% c(9,10)), na.rm=TRUE,vartype=vt) / n()*100),
-    dv01_pin=(survey_total((dv01>=1 & dv01<=5), na.rm=TRUE,vartype=vt) / n()*100),
-    dv01_pin_1=(survey_total((dv01>=1 & dv01<=5), na.rm=TRUE,vartype=vt) / n()*100),
-    dv01_pin_2=(survey_total((dv01==6), na.rm=TRUE,vartype=vt) / n()*100),
-    dv01_pin_3=(survey_total((dv01==7), na.rm=TRUE,vartype=vt) / n()*100),
-    dv01_pin_4=(survey_total((dv01==8), na.rm=TRUE,vartype=vt) / n()*100),
-    dv01_pin_5=(survey_total((dv01 %in% c(9,10)), na.rm=TRUE,vartype=vt) / n()*100),
-    sc02_pin=(survey_total((sc02>=1 & sc02<=5), na.rm=TRUE,vartype=vt) / n()*100),
-    sc02_pin_1=(survey_total((sc02>=1 & sc02<=5), na.rm=TRUE,vartype=vt) / n()*100),
-    sc02_pin_2=(survey_total((sc02==6), na.rm=TRUE,vartype=vt) / n()*100),
-    sc02_pin_3=(survey_total((sc02==7), na.rm=TRUE,vartype=vt) / n()*100),
-    sc02_pin_4=(survey_total((sc02==8), na.rm=TRUE,vartype=vt) / n()*100),
-    sc02_pin_5=(survey_total((sc02 %in% c(9,10)), na.rm=TRUE,vartype=vt) / n()*100),
-    dv06_pin=(survey_total((dv06>=1 & dv06<=5), na.rm=TRUE,vartype=vt) / n()*100),
-    dv06_pin_1=(survey_total((dv06>=1 & dv06<=5), na.rm=TRUE,vartype=vt) / n()*100),
-    dv06_pin_2=(survey_total((dv06==6), na.rm=TRUE,vartype=vt) / n()*100),
-    dv06_pin_3=(survey_total((dv06==7), na.rm=TRUE,vartype=vt) / n()*100),
-    dv06_pin_4=(survey_total((dv06==8), na.rm=TRUE,vartype=vt) / n()*100),
-    dv06_pin_5=(survey_total((dv06 %in% c(9,10)), na.rm=TRUE,vartype=vt) / n()*100),
-    dv10_pin_1=(survey_total((dv10>=1 & dv10<=5), na.rm=TRUE,vartype=vt) / n()*100),
-    dv10_pin_2=(survey_total((dv10==6), na.rm=TRUE,vartype=vt) / n()*100),
-    dv10_pin_3=(survey_total((dv10==7), na.rm=TRUE,vartype=vt) / n()*100),
-    dv10_pin_4=(survey_total((dv10==8), na.rm=TRUE,vartype=vt) / n()*100),
-    dv10_pin_5=(survey_total((dv10 %in% c(9,10)), na.rm=TRUE,vartype=vt) / n()*100),
-    zw12_pin_1=(survey_total((zw12>=1 & zw12<=5), na.rm=TRUE,vartype=vt) / n()*100),
-    zw12_pin_2=(survey_total((zw12==6), na.rm=TRUE,vartype=vt) / n()*100),
-    zw12_pin_3=(survey_total((zw12==7), na.rm=TRUE,vartype=vt) / n()*100),
-    zw12_pin_4=(survey_total((zw12==8), na.rm=TRUE,vartype=vt) / n()*100),
-    zw12_pin_5=(survey_total((zw12 %in% c(9,10)), na.rm=TRUE,vartype=vt) / n()*100),
-    wl09_pin1=(survey_total((wl09==1), na.rm=TRUE,vartype=vt) / n()*100),
-    wl09_pin2=(survey_total((wl09==2), na.rm=TRUE,vartype=vt) / n()*100),
-    wl09_pin3=(survey_total((wl09==3), na.rm=TRUE,vartype=vt) / n()*100),
-    wl09_pin4=(survey_total((wl09==4), na.rm=TRUE,vartype=vt) / n()*100),
-    wl09_pin5=(survey_total((wl09==5), na.rm=TRUE,vartype=vt) / n()*100),
-    wl04_pin1=(survey_total((wl04==1), na.rm=TRUE,vartype=vt) / n()*100),
-    wl04_pin2=(survey_total((wl04==2), na.rm=TRUE,vartype=vt) / n()*100),
-    wl04_pin3=(survey_total((wl04==3), na.rm=TRUE,vartype=vt) / n()*100),
-    wl04_pin4=(survey_total((wl04==4), na.rm=TRUE,vartype=vt) / n()*100),
-    wl04_pin5=(survey_total((wl04==5), na.rm=TRUE,vartype=vt) / n()*100),
-    wl05_pin1=(survey_total((wl05==1), na.rm=TRUE,vartype=vt) / n()*100),
-    wl05_pin2=(survey_total((wl05==2), na.rm=TRUE,vartype=vt) / n()*100),
-    wl05_pin3=(survey_total((wl05==3), na.rm=TRUE,vartype=vt) / n()*100),
-    wl05_pin4=(survey_total((wl05==4), na.rm=TRUE,vartype=vt) / n()*100),
-    wl05_pin5=(survey_total((wl05==5), na.rm=TRUE,vartype=vt) / n()*100),
-    zw05_pin0=(survey_total((zw05_0==1), na.rm=TRUE,vartype=vt) / n()*100),
-    zw05_pin1=(survey_total((zw05_1==1), na.rm=TRUE,vartype=vt) / n()*100),
-    zw05_pin2=(survey_total((zw05_2==1), na.rm=TRUE,vartype=vt) / n()*100),
-    zw05_pin3=(survey_total((zw05_3==1), na.rm=TRUE,vartype=vt) / n()*100),
-    zw05_pin4=(survey_total((zw05_4==1), na.rm=TRUE,vartype=vt) / n()*100),
-    zw05_pin5=(survey_total((zw05_5==1), na.rm=TRUE,vartype=vt) / n()*100),
-    dv03_pin0=(survey_total((dv03_0==1), na.rm=TRUE,vartype=vt) / n()*100),
-    dv03_pin1=(survey_total((dv03_1==1), na.rm=TRUE,vartype=vt) / n()*100),
-    dv03_pin2=(survey_total((dv03_2==1), na.rm=TRUE,vartype=vt) / n()*100),
-    dv03_pin3=(survey_total((dv03_3==1), na.rm=TRUE,vartype=vt) / n()*100),
-    dv03_pin4=(survey_total((dv03_4==1), na.rm=TRUE,vartype=vt) / n()*100),
-    dv03_pin5=(survey_total((dv03_5==1), na.rm=TRUE,vartype=vt) / n()*100),
-    dv03_pin6=(survey_total((dv03_6==1), na.rm=TRUE,vartype=vt) / n()*100),
-    zw08_0_pin=(survey_total((zw08_0==1), na.rm=TRUE,vartype=vt) / n()*100),
-    zw08_1_pin=(survey_total((zw08_1==1), na.rm=TRUE,vartype=vt) / n()*100),
-    zw08_2_pin=(survey_total((zw08_2==1), na.rm=TRUE,vartype=vt) / n()*100),
-    zw08_3_pin=(survey_total((zw08_3==1), na.rm=TRUE,vartype=vt) / n()*100),
-    zw08_4_pin=(survey_total((zw08_4==1), na.rm=TRUE,vartype=vt) / n()*100),
-    zw08_5_pin=(survey_total((zw08_5==1), na.rm=TRUE,vartype=vt) / n()*100),
-    zw08_6_pin=(survey_total((zw08_6==1), na.rm=TRUE,vartype=vt) / n()*100),
-    zw13_0_pin=(survey_total((zw13_0==1), na.rm=TRUE,vartype=vt) / n()*100),
-    zw13_1_pin=(survey_total((zw13_1==1), na.rm=TRUE,vartype=vt) / n()*100),
-    zw13_2_pin=(survey_total((zw13_2==1), na.rm=TRUE,vartype=vt) / n()*100),
-    zw13_3_pin=(survey_total((zw13_3==1), na.rm=TRUE,vartype=vt) / n()*100),
-    zw13_4_pin=(survey_total((zw13_4==1), na.rm=TRUE,vartype=vt) / n()*100),
-    zw13_5_pin=(survey_total((zw13_5==1), na.rm=TRUE,vartype=vt) / n()*100),
-    zw13_6_pin=(survey_total((zw13_6==1), na.rm=TRUE,vartype=vt) / n()*100),
-    zw13_7_pin=(survey_total((zw13_7==1), na.rm=TRUE,vartype=vt) / n()*100),
-    zw13_8_pin=(survey_total((zw13_8==1), na.rm=TRUE,vartype=vt) / n()*100),
-    zw13_9_pin=(survey_total((zw13_9==1), na.rm=TRUE,vartype=vt) / n()*100),
-    zw13_10_pin=(survey_total((zw13_10==1), na.rm=TRUE,vartype=vt) / n()*100),
-    zw01_0_pin1=(survey_total((zw01_0==1), na.rm=TRUE,vartype=vt) / n()*100),
-    zw01_0_pin2=(survey_total((zw01_0==2), na.rm=TRUE,vartype=vt) / n()*100),
-    zw01_0_pin3=(survey_total((zw01_0==3), na.rm=TRUE,vartype=vt) / n()*100),
-    zw01_0_pin4=(survey_total((zw01_0==4), na.rm=TRUE,vartype=vt) / n()*100),
-    zw01_1_pin1=(survey_total((zw01_1==1), na.rm=TRUE,vartype=vt) / n()*100),
-    zw01_1_pin2=(survey_total((zw01_1==2), na.rm=TRUE,vartype=vt) / n()*100),
-    zw01_1_pin3=(survey_total((zw01_1==3), na.rm=TRUE,vartype=vt) / n()*100),
-    zw01_1_pin4=(survey_total((zw01_1==4), na.rm=TRUE,vartype=vt) / n()*100),
-    zw01_2_pin1=(survey_total((zw01_2==1), na.rm=TRUE,vartype=vt) / n()*100),
-    zw01_2_pin2=(survey_total((zw01_2==2), na.rm=TRUE,vartype=vt) / n()*100),
-    zw01_2_pin3=(survey_total((zw01_2==3), na.rm=TRUE,vartype=vt) / n()*100),
-    zw01_2_pin4=(survey_total((zw01_2==4), na.rm=TRUE,vartype=vt) / n()*100),
-    zw01_3_pin1=(survey_total((zw01_3==1), na.rm=TRUE,vartype=vt) / n()*100),
-    zw01_3_pin2=(survey_total((zw01_3==2), na.rm=TRUE,vartype=vt) / n()*100),
-    zw01_3_pin3=(survey_total((zw01_3==3), na.rm=TRUE,vartype=vt) / n()*100),
-    zw01_3_pin4=(survey_total((zw01_3==4), na.rm=TRUE,vartype=vt) / n()*100),
-    zw01_4_pin1=(survey_total((zw01_4==1), na.rm=TRUE,vartype=vt) / n()*100),
-    zw01_4_pin2=(survey_total((zw01_4==2), na.rm=TRUE,vartype=vt) / n()*100),
-    zw01_4_pin3=(survey_total((zw01_4==3), na.rm=TRUE,vartype=vt) / n()*100),
-    zw01_4_pin4=(survey_total((zw01_4==4), na.rm=TRUE,vartype=vt) / n()*100),
-    zw01_5_pin1=(survey_total((zw01_5==1), na.rm=TRUE,vartype=vt) / n()*100),
-    zw01_5_pin2=(survey_total((zw01_5==2), na.rm=TRUE,vartype=vt) / n()*100),
-    zw01_5_pin3=(survey_total((zw01_5==3), na.rm=TRUE,vartype=vt) / n()*100),
-    zw01_5_pin4=(survey_total((zw01_5==4), na.rm=TRUE,vartype=vt) / n()*100),
-    zw01_6_pin1=(survey_total((zw01_6==1), na.rm=TRUE,vartype=vt) / n()*100),
-    zw01_6_pin2=(survey_total((zw01_6==2), na.rm=TRUE,vartype=vt) / n()*100),
-    zw01_6_pin3=(survey_total((zw01_6==3), na.rm=TRUE,vartype=vt) / n()*100),
-    zw01_6_pin4=(survey_total((zw01_6==4), na.rm=TRUE,vartype=vt) / n()*100),
-    zw10_0_pin1=(survey_total((zw10_0==1), na.rm=TRUE,vartype=vt) / n()*100),
-    zw10_0_pin2=(survey_total((zw10_0==2), na.rm=TRUE,vartype=vt) / n()*100),
-    zw10_0_pin3=(survey_total((zw10_0==3), na.rm=TRUE,vartype=vt) / n()*100),
-    zw10_1_pin1=(survey_total((zw10_1==1), na.rm=TRUE,vartype=vt) / n()*100),
-    zw10_1_pin2=(survey_total((zw10_1==2), na.rm=TRUE,vartype=vt) / n()*100),
-    zw10_1_pin3=(survey_total((zw10_1==3), na.rm=TRUE,vartype=vt) / n()*100),
-    zw10_2_pin1=(survey_total((zw10_2==1), na.rm=TRUE,vartype=vt) / n()*100),
-    zw10_2_pin2=(survey_total((zw10_2==2), na.rm=TRUE,vartype=vt) / n()*100),
-    zw10_2_pin3=(survey_total((zw10_2==3), na.rm=TRUE,vartype=vt) / n()*100),
-    wl14_1=(survey_total((wl14==1), na.rm=TRUE,vartype=vt) / n()*100),
-    wl14_2=(survey_total((wl14==2), na.rm=TRUE,vartype=vt) / n()*100),
-    wl14_3=(survey_total((wl14==3), na.rm=TRUE,vartype=vt) / n()*100),
-    #wl14_4=(survey_total((wl14==4), na.rm=TRUE,vartype=vt) / n()*100), 
-    #dv04_pin1=(survey_total((dv04==1), na.rm=TRUE,vartype=vt) / n()*100),
-    #dv04_pin2=(survey_total((dv04==2), na.rm=TRUE,vartype=vt) / n()*100),
-    #dv04_pin3=(survey_total((dv04==3), na.rm=TRUE,vartype=vt) / n()*100),
-    #dv04_pin4=(survey_total((dv04==4), na.rm=TRUE,vartype=vt) / n()*100),
-    #dv04_pin5=(survey_total((dv04==5), na.rm=TRUE,vartype=vt) / n()*100),
-    #dv04_pin6=(survey_total((dv04==6), na.rm=TRUE,vartype=vt) / n()*100),
-    wl06_pin1=(survey_total((wl06==1), na.rm=TRUE,vartype=vt) / n()*100),
-    wl06_pin2=(survey_total((wl06==2), na.rm=TRUE,vartype=vt) / n()*100),
-    wl06_pin3=(survey_total((wl06==3), na.rm=TRUE,vartype=vt) / n()*100),
-    wl06_pin4=(survey_total((wl06==4), na.rm=TRUE,vartype=vt) / n()*100),
-    zw03_pin1=(survey_total((zw03==1), na.rm=TRUE,vartype=vt) / n()*100),
-    zw03_pin2=(survey_total((zw03==2), na.rm=TRUE,vartype=vt) / n()*100),
-    zw03_pin3=(survey_total((zw03==3), na.rm=TRUE,vartype=vt) / n()*100),
-    zw04_pin1=(survey_total((zw04==1), na.rm=TRUE,vartype=vt) / n()*100),
-    zw04_pin2=(survey_total((zw04==2), na.rm=TRUE,vartype=vt) / n()*100),
-    zw04_pin3=(survey_total((zw04==3), na.rm=TRUE,vartype=vt) / n()*100), 
-    zw04_pin4=(survey_total((zw04==4), na.rm=TRUE,vartype=vt) / n()*100),
-    zw20_pin1=(survey_total((zw20==1), na.rm=TRUE,vartype=vt) / n()*100),
-    zw20_pin2=(survey_total((zw20==2), na.rm=TRUE,vartype=vt) / n()*100),
-    zw20_pin3=(survey_total((zw20==3), na.rm=TRUE,vartype=vt) / n()*100), 
-    zw20_pin4=(survey_total((zw20==4), na.rm=TRUE,vartype=vt) / n()*100),
-    zw20_pin5=(survey_total((zw20==5), na.rm=TRUE,vartype=vt) / n()*100),
-    part_brt_pin1=(survey_total((part_brt==1), na.rm=TRUE,vartype=vt) / n()*100),
-    part_brt_pin2=(survey_total((part_brt==2), na.rm=TRUE,vartype=vt) / n()*100),
-    part_brt_pin3=(survey_total((part_brt==3), na.rm=TRUE,vartype=vt) / n()*100), 
-    part_brt_pin4=(survey_total((part_brt==4), na.rm=TRUE,vartype=vt) / n()*100),
-    part_brt_pin5=(survey_total((part_brt==5), na.rm=TRUE,vartype=vt) / n()*100),
-    part_vw_pin1=(survey_total((part_vw==1), na.rm=TRUE,vartype=vt) / n()*100),
-    part_vw_pin2=(survey_total((part_vw==2), na.rm=TRUE,vartype=vt) / n()*100),
-    part_vw_pin3=(survey_total((part_vw==3), na.rm=TRUE,vartype=vt) / n()*100), 
-    part_vw_pin4=(survey_total((part_vw==4), na.rm=TRUE,vartype=vt) / n()*100),
-    part_vw_pin5=(survey_total((part_vw==5), na.rm=TRUE,vartype=vt) / n()*100),
-    zw07_pin1=(survey_total((zw07==1), na.rm=TRUE,vartype=vt) / n()*100),
-    zw07_pin2=(survey_total((zw07==2), na.rm=TRUE,vartype=vt) / n()*100),
-    zw07_pin3=(survey_total((zw07==3), na.rm=TRUE,vartype=vt) / n()*100), 
-    zw07_pin4=(survey_total((zw07==4), na.rm=TRUE,vartype=vt) / n()*100),
-    zw09_pin1=(survey_total((zw09==1), na.rm=TRUE,vartype=vt) / n()*100),
-    zw09_pin2=(survey_total((zw09==2), na.rm=TRUE,vartype=vt) / n()*100),
-    zw09_pin3=(survey_total((zw09==3), na.rm=TRUE,vartype=vt) / n()*100), 
-    zw09_pin4=(survey_total((zw09==4), na.rm=TRUE,vartype=vt) / n()*100),
-    mz_lev1=(survey_total((zw06_0==1), na.rm=TRUE,vartype=vt) / n()*100),
-    mz_lev2=(survey_total((zw06_0==2), na.rm=TRUE,vartype=vt) / n()*100),
-    mz_lev3=(survey_total((zw06_0==3), na.rm=TRUE,vartype=vt) / n()*100),
-    vw_lev1=(survey_total((zw06_3==1), na.rm=TRUE,vartype=vt) / n()*100),
-    vw_lev2=(survey_total((zw06_3==2), na.rm=TRUE,vartype=vt) / n()*100),
-    vw_lev3=(survey_total((zw06_3==3), na.rm=TRUE,vartype=vt) / n()*100),
-    zw06_0=(survey_total((zw06_0<3), na.rm=TRUE,vartype=vt) / n()*100),
-    zw06_1=(survey_total((zw06_1<3), na.rm=TRUE,vartype=vt) / n()*100),  
-    zw06_2=(survey_total((zw06_2<3), na.rm=TRUE,vartype=vt) / n()*100), 
-    zw06_3=(survey_total((zw06_3<3), na.rm=TRUE,vartype=vt) / n()*100), 
-    zw19_0_pin=(survey_total((zw19_0<3), na.rm=TRUE,vartype=vt) / n()*100),
-    zw19_1_pin=(survey_total((zw19_1<3), na.rm=TRUE,vartype=vt) / n()*100),
-    zw19_2_pin=(survey_total((zw19_2<3), na.rm=TRUE,vartype=vt) / n()*100),
-    zw19_3_pin=(survey_total((zw19_3<3), na.rm=TRUE,vartype=vt) / n()*100),
-    zw19_4_pin=(survey_total((zw19_4<3), na.rm=TRUE,vartype=vt) / n()*100),
-    vz03_0=(survey_total((vz03_0<3), na.rm=TRUE,vartype=vt) / n()*100),
-    vz03_1=(survey_total((vz03_1<3), na.rm=TRUE,vartype=vt) / n()*100),
-    vz03_2=(survey_total((vz03_2<3), na.rm=TRUE,vartype=vt) / n()*100),
-    vz03_3=(survey_total((vz03_3<3), na.rm=TRUE,vartype=vt) / n()*100),
-    vz03_4=(survey_total((vz03_4<3), na.rm=TRUE,vartype=vt) / n()*100),
-    wl02_0=(survey_total((wl02_0<3), na.rm=TRUE,vartype=vt) / n()*100),
-    wl02_1=(survey_total((wl02_1<3), na.rm=TRUE,vartype=vt) / n()*100),
-    wl03_0=(survey_total((wl03_0<3), na.rm=TRUE,vartype=vt) / n()*100),
-    wl03_1=(survey_total((wl03_1<3), na.rm=TRUE,vartype=vt) / n()*100),
-    wl03_2=(survey_total((wl03_2<3), na.rm=TRUE,vartype=vt) / n()*100),
-    wl07_0=(survey_total((wl07_0<3), na.rm=TRUE,vartype=vt) / n()*100),
-    wl07_1=(survey_total((wl07_1<3), na.rm=TRUE,vartype=vt) / n()*100),
-    wl08_0=(survey_total((wl08_0<3), na.rm=TRUE,vartype=vt) / n()*100),
-    wl08_1=(survey_total((wl08_1<3), na.rm=TRUE,vartype=vt) / n()*100),
-    wl12_0=(survey_total((wl12_0<3), na.rm=TRUE,vartype=vt) / n()*100),
-    wl12_1=(survey_total((wl12_1<3), na.rm=TRUE,vartype=vt) / n()*100),
-    wl12_2=(survey_total((wl12_2<3), na.rm=TRUE,vartype=vt) / n()*100),
-    vz01_0=(survey_total((vz01_0<3), na.rm=TRUE,vartype=vt) / n()*100),
-    vz01_1=(survey_total((vz01_1<3), na.rm=TRUE,vartype=vt) / n()*100),
-    vz02_0=(survey_total((vz02_0<3), na.rm=TRUE,vartype=vt) / n()*100),
-    vz02_1=(survey_total((vz02_1<3), na.rm=TRUE,vartype=vt) / n()*100),
-    bo02_0=(survey_total((bo02_0<3), na.rm=TRUE,vartype=vt) / n()*100),
-    bo02_1=(survey_total((bo02_1<3), na.rm=TRUE,vartype=vt) / n()*100),
-    bo02_2=(survey_total((bo02_2<3), na.rm=TRUE,vartype=vt) / n()*100),
-    bo03_0=(survey_total((bo03_0<3), na.rm=TRUE,vartype=vt) / n()*100),
-    bo03_1=(survey_total((bo03_1<3), na.rm=TRUE,vartype=vt) / n()*100),
-    bo04_0=(survey_total((bo04_0<3), na.rm=TRUE,vartype=vt) / n()*100),
-    dv07_1=(survey_total((dv07_1<3), na.rm=TRUE,vartype=vt) / n()*100),
-    dv07_2=(survey_total((dv07_2<3), na.rm=TRUE,vartype=vt) / n()*100), 
-    dv07_3=(survey_total((dv07_3<3), na.rm=TRUE,vartype=vt) / n()*100),
-    dv05_0=(survey_total((dv05_0<3), na.rm=TRUE,vartype=vt) / n()*100),   
-    dv08_0=(survey_total((dv08_0<3), na.rm=TRUE,vartype=vt) / n()*100),
-    dv09_0=(survey_total((dv09_0<3), na.rm=TRUE,vartype=vt) / n()*100),
-    wl04=(survey_total((wl04<3), na.rm=TRUE,vartype=vt) / n()*100),
-    wl05=(survey_total((wl05<3), na.rm=TRUE,vartype=vt) / n()*100),
-    wl06=(survey_total((wl06<3), na.rm=TRUE,vartype=vt) / n()*100),
-    wl09_rv=(survey_total((wl09==4 | wl09==5), na.rm=TRUE,vartype=vt) / n()*100),
-    wl09=(survey_total((wl09<3), na.rm=TRUE,vartype=vt) / n()*100),
-    wl11_0=(survey_total((wl11<3), na.rm=TRUE,vartype=vt) / n()*100),
-    wl14=(survey_total((wl14<3), na.rm=TRUE,vartype=vt) / n()*100),
-    bo01_rv=(survey_total((bo01==4 | bo01==5), na.rm=TRUE,vartype=vt) / n()*100),
-    bo01=(survey_total((bo01<3), na.rm=TRUE,vartype=vt) / n()*100),
-    zw00_pin=(survey_total((zw00 >6), na.rm=TRUE,vartype=vt) / n()*100),
-    zw07=(survey_total((zw07<3), na.rm=TRUE,vartype=vt) / n()*100),
-    #zw18_0_pin=(survey_total((zw18<3), na.rm=TRUE,vartype=vt) / n()*100),
-    mm01_0=(survey_total((mm01_0<3), na.rm=TRUE,vartype=vt) / n()*100),
-    mm01_1=(survey_total((mm01_1<3), na.rm=TRUE,vartype=vt) / n()*100),
-    mm01_2=(survey_total((mm01_2<3), na.rm=TRUE,vartype=vt) / n()*100),
-    mm01_3=(survey_total((mm01_3<3), na.rm=TRUE,vartype=vt) / n()*100),
-    mm01_4=(survey_total((mm01_4<3), na.rm=TRUE,vartype=vt) / n()*100),
-    mm02_0=(survey_total((mm02_0<3), na.rm=TRUE,vartype=vt) / n()*100),
-    wl13=(survey_total((wl13==1), na.rm=TRUE,vartype=vt) / n()*100),
-    dv02=(survey_total((dv02==1), na.rm=TRUE,vartype=vt) / n()*100),
-    zw05_rc=(survey_total((zw05_4==0), na.rm=TRUE,vartype=vt) / n()*100),
-    dv06_pin=(survey_total((dv06>=1 & dv06<=5), na.rm=TRUE,vartype=vt) / n()*100),
-    dv10_pin=(survey_total((dv10>=1 & dv10<=5), na.rm=TRUE,vartype=vt) / n()*100),
-    zw02_pin=(survey_total((zw02>=1 & zw02<=5), na.rm=TRUE,vartype=vt) / n()*100),
-    zw12_pin=(survey_total((zw12>=1 & zw12<=5), na.rm=TRUE,vartype=vt) / n()*100),
-    #zw09_pin=(survey_total((zw09>=3 & zw09<=4), na.rm=TRUE,vartype=vt) / n()*100),
-    zw03=(survey_total((zw03>=2 & zw03<=3), na.rm=TRUE,vartype=vt) / n()*100),
-    zw04_rv=(survey_total((zw04>=1 & zw04<=1), na.rm=TRUE,vartype=vt) / n()*100),
-    zw04=(survey_total((zw04>=3 & zw04<=4), na.rm=TRUE,vartype=vt) / n()*100),
-    sc02_pin=(survey_total((sc02>=1 & sc02<=5), na.rm=TRUE,vartype=vt) / n()*100)  
+    wl01_pin=(survey_mean((wl01>=1 & wl01<=5), na.rm=TRUE,vartype=vt) *100),
+    wl01_pin_1=(survey_mean((wl01>=1 & wl01<=5), na.rm=TRUE,vartype=vt) *100),
+    wl01_pin_2=(survey_mean((wl01==6), na.rm=TRUE,vartype=vt) *100),
+    wl01_pin_3=(survey_mean((wl01==7), na.rm=TRUE,vartype=vt) *100),
+    wl01_pin_4=(survey_mean((wl01==8), na.rm=TRUE,vartype=vt) *100),
+    wl01_pin_5=(survey_mean((wl01 %in% c(9,10)), na.rm=TRUE,vartype=vt) *100),
+    wl16_pin=(survey_mean((wl16>=1 & wl16<=5), na.rm=TRUE,vartype=vt) *100),
+    wl16_pin_1=(survey_mean((wl16>=1 & wl16<=5), na.rm=TRUE,vartype=vt) *100),
+    wl16_pin_2=(survey_mean((wl16==6), na.rm=TRUE,vartype=vt) *100),
+    wl16_pin_3=(survey_mean((wl16==7), na.rm=TRUE,vartype=vt) *100),
+    wl16_pin_4=(survey_mean((wl16==8), na.rm=TRUE,vartype=vt) *100),
+    wl16_pin_5=(survey_mean((wl16 %in% c(9,10)), na.rm=TRUE,vartype=vt) *100),
+    bo06_pin=(survey_mean((bo06>=1 & bo06<=5), na.rm=TRUE,vartype=vt) *100),
+    bo06_pin_1=(survey_mean((bo06>=1 & bo06<=5), na.rm=TRUE,vartype=vt) *100),
+    bo06_pin_2=(survey_mean((bo06==6), na.rm=TRUE,vartype=vt) *100),
+    bo06_pin_3=(survey_mean((bo06==7), na.rm=TRUE,vartype=vt) *100),
+    bo06_pin_4=(survey_mean((bo06==8), na.rm=TRUE,vartype=vt) *100),
+    bo06_pin_5=(survey_mean((bo06 %in% c(9,10)), na.rm=TRUE,vartype=vt) *100),
+    dv01_pin=(survey_mean((dv01>=1 & dv01<=5), na.rm=TRUE,vartype=vt) *100),
+    dv01_pin_1=(survey_mean((dv01>=1 & dv01<=5), na.rm=TRUE,vartype=vt) *100),
+    dv01_pin_2=(survey_mean((dv01==6), na.rm=TRUE,vartype=vt) *100),
+    dv01_pin_3=(survey_mean((dv01==7), na.rm=TRUE,vartype=vt) *100),
+    dv01_pin_4=(survey_mean((dv01==8), na.rm=TRUE,vartype=vt) *100),
+    dv01_pin_5=(survey_mean((dv01 %in% c(9,10)), na.rm=TRUE,vartype=vt) *100),
+    sc02_pin=(survey_mean((sc02>=1 & sc02<=5), na.rm=TRUE,vartype=vt) *100),
+    sc02_pin_1=(survey_mean((sc02>=1 & sc02<=5), na.rm=TRUE,vartype=vt) *100),
+    sc02_pin_2=(survey_mean((sc02==6), na.rm=TRUE,vartype=vt) *100),
+    sc02_pin_3=(survey_mean((sc02==7), na.rm=TRUE,vartype=vt) *100),
+    sc02_pin_4=(survey_mean((sc02==8), na.rm=TRUE,vartype=vt) *100),
+    sc02_pin_5=(survey_mean((sc02 %in% c(9,10)), na.rm=TRUE,vartype=vt) *100),
+    dv06_pin=(survey_mean((dv06>=1 & dv06<=5), na.rm=TRUE,vartype=vt) *100),
+    dv06_pin_1=(survey_mean((dv06>=1 & dv06<=5), na.rm=TRUE,vartype=vt) *100),
+    dv06_pin_2=(survey_mean((dv06==6), na.rm=TRUE,vartype=vt) *100),
+    dv06_pin_3=(survey_mean((dv06==7), na.rm=TRUE,vartype=vt) *100),
+    dv06_pin_4=(survey_mean((dv06==8), na.rm=TRUE,vartype=vt) *100),
+    dv06_pin_5=(survey_mean((dv06 %in% c(9,10)), na.rm=TRUE,vartype=vt) *100),
+    dv10_pin_1=(survey_mean((dv10>=1 & dv10<=5), na.rm=TRUE,vartype=vt) *100),
+    dv10_pin_2=(survey_mean((dv10==6), na.rm=TRUE,vartype=vt) *100),
+    dv10_pin_3=(survey_mean((dv10==7), na.rm=TRUE,vartype=vt) *100),
+    dv10_pin_4=(survey_mean((dv10==8), na.rm=TRUE,vartype=vt) *100),
+    dv10_pin_5=(survey_mean((dv10 %in% c(9,10)), na.rm=TRUE,vartype=vt) *100),
+    zw12_pin_1=(survey_mean((zw12>=1 & zw12<=5), na.rm=TRUE,vartype=vt) *100),
+    zw12_pin_2=(survey_mean((zw12==6), na.rm=TRUE,vartype=vt) *100),
+    zw12_pin_3=(survey_mean((zw12==7), na.rm=TRUE,vartype=vt) *100),
+    zw12_pin_4=(survey_mean((zw12==8), na.rm=TRUE,vartype=vt) *100),
+    zw12_pin_5=(survey_mean((zw12 %in% c(9,10)), na.rm=TRUE,vartype=vt) *100),
+    wl09_pin1=(survey_mean((wl09==1), na.rm=TRUE,vartype=vt) *100),
+    wl09_pin2=(survey_mean((wl09==2), na.rm=TRUE,vartype=vt) *100),
+    wl09_pin3=(survey_mean((wl09==3), na.rm=TRUE,vartype=vt) *100),
+    wl09_pin4=(survey_mean((wl09==4), na.rm=TRUE,vartype=vt) *100),
+    wl09_pin5=(survey_mean((wl09==5), na.rm=TRUE,vartype=vt) *100),
+    wl04_pin1=(survey_mean((wl04==1), na.rm=TRUE,vartype=vt) *100),
+    wl04_pin2=(survey_mean((wl04==2), na.rm=TRUE,vartype=vt) *100),
+    wl04_pin3=(survey_mean((wl04==3), na.rm=TRUE,vartype=vt) *100),
+    wl04_pin4=(survey_mean((wl04==4), na.rm=TRUE,vartype=vt) *100),
+    wl04_pin5=(survey_mean((wl04==5), na.rm=TRUE,vartype=vt) *100),
+    wl05_pin1=(survey_mean((wl05==1), na.rm=TRUE,vartype=vt) *100),
+    wl05_pin2=(survey_mean((wl05==2), na.rm=TRUE,vartype=vt) *100),
+    wl05_pin3=(survey_mean((wl05==3), na.rm=TRUE,vartype=vt) *100),
+    wl05_pin4=(survey_mean((wl05==4), na.rm=TRUE,vartype=vt) *100),
+    wl05_pin5=(survey_mean((wl05==5), na.rm=TRUE,vartype=vt) *100),
+    zw05_pin0=(survey_mean((zw05_0==1), na.rm=TRUE,vartype=vt) *100),
+    zw05_pin1=(survey_mean((zw05_1==1), na.rm=TRUE,vartype=vt) *100),
+    zw05_pin2=(survey_mean((zw05_2==1), na.rm=TRUE,vartype=vt) *100),
+    zw05_pin3=(survey_mean((zw05_3==1), na.rm=TRUE,vartype=vt) *100),
+    zw05_pin4=(survey_mean((zw05_4==1), na.rm=TRUE,vartype=vt) *100),
+    zw05_pin5=(survey_mean((zw05_5==1), na.rm=TRUE,vartype=vt) *100),
+    dv03_pin0=(survey_mean((dv03_0==1), na.rm=TRUE,vartype=vt) *100),
+    dv03_pin1=(survey_mean((dv03_1==1), na.rm=TRUE,vartype=vt) *100),
+    dv03_pin2=(survey_mean((dv03_2==1), na.rm=TRUE,vartype=vt) *100),
+    dv03_pin3=(survey_mean((dv03_3==1), na.rm=TRUE,vartype=vt) *100),
+    dv03_pin4=(survey_mean((dv03_4==1), na.rm=TRUE,vartype=vt) *100),
+    dv03_pin5=(survey_mean((dv03_5==1), na.rm=TRUE,vartype=vt) *100),
+    dv03_pin6=(survey_mean((dv03_6==1), na.rm=TRUE,vartype=vt) *100),
+    zw08_0_pin=(survey_mean((zw08_0==1), na.rm=TRUE,vartype=vt) *100),
+    zw08_1_pin=(survey_mean((zw08_1==1), na.rm=TRUE,vartype=vt) *100),
+    zw08_2_pin=(survey_mean((zw08_2==1), na.rm=TRUE,vartype=vt) *100),
+    zw08_3_pin=(survey_mean((zw08_3==1), na.rm=TRUE,vartype=vt) *100),
+    zw08_4_pin=(survey_mean((zw08_4==1), na.rm=TRUE,vartype=vt) *100),
+    zw08_5_pin=(survey_mean((zw08_5==1), na.rm=TRUE,vartype=vt) *100),
+    zw08_6_pin=(survey_mean((zw08_6==1), na.rm=TRUE,vartype=vt) *100),
+    zw13_0_pin=(survey_mean((zw13_0==1), na.rm=TRUE,vartype=vt) *100),
+    zw13_1_pin=(survey_mean((zw13_1==1), na.rm=TRUE,vartype=vt) *100),
+    zw13_2_pin=(survey_mean((zw13_2==1), na.rm=TRUE,vartype=vt) *100),
+    zw13_3_pin=(survey_mean((zw13_3==1), na.rm=TRUE,vartype=vt) *100),
+    zw13_4_pin=(survey_mean((zw13_4==1), na.rm=TRUE,vartype=vt) *100),
+    zw13_5_pin=(survey_mean((zw13_5==1), na.rm=TRUE,vartype=vt) *100),
+    zw13_6_pin=(survey_mean((zw13_6==1), na.rm=TRUE,vartype=vt) *100),
+    zw13_7_pin=(survey_mean((zw13_7==1), na.rm=TRUE,vartype=vt) *100),
+    zw13_8_pin=(survey_mean((zw13_8==1), na.rm=TRUE,vartype=vt) *100),
+    zw13_9_pin=(survey_mean((zw13_9==1), na.rm=TRUE,vartype=vt) *100),
+    zw13_10_pin=(survey_mean((zw13_10==1), na.rm=TRUE,vartype=vt) *100),
+    zw01_0_pin1=(survey_mean((zw01_0==1), na.rm=TRUE,vartype=vt) *100),
+    zw01_0_pin2=(survey_mean((zw01_0==2), na.rm=TRUE,vartype=vt) *100),
+    zw01_0_pin3=(survey_mean((zw01_0==3), na.rm=TRUE,vartype=vt) *100),
+    zw01_0_pin4=(survey_mean((zw01_0==4), na.rm=TRUE,vartype=vt) *100),
+    zw01_1_pin1=(survey_mean((zw01_1==1), na.rm=TRUE,vartype=vt) *100),
+    zw01_1_pin2=(survey_mean((zw01_1==2), na.rm=TRUE,vartype=vt) *100),
+    zw01_1_pin3=(survey_mean((zw01_1==3), na.rm=TRUE,vartype=vt) *100),
+    zw01_1_pin4=(survey_mean((zw01_1==4), na.rm=TRUE,vartype=vt) *100),
+    zw01_2_pin1=(survey_mean((zw01_2==1), na.rm=TRUE,vartype=vt) *100),
+    zw01_2_pin2=(survey_mean((zw01_2==2), na.rm=TRUE,vartype=vt) *100),
+    zw01_2_pin3=(survey_mean((zw01_2==3), na.rm=TRUE,vartype=vt) *100),
+    zw01_2_pin4=(survey_mean((zw01_2==4), na.rm=TRUE,vartype=vt) *100),
+    zw01_3_pin1=(survey_mean((zw01_3==1), na.rm=TRUE,vartype=vt) *100),
+    zw01_3_pin2=(survey_mean((zw01_3==2), na.rm=TRUE,vartype=vt) *100),
+    zw01_3_pin3=(survey_mean((zw01_3==3), na.rm=TRUE,vartype=vt) *100),
+    zw01_3_pin4=(survey_mean((zw01_3==4), na.rm=TRUE,vartype=vt) *100),
+    zw01_4_pin1=(survey_mean((zw01_4==1), na.rm=TRUE,vartype=vt) *100),
+    zw01_4_pin2=(survey_mean((zw01_4==2), na.rm=TRUE,vartype=vt) *100),
+    zw01_4_pin3=(survey_mean((zw01_4==3), na.rm=TRUE,vartype=vt) *100),
+    zw01_4_pin4=(survey_mean((zw01_4==4), na.rm=TRUE,vartype=vt) *100),
+    zw01_5_pin1=(survey_mean((zw01_5==1), na.rm=TRUE,vartype=vt) *100),
+    zw01_5_pin2=(survey_mean((zw01_5==2), na.rm=TRUE,vartype=vt) *100),
+    zw01_5_pin3=(survey_mean((zw01_5==3), na.rm=TRUE,vartype=vt) *100),
+    zw01_5_pin4=(survey_mean((zw01_5==4), na.rm=TRUE,vartype=vt) *100),
+    zw01_6_pin1=(survey_mean((zw01_6==1), na.rm=TRUE,vartype=vt) *100),
+    zw01_6_pin2=(survey_mean((zw01_6==2), na.rm=TRUE,vartype=vt) *100),
+    zw01_6_pin3=(survey_mean((zw01_6==3), na.rm=TRUE,vartype=vt) *100),
+    zw01_6_pin4=(survey_mean((zw01_6==4), na.rm=TRUE,vartype=vt) *100),
+    zw10_0_pin1=(survey_mean((zw10_0==1), na.rm=TRUE,vartype=vt) *100),
+    zw10_0_pin2=(survey_mean((zw10_0==2), na.rm=TRUE,vartype=vt) *100),
+    zw10_0_pin3=(survey_mean((zw10_0==3), na.rm=TRUE,vartype=vt) *100),
+    zw10_1_pin1=(survey_mean((zw10_1==1), na.rm=TRUE,vartype=vt) *100),
+    zw10_1_pin2=(survey_mean((zw10_1==2), na.rm=TRUE,vartype=vt) *100),
+    zw10_1_pin3=(survey_mean((zw10_1==3), na.rm=TRUE,vartype=vt) *100),
+    zw10_2_pin1=(survey_mean((zw10_2==1), na.rm=TRUE,vartype=vt) *100),
+    zw10_2_pin2=(survey_mean((zw10_2==2), na.rm=TRUE,vartype=vt) *100),
+    zw10_2_pin3=(survey_mean((zw10_2==3), na.rm=TRUE,vartype=vt) *100),
+    wl14_1=(survey_mean((wl14==1), na.rm=TRUE,vartype=vt) *100),
+    wl14_2=(survey_mean((wl14==2), na.rm=TRUE,vartype=vt) *100),
+    wl14_3=(survey_mean((wl14==3), na.rm=TRUE,vartype=vt) *100),
+    #wl14_4=(survey_mean((wl14==4), na.rm=TRUE,vartype=vt) *100), 
+    #dv04_pin1=(survey_mean((dv04==1), na.rm=TRUE,vartype=vt) *100),
+    #dv04_pin2=(survey_mean((dv04==2), na.rm=TRUE,vartype=vt) *100),
+    #dv04_pin3=(survey_mean((dv04==3), na.rm=TRUE,vartype=vt) *100),
+    #dv04_pin4=(survey_mean((dv04==4), na.rm=TRUE,vartype=vt) *100),
+    #dv04_pin5=(survey_mean((dv04==5), na.rm=TRUE,vartype=vt) *100),
+    #dv04_pin6=(survey_mean((dv04==6), na.rm=TRUE,vartype=vt) *100),
+    wl06_pin1=(survey_mean((wl06==1), na.rm=TRUE,vartype=vt) *100),
+    wl06_pin2=(survey_mean((wl06==2), na.rm=TRUE,vartype=vt) *100),
+    wl06_pin3=(survey_mean((wl06==3), na.rm=TRUE,vartype=vt) *100),
+    wl06_pin4=(survey_mean((wl06==4), na.rm=TRUE,vartype=vt) *100),
+    zw03_pin1=(survey_mean((zw03==1), na.rm=TRUE,vartype=vt) *100),
+    zw03_pin2=(survey_mean((zw03==2), na.rm=TRUE,vartype=vt) *100),
+    zw03_pin3=(survey_mean((zw03==3), na.rm=TRUE,vartype=vt) *100),
+    zw04_pin1=(survey_mean((zw04==1), na.rm=TRUE,vartype=vt) *100),
+    zw04_pin2=(survey_mean((zw04==2), na.rm=TRUE,vartype=vt) *100),
+    zw04_pin3=(survey_mean((zw04==3), na.rm=TRUE,vartype=vt) *100), 
+    zw04_pin4=(survey_mean((zw04==4), na.rm=TRUE,vartype=vt) *100),
+    zw20_pin1=(survey_mean((zw20==1), na.rm=TRUE,vartype=vt) *100),
+    zw20_pin2=(survey_mean((zw20==2), na.rm=TRUE,vartype=vt) *100),
+    zw20_pin3=(survey_mean((zw20==3), na.rm=TRUE,vartype=vt) *100), 
+    zw20_pin4=(survey_mean((zw20==4), na.rm=TRUE,vartype=vt) *100),
+    zw20_pin5=(survey_mean((zw20==5), na.rm=TRUE,vartype=vt) *100),
+    part_brt_pin1=(survey_mean((part_brt==1), na.rm=TRUE,vartype=vt) *100),
+    part_brt_pin2=(survey_mean((part_brt==2), na.rm=TRUE,vartype=vt) *100),
+    part_brt_pin3=(survey_mean((part_brt==3), na.rm=TRUE,vartype=vt) *100), 
+    part_brt_pin4=(survey_mean((part_brt==4), na.rm=TRUE,vartype=vt) *100),
+    part_brt_pin5=(survey_mean((part_brt==5), na.rm=TRUE,vartype=vt) *100),
+    part_vw_pin1=(survey_mean((part_vw==1), na.rm=TRUE,vartype=vt) *100),
+    part_vw_pin2=(survey_mean((part_vw==2), na.rm=TRUE,vartype=vt) *100),
+    part_vw_pin3=(survey_mean((part_vw==3), na.rm=TRUE,vartype=vt) *100), 
+    part_vw_pin4=(survey_mean((part_vw==4), na.rm=TRUE,vartype=vt) *100),
+    part_vw_pin5=(survey_mean((part_vw==5), na.rm=TRUE,vartype=vt) *100),
+    zw07_pin1=(survey_mean((zw07==1), na.rm=TRUE,vartype=vt) *100),
+    zw07_pin2=(survey_mean((zw07==2), na.rm=TRUE,vartype=vt) *100),
+    zw07_pin3=(survey_mean((zw07==3), na.rm=TRUE,vartype=vt) *100), 
+    zw07_pin4=(survey_mean((zw07==4), na.rm=TRUE,vartype=vt) *100),
+    zw09_pin1=(survey_mean((zw09==1), na.rm=TRUE,vartype=vt) *100),
+    zw09_pin2=(survey_mean((zw09==2), na.rm=TRUE,vartype=vt) *100),
+    zw09_pin3=(survey_mean((zw09==3), na.rm=TRUE,vartype=vt) *100), 
+    zw09_pin4=(survey_mean((zw09==4), na.rm=TRUE,vartype=vt) *100),
+    mz_lev1=(survey_mean((zw06_0==1), na.rm=TRUE,vartype=vt) *100),
+    mz_lev2=(survey_mean((zw06_0==2), na.rm=TRUE,vartype=vt) *100),
+    mz_lev3=(survey_mean((zw06_0==3), na.rm=TRUE,vartype=vt) *100),
+    vw_lev1=(survey_mean((zw06_3==1), na.rm=TRUE,vartype=vt) *100),
+    vw_lev2=(survey_mean((zw06_3==2), na.rm=TRUE,vartype=vt) *100),
+    vw_lev3=(survey_mean((zw06_3==3), na.rm=TRUE,vartype=vt) *100),
+    zw06_0=(survey_mean((zw06_0<3), na.rm=TRUE,vartype=vt) *100),
+    zw06_1=(survey_mean((zw06_1<3), na.rm=TRUE,vartype=vt) *100),  
+    zw06_2=(survey_mean((zw06_2<3), na.rm=TRUE,vartype=vt) *100), 
+    zw06_3=(survey_mean((zw06_3<3), na.rm=TRUE,vartype=vt) *100), 
+    zw19_0_pin=(survey_mean((zw19_0<3), na.rm=TRUE,vartype=vt) *100),
+    zw19_1_pin=(survey_mean((zw19_1<3), na.rm=TRUE,vartype=vt) *100),
+    zw19_2_pin=(survey_mean((zw19_2<3), na.rm=TRUE,vartype=vt) *100),
+    zw19_3_pin=(survey_mean((zw19_3<3), na.rm=TRUE,vartype=vt) *100),
+    zw19_4_pin=(survey_mean((zw19_4<3), na.rm=TRUE,vartype=vt) *100),
+    vz03_0=(survey_mean((vz03_0<3), na.rm=TRUE,vartype=vt) *100),
+    vz03_1=(survey_mean((vz03_1<3), na.rm=TRUE,vartype=vt) *100),
+    vz03_2=(survey_mean((vz03_2<3), na.rm=TRUE,vartype=vt) *100),
+    vz03_3=(survey_mean((vz03_3<3), na.rm=TRUE,vartype=vt) *100),
+    vz03_4=(survey_mean((vz03_4<3), na.rm=TRUE,vartype=vt) *100),
+    wl02_0=(survey_mean((wl02_0<3), na.rm=TRUE,vartype=vt) *100),
+    wl02_1=(survey_mean((wl02_1<3), na.rm=TRUE,vartype=vt) *100),
+    wl03_0=(survey_mean((wl03_0<3), na.rm=TRUE,vartype=vt) *100),
+    wl03_1=(survey_mean((wl03_1<3), na.rm=TRUE,vartype=vt) *100),
+    wl03_2=(survey_mean((wl03_2<3), na.rm=TRUE,vartype=vt) *100),
+    wl07_0=(survey_mean((wl07_0<3), na.rm=TRUE,vartype=vt) *100),
+    wl07_1=(survey_mean((wl07_1<3), na.rm=TRUE,vartype=vt) *100),
+    wl08_0=(survey_mean((wl08_0<3), na.rm=TRUE,vartype=vt) *100),
+    wl08_1=(survey_mean((wl08_1<3), na.rm=TRUE,vartype=vt) *100),
+    wl12_0=(survey_mean((wl12_0<3), na.rm=TRUE,vartype=vt) *100),
+    wl12_1=(survey_mean((wl12_1<3), na.rm=TRUE,vartype=vt) *100),
+    wl12_2=(survey_mean((wl12_2<3), na.rm=TRUE,vartype=vt) *100),
+    vz01_0=(survey_mean((vz01_0<3), na.rm=TRUE,vartype=vt) *100),
+    vz01_1=(survey_mean((vz01_1<3), na.rm=TRUE,vartype=vt) *100),
+    vz02_0=(survey_mean((vz02_0<3), na.rm=TRUE,vartype=vt) *100),
+    vz02_1=(survey_mean((vz02_1<3), na.rm=TRUE,vartype=vt) *100),
+    bo02_0=(survey_mean((bo02_0<3), na.rm=TRUE,vartype=vt) *100),
+    bo02_1=(survey_mean((bo02_1<3), na.rm=TRUE,vartype=vt) *100),
+    bo02_2=(survey_mean((bo02_2<3), na.rm=TRUE,vartype=vt) *100),
+    bo03_0=(survey_mean((bo03_0<3), na.rm=TRUE,vartype=vt) *100),
+    bo03_1=(survey_mean((bo03_1<3), na.rm=TRUE,vartype=vt) *100),
+    bo04_0=(survey_mean((bo04_0<3), na.rm=TRUE,vartype=vt) *100),
+    dv07_1=(survey_mean((dv07_1<3), na.rm=TRUE,vartype=vt) *100),
+    dv07_2=(survey_mean((dv07_2<3), na.rm=TRUE,vartype=vt) *100), 
+    dv07_3=(survey_mean((dv07_3<3), na.rm=TRUE,vartype=vt) *100),
+    dv05_0=(survey_mean((dv05_0<3), na.rm=TRUE,vartype=vt) *100),   
+    dv08_0=(survey_mean((dv08_0<3), na.rm=TRUE,vartype=vt) *100),
+    dv09_0=(survey_mean((dv09_0<3), na.rm=TRUE,vartype=vt) *100),
+    wl04=(survey_mean((wl04<3), na.rm=TRUE,vartype=vt) *100),
+    wl05=(survey_mean((wl05<3), na.rm=TRUE,vartype=vt) *100),
+    wl06=(survey_mean((wl06<3), na.rm=TRUE,vartype=vt) *100),
+    wl09_rv=(survey_mean((wl09==4 | wl09==5), na.rm=TRUE,vartype=vt) *100),
+    wl09=(survey_mean((wl09<3), na.rm=TRUE,vartype=vt) *100),
+    wl11_0=(survey_mean((wl11<3), na.rm=TRUE,vartype=vt) *100),
+    wl14=(survey_mean((wl14<3), na.rm=TRUE,vartype=vt) *100),
+    bo01_rv=(survey_mean((bo01==4 | bo01==5), na.rm=TRUE,vartype=vt) *100),
+    bo01=(survey_mean((bo01<3), na.rm=TRUE,vartype=vt) *100),
+    zw00_pin=(survey_mean((zw00 >6), na.rm=TRUE,vartype=vt) *100),
+    zw07=(survey_mean((zw07<3), na.rm=TRUE,vartype=vt) *100),
+    #zw18_0_pin=(survey_mean((zw18<3), na.rm=TRUE,vartype=vt) *100),
+    mm01_0=(survey_mean((mm01_0<3), na.rm=TRUE,vartype=vt) *100),
+    mm01_1=(survey_mean((mm01_1<3), na.rm=TRUE,vartype=vt) *100),
+    mm01_2=(survey_mean((mm01_2<3), na.rm=TRUE,vartype=vt) *100),
+    mm01_3=(survey_mean((mm01_3<3), na.rm=TRUE,vartype=vt) *100),
+    mm01_4=(survey_mean((mm01_4<3), na.rm=TRUE,vartype=vt) *100),
+    mm02_0=(survey_mean((mm02_0<3), na.rm=TRUE,vartype=vt) *100),
+    wl13=(survey_mean((wl13==1), na.rm=TRUE,vartype=vt) *100),
+    dv02=(survey_mean((dv02==1), na.rm=TRUE,vartype=vt) *100),
+    zw05_rc=(survey_mean((zw05_4==0), na.rm=TRUE,vartype=vt) *100),
+    dv06_pin=(survey_mean((dv06>=1 & dv06<=5), na.rm=TRUE,vartype=vt) *100),
+    dv10_pin=(survey_mean((dv10>=1 & dv10<=5), na.rm=TRUE,vartype=vt) *100),
+    zw02_pin=(survey_mean((zw02>=1 & zw02<=5), na.rm=TRUE,vartype=vt) *100),
+    zw12_pin=(survey_mean((zw12>=1 & zw12<=5), na.rm=TRUE,vartype=vt) *100),
+    #zw09_pin=(survey_mean((zw09>=3 & zw09<=4), na.rm=TRUE,vartype=vt) *100),
+    zw03=(survey_mean((zw03>=2 & zw03<=3), na.rm=TRUE,vartype=vt) *100),
+    zw04_rv=(survey_mean((zw04>=1 & zw04<=1), na.rm=TRUE,vartype=vt) *100),
+    zw04=(survey_mean((zw04>=3 & zw04<=4), na.rm=TRUE,vartype=vt) *100),
+    sc02_pin=(survey_mean((sc02>=1 & sc02<=5), na.rm=TRUE,vartype=vt) *100)  
   ) %>%
   mutate_at(.,vars(-group_cols()),~ifelse(is.nan(.) | is.infinite(.), NA, .)) %>%
   mutate_at(.,vars(-group_cols()),~replace(., .== 0, NA))
-  
-  #cols_to_remove<- grep("_se", names(df_aggr_pin))
-  
-  df_aggr_pin<-df_aggr_pin %>% 
-    #select(-cols_to_remove) %>%
-    #reorder variables
-    select(sort(names(.))) %>% 
-    #move gemeente and metingsjaar to the front
-    relocate(any_of(c('GEOITEM', 'PERIOD')), .before=bo01)
-  
+
+#cols_to_remove<- grep("_se", names(df_aggr_pin))
+
+df_aggr_pin<-df_aggr_pin %>% 
+  #select(-cols_to_remove) %>%
+  #reorder variables
+  select(sort(names(.))) %>% 
+  #move gemeente and metingsjaar to the front
+  relocate(any_of(c('GEOITEM', 'PERIOD')), .before=bo01)
+
    
 #-----------------------------------------------------------------------------------------------
 
@@ -1383,11 +1414,11 @@ df_ss_weight<- df_ss %>%
 df_ss_vital<-df_ss_weight %>%
 group_by(GEOITEM,PERIOD) %>%
   summarize(
-    typology_pin1=(survey_total((typology==1), na.rm=T, vartype=vt) / n()*100),
-    typology_pin2=(survey_total((typology==2), na.rm=T, vartype=vt) / n()*100),
-    typology_pin3=(survey_total((typology==3), na.rm=T, vartype=vt) / n()*100),
-    typology_pin4=(survey_total((typology==4), na.rm=T, vartype=vt) / n()*100),
-    zorgwekkend_pin1=(survey_total((zorwekkend==1), na.rm=T, vartype=vt) / n()*100)   
+    typology_pin1=(survey_mean((typology==1), na.rm=T, vartype=vt) *100),
+    typology_pin2=(survey_mean((typology==2), na.rm=T, vartype=vt) *100),
+    typology_pin3=(survey_mean((typology==3), na.rm=T, vartype=vt) *100),
+    typology_pin4=(survey_mean((typology==4), na.rm=T, vartype=vt) *100),
+    zorgwekkend_pin1=(survey_mean((zorwekkend==1), na.rm=T, vartype=vt) *100)   
 ) %>%
 mutate_at(.,vars(-group_cols()),~replace(., .== 0, NA))  
 
