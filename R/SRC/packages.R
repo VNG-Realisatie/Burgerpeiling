@@ -46,6 +46,8 @@ packages <- c(
   'haven', 
   #statistical calculations
   'stats',
+  #multiuple response sets
+  'expss',
   #colour scheme
   'viridis',
   #layout plots

@@ -10,7 +10,7 @@
 
 #see'Beschrijving' directory for specification of the variables.
 
-#last update 2022-12-01 (beta version)
+#last update 2022-12-02 (beta version)
 
 #questions? contact Mark Henry Gremmen mark.gremmen@vng.nl
 
@@ -61,9 +61,7 @@ var.loc<-here::here("DATA/REF/var_df.RData")
 #var_df<-as_tibble(var_nms)
 #save(var_df,file="DATA/REF/var_df.RData")
 
-if(var_len>196) { stop("dataframe contains illegal variables!") }
-
-
+#if(var_len>196) { stop("dataframe contains illegal variables!") }
 
 #get duplicates
 #get_dupes(df,-c(id,respondent))
@@ -84,7 +82,7 @@ df<-df %>%
   #Weight lower than 5
   filter(weging<5) %>%
   #year
-  filter(jr>2019)
+  filter(jr>2020)
 
 #get vector with valid variables
 load(var.loc)
@@ -92,7 +90,7 @@ var_vec<-as.vector(var_df)
 
 #select vars
 df<-df %>%
-  select(all_of((var_vec[["value"]])))
+  select(any_of((var_vec[["value"]])))
 
 #-----------------------------------------------------------------------------------------------
 
@@ -150,6 +148,7 @@ df<- df %>%
   rename(PERIOD=jr, GEOITEM=gemnr)
 
 
+
 #-----------------------------------------------------------------------------------------------
 
 # FACTORS AND LEVELS
@@ -179,12 +178,6 @@ df<-df %>%
   relocate(any_of(c('GEMEENTE')), .before=GEOITEM)
 
 
-#reporting municipalities
-munic.active<-levels(factor(df$GEMEENTE))
-
-cat("reporting municipalities: ", munic.active)
-
-
 #-----------------------------------------------------------------------------------------------
 
 # IDENTIFIER
@@ -200,6 +193,15 @@ df$id<-paste0("BP",df$GEOITEM,"Y",df$PERIOD,"S",df$seq)
 #out.file<-paste0(output.dir,"/BP-combined.RData")
 #save(df, file = out.file)
 
+#order records by id
+#df<-df %>%
+#  order(id)
+
+#reporting municipalities
+munic.active<-levels(factor(df$GEMEENTE))
+geoitem.active<-as.numeric(levels(factor(df$GEOITEM)))
+
+cat("reporting municipalities: ", munic.active)
 
 #-----------------------------------------------------------------------------------------------
 
@@ -248,6 +250,14 @@ df<- df %>%
 
 
 
+#-----------------------------------------------------------------------------------------------
+
+# Multiple response sets
+
+#-----------------------------------------------------------------------------------------------
+
+
+source(here::here('SRC/mrsets.R'))
 
 #-----------------------------------------------------------------------------------------------
 
@@ -374,37 +384,6 @@ df_aggr_pin<- df_weight %>%
     wl05_pin3=(survey_mean((wl05==3), na.rm=TRUE,vartype=vt) *100),
     wl05_pin4=(survey_mean((wl05==4), na.rm=TRUE,vartype=vt) *100),
     wl05_pin5=(survey_mean((wl05==5), na.rm=TRUE,vartype=vt) *100),
-    zw05_pin0=(survey_mean((zw05_0==1), na.rm=TRUE,vartype=vt) *100),
-    zw05_pin1=(survey_mean((zw05_1==1), na.rm=TRUE,vartype=vt) *100),
-    zw05_pin2=(survey_mean((zw05_2==1), na.rm=TRUE,vartype=vt) *100),
-    zw05_pin3=(survey_mean((zw05_3==1), na.rm=TRUE,vartype=vt) *100),
-    zw05_pin4=(survey_mean((zw05_4==1), na.rm=TRUE,vartype=vt) *100),
-    zw05_pin5=(survey_mean((zw05_5==1), na.rm=TRUE,vartype=vt) *100),
-    dv03_pin0=(survey_mean((dv03_0==1), na.rm=TRUE,vartype=vt) *100),
-    dv03_pin1=(survey_mean((dv03_1==1), na.rm=TRUE,vartype=vt) *100),
-    dv03_pin2=(survey_mean((dv03_2==1), na.rm=TRUE,vartype=vt) *100),
-    dv03_pin3=(survey_mean((dv03_3==1), na.rm=TRUE,vartype=vt) *100),
-    dv03_pin4=(survey_mean((dv03_4==1), na.rm=TRUE,vartype=vt) *100),
-    dv03_pin5=(survey_mean((dv03_5==1), na.rm=TRUE,vartype=vt) *100),
-    dv03_pin6=(survey_mean((dv03_6==1), na.rm=TRUE,vartype=vt) *100),
-    zw08_0_pin=(survey_mean((zw08_0==1), na.rm=TRUE,vartype=vt) *100),
-    zw08_1_pin=(survey_mean((zw08_1==1), na.rm=TRUE,vartype=vt) *100),
-    zw08_2_pin=(survey_mean((zw08_2==1), na.rm=TRUE,vartype=vt) *100),
-    zw08_3_pin=(survey_mean((zw08_3==1), na.rm=TRUE,vartype=vt) *100),
-    zw08_4_pin=(survey_mean((zw08_4==1), na.rm=TRUE,vartype=vt) *100),
-    zw08_5_pin=(survey_mean((zw08_5==1), na.rm=TRUE,vartype=vt) *100),
-    zw08_6_pin=(survey_mean((zw08_6==1), na.rm=TRUE,vartype=vt) *100),
-    zw13_0_pin=(survey_mean((zw13_0==1), na.rm=TRUE,vartype=vt) *100),
-    zw13_1_pin=(survey_mean((zw13_1==1), na.rm=TRUE,vartype=vt) *100),
-    zw13_2_pin=(survey_mean((zw13_2==1), na.rm=TRUE,vartype=vt) *100),
-    zw13_3_pin=(survey_mean((zw13_3==1), na.rm=TRUE,vartype=vt) *100),
-    zw13_4_pin=(survey_mean((zw13_4==1), na.rm=TRUE,vartype=vt) *100),
-    zw13_5_pin=(survey_mean((zw13_5==1), na.rm=TRUE,vartype=vt) *100),
-    zw13_6_pin=(survey_mean((zw13_6==1), na.rm=TRUE,vartype=vt) *100),
-    zw13_7_pin=(survey_mean((zw13_7==1), na.rm=TRUE,vartype=vt) *100),
-    zw13_8_pin=(survey_mean((zw13_8==1), na.rm=TRUE,vartype=vt) *100),
-    zw13_9_pin=(survey_mean((zw13_9==1), na.rm=TRUE,vartype=vt) *100),
-    zw13_10_pin=(survey_mean((zw13_10==1), na.rm=TRUE,vartype=vt) *100),
     zw01_0_pin1=(survey_mean((zw01_0==1), na.rm=TRUE,vartype=vt) *100),
     zw01_0_pin2=(survey_mean((zw01_0==2), na.rm=TRUE,vartype=vt) *100),
     zw01_0_pin3=(survey_mean((zw01_0==3), na.rm=TRUE,vartype=vt) *100),
@@ -445,13 +424,6 @@ df_aggr_pin<- df_weight %>%
     wl14_1=(survey_mean((wl14==1), na.rm=TRUE,vartype=vt) *100),
     wl14_2=(survey_mean((wl14==2), na.rm=TRUE,vartype=vt) *100),
     wl14_3=(survey_mean((wl14==3), na.rm=TRUE,vartype=vt) *100),
-    #wl14_4=(survey_mean((wl14==4), na.rm=TRUE,vartype=vt) *100), 
-    #dv04_pin1=(survey_mean((dv04==1), na.rm=TRUE,vartype=vt) *100),
-    #dv04_pin2=(survey_mean((dv04==2), na.rm=TRUE,vartype=vt) *100),
-    #dv04_pin3=(survey_mean((dv04==3), na.rm=TRUE,vartype=vt) *100),
-    #dv04_pin4=(survey_mean((dv04==4), na.rm=TRUE,vartype=vt) *100),
-    #dv04_pin5=(survey_mean((dv04==5), na.rm=TRUE,vartype=vt) *100),
-    #dv04_pin6=(survey_mean((dv04==6), na.rm=TRUE,vartype=vt) *100),
     wl06_pin1=(survey_mean((wl06==1), na.rm=TRUE,vartype=vt) *100),
     wl06_pin2=(survey_mean((wl06==2), na.rm=TRUE,vartype=vt) *100),
     wl06_pin3=(survey_mean((wl06==3), na.rm=TRUE,vartype=vt) *100),
@@ -1543,6 +1515,8 @@ df_respond<- cbind(df,df_ss)
 df_munic<- Reduce(function(x, y) merge(x, y, all=TRUE), 
                  list(df_aggr_mn,df_aggr_pin,df_ss_aggr,df_ss_type_aggr,df_ss_age_aggr,df_ss_vital))
 df_munic[complete.cases(df_munic), ]
+
+df_munic<-cbind(df_munic,mr_sets)
 
 #df_munic <- list(df_aggr_mn,df_aggr_pin,df_ss_aggr,df_ss_type_aggr,df_ss_age_aggr,df_ss_vital) |> purrr::reduce(rbind)
 

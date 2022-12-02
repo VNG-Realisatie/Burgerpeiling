@@ -24,7 +24,7 @@ Sys.getlocale()
 #turn-off dplyr's summarise notifications
 
 options(scipen = 999, digits = 4, OutDec=",", stringsAsFactors = FALSE, encoding = "UTF-8",
-        warn = 0,dplyr.summarise.inform = FALSE)
+        warn = 0, dplyr.summarise.inform = FALSE)
 
 
 #R root

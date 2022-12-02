@@ -1,6 +1,10 @@
 
+#-----------------------------------------------------------------------------------------------
 
-library(cbsodataR)
+#CBS API
+
+#-----------------------------------------------------------------------------------------------
+
 
 toc <- cbs_get_toc("Language" = "nl") %>% 
   filter(grepl('gemeente', ShortDescription))
@@ -55,7 +59,6 @@ cbs_codes<-Gebieden %>%
   
 cbs_codes$Gemeentecode<-as.numeric(gsub("[[:alpha:]]", "", cbs_codes$Gemeentecode))
   
-
 file.cbs.nme<-here::here(cbs.dir,"cbs_munic_codes.xlsx")
 
 openxlsx::write.xlsx(cbs_codes, file.cbs.nme, colNames = TRUE)
