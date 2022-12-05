@@ -20,15 +20,19 @@ print(i)
 vw_reason_mr<-df %>% 
   filter(GEOITEM==i)  %>% 
   tab_cells(mdset(zw08_0 %to% zw08_6)) %>%  # 'mdset' designate that with have multiple dichotomy set
+  #tab_cells(mdset(zw08_0 %to% zw08_7)) %>%  # 'mdset' designate that with have multiple dichotomy set
   tab_weight(weging) %>% # weight
   tab_stat_cpct() %>% # statistic
   tab_pivot() 
 
 vw<-as_tibble(vw_reason_mr[1:7,2]) %>%
+#vw<-as_tibble(vw_reason_mr[1:8,2]) %>%
   t()
 
 colnames(vw)<-c("zw08_0_pin","zw08_1_pin","zw08_2_pin","zw08_3_pin",
-                "zw08_4_pin","zw08_5_pin","zw08_6_pin")
+                "zw08_4_pin","zw08_5_pin","zw08_6_pin"
+                #,"zw08_7_pin"
+                )
 
 
 vw<-as_tibble(vw)

@@ -10,7 +10,7 @@
 
 #see'Beschrijving' directory for specification of the variables.
 
-#last update 2022-12-02 (beta version)
+#last update 2022-12-05 (beta version)
 
 #questions? contact Mark Henry Gremmen mark.gremmen@vng.nl
 
@@ -82,7 +82,7 @@ df<-df %>%
   #Weight lower than 5
   filter(weging<5) %>%
   #year
-  filter(jr>2020)
+  filter(jr>2019)
 
 #get vector with valid variables
 load(var.loc)
@@ -134,7 +134,7 @@ ml7<-c('ch06')
 df[,ml7][df[,ml7]==7]<- NA
 
 #missing cat located at 5th position
-ml5<-c('wl06','zw01_0','zw01_1','zw01_2','zw01_3','zw01_4','zw01_5','zw01_6', 'zw09')
+ml5<-c('wl06','zw01_0','zw01_1','zw01_2','zw01_3','zw01_4','zw01_5','zw01_6','zw04', 'zw09')
 df[,ml5][df[,ml5]==5]<- NA
 
 #missing cat located at 4th position
@@ -212,7 +212,7 @@ cat("reporting municipalities: ", munic.active)
 #multiple response sets (missings -> 0)
 mr<-c("dv03_0","dv03_1","dv03_2","dv03_3","dv03_4","dv03_5","dv03_6",
       "zw05_0","zw05_1","zw05_2","zw05_3","zw05_4","zw05_5",
-      "zw08_0","zw08_1","zw08_2","zw08_3","zw08_4","zw08_5","zw08_6",
+      "zw08_0","zw08_1","zw08_2","zw08_3","zw08_4","zw08_5","zw08_6",#"zw08_7",
       "zw13_0","zw13_1","zw13_2","zw13_3","zw13_4","zw13_5","zw13_6","zw13_7","zw13_8"
 )
 df<-df %>% mutate(across(all_of(mr), ~replace_na(.,0)))
@@ -440,6 +440,11 @@ df_aggr_pin<- df_weight %>%
     zw20_pin3=(survey_mean((zw20==3), na.rm=TRUE,vartype=vt) *100), 
     zw20_pin4=(survey_mean((zw20==4), na.rm=TRUE,vartype=vt) *100),
     zw20_pin5=(survey_mean((zw20==5), na.rm=TRUE,vartype=vt) *100),
+    #zw20n_pin1=(survey_mean((zw20==1), na.rm=TRUE,vartype=vt) *100),
+    #zw20n_pin2=(survey_mean((zw20==2), na.rm=TRUE,vartype=vt) *100),
+    #zw20n_pin3=(survey_mean((zw20==3), na.rm=TRUE,vartype=vt) *100), 
+    #zw20n_pin4=(survey_mean((zw20==4), na.rm=TRUE,vartype=vt) *100),
+    #zw20n_pin5=(survey_mean((zw20==5), na.rm=TRUE,vartype=vt) *100),
     part_brt_pin1=(survey_mean((part_brt==1), na.rm=TRUE,vartype=vt) *100),
     part_brt_pin2=(survey_mean((part_brt==2), na.rm=TRUE,vartype=vt) *100),
     part_brt_pin3=(survey_mean((part_brt==3), na.rm=TRUE,vartype=vt) *100), 
@@ -458,6 +463,10 @@ df_aggr_pin<- df_weight %>%
     zw09_pin2=(survey_mean((zw09==2), na.rm=TRUE,vartype=vt) *100),
     zw09_pin3=(survey_mean((zw09==3), na.rm=TRUE,vartype=vt) *100), 
     zw09_pin4=(survey_mean((zw09==4), na.rm=TRUE,vartype=vt) *100),
+    #zw09n_pin1=(survey_mean((zw09==1), na.rm=TRUE,vartype=vt) *100),
+    #zw09n_pin2=(survey_mean((zw09==2), na.rm=TRUE,vartype=vt) *100),
+    #zw09n_pin3=(survey_mean((zw09==3), na.rm=TRUE,vartype=vt) *100), 
+    #zw09n_pin4=(survey_mean((zw09==4), na.rm=TRUE,vartype=vt) *100),
     mz_lev1=(survey_mean((zw06_0==1), na.rm=TRUE,vartype=vt) *100),
     mz_lev2=(survey_mean((zw06_0==2), na.rm=TRUE,vartype=vt) *100),
     mz_lev3=(survey_mean((zw06_0==3), na.rm=TRUE,vartype=vt) *100),
@@ -480,6 +489,7 @@ df_aggr_pin<- df_weight %>%
     vz03_4=(survey_mean((vz03_4<3), na.rm=TRUE,vartype=vt) *100),
     wl02_0=(survey_mean((wl02_0<3), na.rm=TRUE,vartype=vt) *100),
     wl02_1=(survey_mean((wl02_1<3), na.rm=TRUE,vartype=vt) *100),
+    #wl02_2=(survey_mean((wl02_2<3), na.rm=TRUE,vartype=vt) *100),
     wl03_0=(survey_mean((wl03_0<3), na.rm=TRUE,vartype=vt) *100),
     wl03_1=(survey_mean((wl03_1<3), na.rm=TRUE,vartype=vt) *100),
     wl03_2=(survey_mean((wl03_2<3), na.rm=TRUE,vartype=vt) *100),
@@ -490,6 +500,9 @@ df_aggr_pin<- df_weight %>%
     wl12_0=(survey_mean((wl12_0<3), na.rm=TRUE,vartype=vt) *100),
     wl12_1=(survey_mean((wl12_1<3), na.rm=TRUE,vartype=vt) *100),
     wl12_2=(survey_mean((wl12_2<3), na.rm=TRUE,vartype=vt) *100),
+    #wl12n_0=(survey_mean((wl12_0<3), na.rm=TRUE,vartype=vt) *100),
+    #wl12n_1=(survey_mean((wl12_1<3), na.rm=TRUE,vartype=vt) *100),
+    #wl12n_2=(survey_mean((wl12_2<3), na.rm=TRUE,vartype=vt) *100),
     vz01_0=(survey_mean((vz01_0<3), na.rm=TRUE,vartype=vt) *100),
     vz01_1=(survey_mean((vz01_1<3), na.rm=TRUE,vartype=vt) *100),
     vz02_0=(survey_mean((vz02_0<3), na.rm=TRUE,vartype=vt) *100),
@@ -509,6 +522,7 @@ df_aggr_pin<- df_weight %>%
     wl04=(survey_mean((wl04<3), na.rm=TRUE,vartype=vt) *100),
     wl05=(survey_mean((wl05<3), na.rm=TRUE,vartype=vt) *100),
     wl06=(survey_mean((wl06<3), na.rm=TRUE,vartype=vt) *100),
+    #wl06n=(survey_mean((wl06<4), na.rm=TRUE,vartype=vt) *100), 
     wl09_rv=(survey_mean((wl09==4 | wl09==5), na.rm=TRUE,vartype=vt) *100),
     wl09=(survey_mean((wl09<3), na.rm=TRUE,vartype=vt) *100),
     wl11_0=(survey_mean((wl11<3), na.rm=TRUE,vartype=vt) *100),
@@ -533,8 +547,9 @@ df_aggr_pin<- df_weight %>%
     zw12_pin=(survey_mean((zw12>=1 & zw12<=5), na.rm=TRUE,vartype=vt) *100),
     #zw09_pin=(survey_mean((zw09>=3 & zw09<=4), na.rm=TRUE,vartype=vt) *100),
     zw03=(survey_mean((zw03>=2 & zw03<=3), na.rm=TRUE,vartype=vt) *100),
-    zw04_rv=(survey_mean((zw04>=1 & zw04<=1), na.rm=TRUE,vartype=vt) *100),
+    zw04_rv=(survey_mean((zw04==1), na.rm=TRUE,vartype=vt) *100),
     zw04=(survey_mean((zw04>=3 & zw04<=4), na.rm=TRUE,vartype=vt) *100),
+    zw04n=(survey_mean((zw04>=2 & zw04<=4), na.rm=TRUE,vartype=vt) *100),
     sc02_pin=(survey_mean((sc02>=1 & sc02<=5), na.rm=TRUE,vartype=vt) *100)  
   ) %>%
   mutate_at(.,vars(-group_cols()),~ifelse(is.nan(.) | is.infinite(.), NA, .)) %>%

@@ -38,7 +38,7 @@ load(resp.df)
 
 #-----------------------------------------------------------------------------------------------
 
-#Self-Organising Maps (SOMs), or Kohonen maps, is  an unsupervised data visualisation technique that 
+#Self-Organising Maps (SOMs), or Kohonen maps, is an unsupervised data visualisation technique that 
 #can be used to visualise high-dimensional data sets in lower (typically 2) dimensional representations.
 #SOM maintains a topology embedded in the data space (as opposed to e.g. Kmeans)
 #SOMs are a type of artificial neural network (ANN) that are trained using unsupervised learning
@@ -80,7 +80,6 @@ som.nme<-paste0(plots.dir,'/som_codes.png')
 png(file=som.nme, width = 960, height = 960, units = "px")
 plot(som_model, type="codes")
 dev.off()
-
 
 #-----------------------------------------------------------------------------------------------
 
@@ -135,7 +134,6 @@ cluster_assignment <- som_cluster[som_model$unit.classif]
 df_scores$cluster_assignment <- cluster_assignment
 df_respond$cluster_assignment <- cluster_assignment
 
-
 #-----------------------------------------------------------------------------------------------
 
 # CHARACTERISTICS OF CLUSTERS
@@ -180,7 +178,6 @@ cluster_dis_rel
 plot.nme = paste0('/clusters_assignment_distribution_rel.png')
 plot.store <-paste0(plots.dir,plot.nme)
 ggsave(plot.store, height = graph_height, width = graph_height * 2, dpi=dpi)
-
 
 #-----------------------------------------------------------------------------------------------
 
@@ -243,7 +240,6 @@ vit_par
 plot.nme = paste0('/clusters_vitaliteit_mtschparticipatie.png')
 plot.store <-paste0(plots.dir,plot.nme)
 ggsave(plot.store, height = graph_height, width = graph_height * 2, dpi=dpi)
-
 
 #-----------------------------------------------------------------------------------------------
 
