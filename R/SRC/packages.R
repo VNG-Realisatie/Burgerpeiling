@@ -44,6 +44,8 @@ packages <- c(
   'data.table',
   #spss
   'haven', 
+  #
+  'readr',
   #statistical calculations
   'stats',
   #multiuple response sets

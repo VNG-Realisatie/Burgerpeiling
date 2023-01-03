@@ -17,7 +17,7 @@ var.loc<-here::here("DATA/REF/var_df.RData")
 #var_df<-as_tibble(var_nms)
 #save(var_df,file="DATA/REF/var_df.RData")
 
-#if(var_len>196) { stop("dataframe contains illegal variables!") }
+#if(var_len>194) { stop("dataframe contains illegal variables!") }
 
 #get duplicates
 #get_dupes(df,-c(id,respondent))

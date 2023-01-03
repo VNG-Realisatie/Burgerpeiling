@@ -12,8 +12,8 @@ View(toc)
 
 cbs.datasets <- list(
   # Gebieden in Nederland 
-  "Gebieden" = "83553NED",
-  "Kerncijfers" = "83765NED"
+  "Gebieden" = "85067NED",
+  "Kerncijfers" = "85318NED"
 ) 
 
 
@@ -29,29 +29,33 @@ DataCleansing <- function(x){
   return(x)
 }
 
-
 for (name in names(cbs.datasets)){
   # Bestandslocatie, elk bestand heet data.csv
   path.cbs.data <- file.path(cbs.dir,cbs.datasets[name],"data.csv")
   # CSV bestanden inlezen, maakt dataframes met opgegeven naam.
   assign(name, 
-         read_csv(file = path.cbs.data, col_types = cols(.default = "c"), locale = readr::locale(encoding = "windows-1252")) # alle kolommen als tekst laden, daarna bewerken
+         read_csv(file = path.cbs.data, 
+                  #col_types = cols(.default = "c"), 
+                  locale = readr::locale(encoding = "windows-1252")) # alle kolommen als tekst laden, daarna bewerken
   )
   # CSV bestanden met metadata importeren, maakt dataframes met suffix meta.
   path.cbs.meta <- file.path(cbs.dir,cbs.datasets[name],"DataProperties.csv")
   assign(paste(name,'meta',sep = '_'), 
-         read_csv(file = path.cbs.meta, col_types = cols(.default = "c"), locale = readr::locale(encoding = "windows-1252")) # alle kolommen als tekst laden, daarna bewerken
+         read_csv(file = path.cbs.meta, 
+                  #col_types = cols(.default = "c"), 
+                  locale = readr::locale(encoding = "windows-1252")) # alle kolommen als tekst laden, daarna bewerken
   )
   assign(name,
          get(name) %>% mutate_all(DataCleansing)) # spaties links en rechts verwijderen
   print(name)
 }
+
 # Metadata bekijken.
 View(Kerncijfers_meta)
 
-
 cbs_codes<-Gebieden %>%
-           select(Code_1,Naam_2) %>%
+  #Gebieden %>%
+  select(Code_1,Naam_2) %>%
   rename(
     Gemeentecode = Code_1,
     Gemeentenaam = Naam_2

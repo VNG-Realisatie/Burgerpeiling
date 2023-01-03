@@ -6,19 +6,23 @@
 #-----------------------------------------------------------------------------------------------
 
 
+df$GEOYR<-paste0(df$GEOITEM,'-',df$PERIOD)
+gy<-unique(df$GEOYR)
+  
+
 iter_vw <- list()
 iter_vl <- list()
 iter_bh <- list()
 
-for(i in geoitem.active) {
+for(i in gy) {
   
 print(i)
-  
+
 #-----------------------------------------------------------------------------------------------
 #vrijwilligerswerk
 
 vw_reason_mr<-df %>% 
-  filter(GEOITEM==i)  %>% 
+  filter(GEOYR==i)  %>% 
   tab_cells(mdset(zw08_0 %to% zw08_6)) %>%  # 'mdset' designate that with have multiple dichotomy set
   #tab_cells(mdset(zw08_0 %to% zw08_7)) %>%  # 'mdset' designate that with have multiple dichotomy set
   tab_weight(weging) %>% # weight
@@ -43,7 +47,7 @@ iter_vw[[i]]<-vw
 #verenigingsleven
 
 vl_mr<-df %>% 
-  filter(GEOITEM==i)  %>%
+  filter(GEOYR==i)  %>%
   tab_cells(mdset(zw05_0 %to% zw05_5)) %>%  # 'mdset' designate that with have multiple dichotomy set
   tab_weight(weging) %>% # weight
   tab_stat_cpct() %>% # statistic
@@ -65,7 +69,7 @@ iter_vl[[i]]<-vl
 #burenhulp
 
 bh_mr<-df %>% 
-  filter(GEOITEM==i)  %>%
+  filter(GEOYR==i)  %>%
   tab_cells(mdset(zw13_0 %to% zw13_8)) %>%  # 'mdset' designate that with have multiple dichotomy set
   tab_weight(weging) %>% # weight
   tab_stat_cpct() %>% # statistic
@@ -80,6 +84,8 @@ bh<-as_tibble(bh)
 
 iter_bh[[i]]<-bh
 
+
+
 }
 
 #append 
@@ -88,4 +94,6 @@ vl_set<-do.call(rbind,iter_vl)
 bh_set<-do.call(rbind,iter_bh)
 
 #merge
-mr_sets<-cbind(vw_set,vl_set,bh_set)
+mr_sets<-cbind(vw_set,vl_set,bh_set) 
+
+

@@ -1,0 +1,4 @@
+"ID","DimensionKey","Title","Description","ParentID"
+0,"RegioS","Gemeenten van het jaar 2022","Alleen de gemeenten die in het jaar 2022 hebben bestaan.
+NB: bij tabblad 'Perioden' alleen 2022 selecteren.",
+1,"RegioS","Gemeentelijst 2022",,0

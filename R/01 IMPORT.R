@@ -76,23 +76,26 @@ source(here::here('SRC/preperation.R'))
 
 message("Subsetting...")
 
-df<-df %>% 
-  #Weight lower than 5
-  filter(weging<5) %>%
-  #year
-  filter(jr>2019)
-
 #vector with valid variables
 load(var.loc)
 var_vec<-as.vector(var_df)
 
-#select valid variables
-df<-df %>%
+df<-df %>% 
+  #municipality id exists
+  filter(!is.na(gemnr)) %>%
+  #Weight lower than 5
+  filter(weging<5) %>%
+  #year
+  filter(jr>2019) %>%
+  #valid variables
   select(any_of((var_vec[["value"]])))
 
 #identify numeric variables
 numeric_cols<- unlist(lapply(df, is.numeric))         
 numeric_cols
+
+#select string variables
+df_string<-df[,!numeric_cols]
 
 #select numeric variables
 df<-df[,numeric_cols]

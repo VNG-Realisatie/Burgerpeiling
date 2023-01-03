@@ -33,3 +33,6 @@ df_export$GEOLEVEL<-"gemeente344"
 
 #report buurten
 df_export$bp_wijk<-0
+
+#remove temporary variables
+df_export$GEOYR<-NULL

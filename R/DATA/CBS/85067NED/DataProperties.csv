@@ -1,0 +1,172 @@
+"odata.type","ID","Position","ParentID","Type","Key","Title","Description","Datatype","Unit","Decimals","Default"
+"Cbs.OData.Dimension",0,0,,"Dimension","RegioS","Regio's","",,,,
+"Cbs.OData.TopicGroup",1,,,"TopicGroup","","Codes en namen van gemeenten","Dit onderdeel bevat de officiële codes en namen van gemeenten en een alfabetische sortering van de namen van de gemeenten.",,,,
+"Cbs.OData.Topic",2,1,1,"Topic","Code_1","Code","De gemeentecode is gebaseerd op de officiële schrijfwijze van de naam van de gemeente en is uniek in relatie tot die naam. De code wordt door het Ministerie van Binnenlandse Zaken en Koninkrijksrelaties (BZK) in overleg met CBS vastgesteld.
+","String","code",0,"Impossible"
+"Cbs.OData.Topic",3,2,1,"Topic","Naam_2","Naam","De naam van de gemeente volgt de officiële schrijfwijze. Lidwoorden en voorvoegsels staan dus voor de gemeentenaam (bijv. De Bilt), terwijl tevens de officiële schrijfwijze in hoofdletters en kleine letters is gevolgd.","String","naam",0,"Impossible"
+"Cbs.OData.Topic",4,3,1,"Topic","SorteringNaam_3","Sortering naam","Een hulpmiddel voor het sorteren van namen van gemeenten op alfabetische volgorde. Bij de bepaling van deze volgorde zijn de volgende regels in acht genomen:
+- voorvoegsels en lidwoorden hebben geen invloed op de volgorde (dus De Bilt onder B), 
+- verbindingsstreepjes gelden als een letter (Alphen aan den Rijn komt voor Alphen-Chaam),
+- de IJ (bijvoorbeeld IJsselstein) valt onder de I.
+Het sorteerveld van gemeentenamen is vooral bedoeld om buiten StatLine namen van gemeenten (rijks)alfabetisch te ordenen.
+","String","naam",0,"Impossible"
+"Cbs.OData.TopicGroup",5,,,"TopicGroup","","Lokaliseringen van gemeenten","Dit onderdeel bevat informatie over de relatie tussen de gemeentelijke indeling (het laagste bestuurlijk niveau) en diverse onderverdelingen van het Nederlandse grondgebied op bovengemeentelijk niveau.",,,,
+"Cbs.OData.TopicGroup",6,,5,"TopicGroup","","Arbeidsmarktregio's","AM = Arbeidsmarktregio
+Een indeling in regio's van waaruit gemeenten en het Uitvoeringsinstituut Werknemersverzekeringen (UWV) de dienstverlening aan werkgevers en werkzoekenden vormgeven. Het is een regionaal niveau tussen gemeenten en provincies in. Deze indeling is van onderop, door gemeenten zelf, tot stand gekomen. Nederland telt 35 arbeidsmarktregio's.
+
+Met ingang van 1-1-2021 is de gemeente Vijfheerenlanden in zijn geheel toebedeeld aan de Arbeidsmarktregio ‘Gorinchem’, code AM35. In de jaren hiervoor was de gemeente over meerdere Arbeidsmarktregio’s verdeeld en stond daarom in deze tabel als ‘Niet in te delen’, code AM99.",,,,
+"Cbs.OData.Topic",7,4,6,"Topic","Code_4","Code","Codes van de arbeidsmarktregio's.","String","code",0,"Impossible"
+"Cbs.OData.Topic",8,5,6,"Topic","Naam_5","Naam","Namen van de arbeidsmarktregio's.","String","naam",0,"Impossible"
+"Cbs.OData.TopicGroup",9,,5,"TopicGroup","","Arrondissementen (rechtsgebieden)","AR = Arrondissement (rechtsgebied)
+Lokalisering van gemeenten per arrondissement. Een arrondissement is het rechtsgebied van één van de 11 rechtbanken in Nederland. De indeling in 11 arrondissementen betreft een onderverdeling van de ressorten, dat zijn de rechtsgebieden van de gerechtshoven.
+",,,,
+"Cbs.OData.Topic",10,6,9,"Topic","Code_6","Code","Codes van de rechtsgebieden van de arrondissementen.","String","code",0,"Impossible"
+"Cbs.OData.Topic",11,7,9,"Topic","Naam_7","Naam","Namen van de rechtsgebieden van de arrondissementen.","String","naam",0,"Impossible"
+"Cbs.OData.TopicGroup",12,,5,"TopicGroup","","COROP-gebieden","CR = COROP-gebied
+Lokalisering van gemeenten per COROP-gebied. De indeling in COROP-gebieden vormt een regionaal niveau tussen gemeenten en provincies in. Omstreeks 1970 ontworpen door de Coördinatie Commissie Regionaal Onderzoeksprogramma, waaraan de indeling haar naam dankt. Nederland telt 40 COROP-gebieden.
+",,,,
+"Cbs.OData.Topic",13,8,12,"Topic","Code_8","Code","Codes van de COROP-gebieden.","String","code",0,"Impossible"
+"Cbs.OData.Topic",14,9,12,"Topic","Naam_9","Naam","Namen van de COROP-gebieden.","String","naam",0,"Impossible"
+"Cbs.OData.TopicGroup",15,,5,"TopicGroup","","COROP-subgebieden","CS = COROP-subgebied
+Lokalisering van gemeenten naar COROP-subgebieden. Een onderverdeling van de 40 COROP-gebieden, waarbij de volgende gebieden zijn opgesplitst: Groot-Amsterdam, Groot-Rijnmond en Noordoost-Noord-Brabant. Nederland telt 43 COROP-subgebieden.
+",,,,
+"Cbs.OData.Topic",16,10,15,"Topic","Code_10","Code","Codes van de COROP-subgebieden.","String","code",0,"Impossible"
+"Cbs.OData.Topic",17,11,15,"Topic","Naam_11","Naam","Namen van de COROP-subgebieden.","String","naam",0,"Impossible"
+"Cbs.OData.TopicGroup",18,,5,"TopicGroup","","COROP-plusgebieden","CP = COROP-plusgebied
+Lokalisering van gemeenten naar COROP-plusgebieden. Een onderverdeling van de COROP-(sub)gebieden, waarbij de volgende gebieden zijn opgesplitst: Utrecht, Overig Groot-Amsterdam, Agglomeratie 's-Gravenhage, Zuidoost-Zuid-Holland en Flevoland. Nederland telt 52 COROP-plusgebieden.
+",,,,
+"Cbs.OData.Topic",19,12,18,"Topic","Code_12","Code","Codes van de COROP-plusgebieden.","String","code",0,"Impossible"
+"Cbs.OData.Topic",20,13,18,"Topic","Naam_13","Naam","Namen van de COROP-plusgebieden.","String","naam",0,"Impossible"
+"Cbs.OData.TopicGroup",21,,5,"TopicGroup","","GGD-regio's","GG = GGD-regio
+Een in 1990 door het toenmalig Ministerie van Welzijn, Volksgezondheid en Cultuur vastgestelde indeling in samenwerkingsgebieden voor de gemeentelijke gezondheidsdiensten (GGD). Deze indeling is in de loop der jaren verschillende keren gewijzigd. De indeling is voor het laatst herzien op 1 januari 2014 en telt vanaf die datum 25 gebieden. Deze indeling in GGD-regio's werd tot 2008 vermeld onder GGD-gebieden. De codering is toen ook uitgebreid van een tweecijferige naar een viercijferige code.
+",,,,
+"Cbs.OData.Topic",22,14,21,"Topic","Code_14","Code","Codes van de samenwerkingsgebieden voor gemeentelijke gezondheidsdiensten (GGD).","String","code",0,"Impossible"
+"Cbs.OData.Topic",23,15,21,"Topic","Naam_15","Naam","Namen van de samenwerkingsgebieden voor gemeentelijke gezondheidsdiensten (GGD).","String","naam",0,"Impossible"
+"Cbs.OData.TopicGroup",24,,5,"TopicGroup","","Jeugdregio's","JZ = Jeugdregio 
+Een door gemeenten vastgestelde indeling in samenwerkingsgebieden voor uitvoering van de Jeugdwet (2014). In CBS-publicaties van eerdere jaren kan de term jeugdzorgregio’s voorkomen, maar met ingang van 2019 wordt gesproken van jeugdregio’s. Nederland telt 42 jeugdregio's.
+",,,,
+"Cbs.OData.Topic",25,16,24,"Topic","Code_16","Code","Codes van de jeugdregio's.","String","code",0,"Impossible"
+"Cbs.OData.Topic",26,17,24,"Topic","Naam_17","Naam","Namen van de jeugdregio's.","String","naam",0,"Impossible"
+"Cbs.OData.TopicGroup",27,,5,"TopicGroup","","Kamer van Koophandel","KK = Kamer van Koophandel
+De indeling in werkgebieden van de Kamer van Koophandel regio's (KvK). De indeling wordt gehanteerd met ingang van 2008 en telde toen 12 KvK regio's. Per 1 januari 2014 is de indeling volledig herzien. Nederland telt vanaf die datum 5 KvK-regio's.
+
+",,,,
+"Cbs.OData.Topic",28,18,27,"Topic","Code_18","Code","Codes van de Kamer van Koophandel regio's (KvK).","String","code",0,"Impossible"
+"Cbs.OData.Topic",29,19,27,"Topic","Naam_19","Naam","Namen van de Kamer van Koophandel regio's (KvK).","String","naam",0,"Impossible"
+"Cbs.OData.TopicGroup",30,,5,"TopicGroup","","Landbouwgebieden","LB = Landbouwgebied
+Lokalisering van gemeenten per landbouwgebied. Groepering van gemeenten met (zoveel mogelijk) gelijksoortige typen van landbouwbedrijven. De indeling in landbouwgebieden is in 1991 door de Adviescommissie Landbouwstatistieken vastgesteld en valt binnen de provinciegrenzen. Nederland telt 65 landbouwgebieden.
+",,,,
+"Cbs.OData.Topic",31,20,30,"Topic","Code_20","Code","Codes van de landbouwgebieden.","String","code",0,"Impossible"
+"Cbs.OData.Topic",32,21,30,"Topic","Naam_21","Naam","Namen van de landbouwgebieden. Een aantal namen is vanwege hun lengte afgekort.","String","naam",0,"Impossible"
+"Cbs.OData.TopicGroup",33,,5,"TopicGroup","","Landbouwgebieden (groepen)","LG = Groep van landbouwgebieden
+Lokalisering van gemeenten per groep van landbouwgebieden. Een samenvoeging van de 65 landbouwgebieden tot 14 groepen van landbouwgebieden. Deze indeling is in 1991 tezamen met de indeling in 65 landbouwgebieden vastgesteld door de Adviescommissie Landbouwstatistieken.
+",,,,
+"Cbs.OData.Topic",34,22,33,"Topic","Code_22","Code","Codes van de groepen van landbouwgebieden.","String","code",0,"Impossible"
+"Cbs.OData.Topic",35,23,33,"Topic","Naam_23","Naam","Namen van de groepen van landbouwgebieden.
+","String","naam",0,"Impossible"
+"Cbs.OData.TopicGroup",36,,5,"TopicGroup","","Landsdelen","LD = Landsdeel
+Lokalisering van gemeenten per landsdeel. Nederland telt 4 landsdelen:
+Noord-Nederland: Groningen, Fryslân, Drenthe
+Oost-Nederland: Overijssel, Flevoland, Gelderland
+West-Nederland: Utrecht, Noord-Holland, Zuid-Holland, Zeeland
+Zuid-Nederland: Noord-Brabant, Limburg
+",,,,
+"Cbs.OData.Topic",37,24,36,"Topic","Code_24","Code","Codes van de landsdelen.","String","code",0,"Impossible"
+"Cbs.OData.Topic",38,25,36,"Topic","Naam_25","Naam","Namen van de landsdelen.","String","naam",0,"Impossible"
+"Cbs.OData.TopicGroup",39,,5,"TopicGroup","","Provincies","PV = Provincie
+Lokalisering van gemeenten per provincie. Bestuurlijke onderverdeling van het Nederlands grondgebied. Sinds het instellen van de provincie Flevoland per 1 januari 1986 telt Nederland 12 provincies.
+",,,,
+"Cbs.OData.Topic",40,26,39,"Topic","Code_26","Code","Codes van de provincies. De codering houdt rekening met de wijziging in volgorde van provincies vanwege de instelling van de provincie Flevoland per 1 januari 1986.","String","code",0,"Impossible"
+"Cbs.OData.Topic",41,27,39,"Topic","Naam_27","Naam","Namen van de provincies.","String","naam",0,"Impossible"
+"Cbs.OData.TopicGroup",42,,5,"TopicGroup","","Regionale eenheden","RE = Regionale eenheid
+De indeling in regionale eenheden is ingevoerd per 1 januari 2013 en berust op de Politiewet 2012. Tot 2013 was de politie verdeeld in 25 regiokorpsen (politieregio's) en het Korps Landelijke Politiediensten (KLPD). Vanaf 2013 telt Nederland 10 regionale eenheden en één landelijke eenheid. De 10 regionale eenheden zijn onderverdeeld in onder andere 43 districten en 167 basisteams.
+",,,,
+"Cbs.OData.Topic",43,28,42,"Topic","Code_28","Code","Codes van de regionale eenheden.","String","code",0,"Impossible"
+"Cbs.OData.Topic",44,29,42,"Topic","Naam_29","Naam","Namen van de regionale eenheden.","String","naam",0,"Impossible"
+"Cbs.OData.TopicGroup",45,,5,"TopicGroup","","Regionale Energiestrategie regio’s","ES = Regionale Energiestrategie regio
+In het kader van het klimaatakkoord is Nederland ingedeeld in 30 regio’s. In die regio’s werken de lokale overheden – gemeenten, provincies en waterschappen - aan het opstellen van Regionale Energiestrategieën (RES). Samen met bedrijfsleven, maatschappelijke organisaties, netbeheerders en inwoners brengen ze mogelijkheden voor lokale energiebesparing (o.a. isolatie van woningen en andere gebouwen) en duurzame opwekking van energie in kaart en de gevolgen daarvan voor het energienetwerk.
+",,,,
+"Cbs.OData.Topic",46,30,45,"Topic","Code_30","Code","Codes van de Regionale Energiestrategie regio’s.","String","code",0,"Impossible"
+"Cbs.OData.Topic",47,31,45,"Topic","Naam_31","Naam","Namen van de Regionale Energiestrategie regio’s.","String","naam",0,"Impossible"
+"Cbs.OData.TopicGroup",48,,5,"TopicGroup","","Regionale Meld- en Coördinatiepunten","MC = Regionaal Meld- en Coördinatiepunt
+In RMC-regio’s werken scholen en gemeenten samen om te voorkomen dat leerlingen zonder startkwalificatie van school gaan. Alle gemeenten in Nederland participeren in één van de 39 RMC-regio’s. Gemeenten registreren (potentiële) voortijdige schoolverlaters (vsv’ers) en zorgen ervoor dat ze via een geschikt onderwijs- of arbeidstraject alsnog een startkwaliﬁcatie halen. 
+",,,,
+"Cbs.OData.Topic",49,32,48,"Topic","Code_32","Code","Codes van de Regionale Meld- en Coördinatiepunten","String","code",0,"Impossible"
+"Cbs.OData.Topic",50,33,48,"Topic","Naam_33","Naam","Namen van de Regionale Meld- en Coördinatiepunten","String","naam",0,"Impossible"
+"Cbs.OData.TopicGroup",51,,5,"TopicGroup","","RegioPlus-arbeidsmarktregio's","RA = RegioPlus-arbeidsmarktregio
+Een indeling in regio's van waaruit regionale werkgeversorganisaties, verenigd in het samenwerkingsverband RegioPlus, zich inzetten voor het behouden en aantrekken van voldoende en goed gekwalificeerd personeel in zorg en welzijn. Deze indeling is tot stand gekomen vanuit dit samenwerkingsverband. Nederland telt 28 RegioPlus-arbeidsmarktregio's.
+",,,,
+"Cbs.OData.Topic",52,34,51,"Topic","Code_34","Code","Codes van de RegioPlus-arbeidsmarktregio's.","String","code",0,"Impossible"
+"Cbs.OData.Topic",53,35,51,"Topic","Naam_35","Naam","Namen van de RegioPlus-arbeidsmarktregio's.","String","naam",0,"Impossible"
+"Cbs.OData.TopicGroup",54,,5,"TopicGroup","","Ressorten (rechtsgebieden)","RT = Ressort (rechtsgebied)
+Lokalisering van gemeenten per ressort. Een ressort is het rechtsgebied van één van de gerechtshoven in Nederland. Elke ressort beslaat een aantal arrondissementen, dat zijn de rechtsgebieden van de rechtbanken.
+",,,,
+"Cbs.OData.Topic",55,36,54,"Topic","Code_36","Code","Codes van de ressorten (gerechtshoven).","String","code",0,"Missing"
+"Cbs.OData.Topic",56,37,54,"Topic","Naam_37","Naam","Namen van de ressorten (gerechtshoven).","String","naam",0,"Impossible"
+"Cbs.OData.TopicGroup",57,,5,"TopicGroup","","SubRES-regio’s","ET = SubRES-regio
+Een onderverdeling van een aantal van de 30 RES-regio’s; de volgende RES-regio’s zijn verder opgesplitst: Foodvalley (ES09), Noord-Holland Noord (ES15), Noord-Holland Zuid (ES16) en Zuid-Limburg (ES30).
+",,,,
+"Cbs.OData.Topic",58,38,57,"Topic","Code_38","Code","Codes van de SubRES-regio’s.","String","code",0,"Missing"
+"Cbs.OData.Topic",59,39,57,"Topic","Naam_39","Naam","Namen van de SubRES-regio’s.","String","naam",0,"Impossible"
+"Cbs.OData.TopicGroup",60,,5,"TopicGroup","","Toeristengebieden","TR = Toeristengebied
+Lokalisering van gemeenten per toeristengebied. De indeling in toeristengebieden is ontworpen in 1972 voor statistieken op het terrein van de toeristische dienstverlening en vrijetijdsbesteding. Nederland telt 17 toeristengebieden. De gebieden zijn niet noodzakelijkerwijs aaneensluitend.
+
+Van de gemeente 's-Gravenhage horen de onderdelen 'Kijkduin' en 'Scheveningen' en van de gemeente Rotterdam het onderdeel 'Hoek van Holland' niet tot het toeristengebied '4 grote steden excl. Noordzeebadplaatsen' (code TR16) maar tot het toeristengebied 'Noordzeebadplaatsen' (code TR02). Deze uitzonderingen zijn afgebakend als clusters van postcodegebieden:
+
+-	Kijkduin (postcode 2554 en 2555).
+-	Scheveningen (postcode 2583, 2584, 2586 en 2587).
+-	Hoek van Holland (postcode 3150 en 3151).
+
+",,,,
+"Cbs.OData.Topic",61,40,60,"Topic","Code_40","Code","Codes van de toeristengebieden.","String","code",0,"Impossible"
+"Cbs.OData.Topic",62,41,60,"Topic","Naam_41","Naam","Namen van de toeristengebieden. Een aantal namen is vanwege hun lengte afgekort.","String","naam",0,"Impossible"
+"Cbs.OData.TopicGroup",63,,5,"TopicGroup","","Toeristengebieden (groepen)","TG = Groep van toeristengebieden
+Lokalisering van gemeenten per groep van toeristengebieden. Een samenvoeging van de 17 toeristengebieden tot 6 groepen van toeristengebieden. ",,,,
+"Cbs.OData.Topic",64,42,63,"Topic","Code_42","Code","Codes van de groepen van toeristengebieden.","String","code",0,"Impossible"
+"Cbs.OData.Topic",65,43,63,"Topic","Naam_43","Naam","Namen van de groepen van toeristengebieden.","String","naam",0,"Impossible"
+"Cbs.OData.TopicGroup",66,,5,"TopicGroup","","Veilig Thuis Regio's","VT = Veilig Thuis regio
+Een indeling in regio’s waarin gemeenten met elkaar samenwerken voor de organisatie van een Advies- en Meldpunt Huiselijk Geweld en Kindermishandeling (ook wel Veilig Thuis genoemd), zoals vastgelegd in de Wet Maatschappelijke Ondersteuning 2015. Nederland telt 26 Veilig Thuis regio’s.
+",,,,
+"Cbs.OData.Topic",67,44,66,"Topic","Code_44","Code","Codes van de Veilig Thuis regio's.","String","code",0,"Impossible"
+"Cbs.OData.Topic",68,45,66,"Topic","Naam_45","Naam","Namen van de Veilig Thuis regio's.","String","naam",0,"Impossible"
+"Cbs.OData.TopicGroup",69,,5,"TopicGroup","","Veiligheidsregio's","VR = Veiligheidsregio
+Een veiligheidsregio is een gebied waarin de brandweer, de Geneeskundige Hulpverlening bij Ongevallen en Rampen (GHOR), de politie en gemeenten samenwerken voor een effectieve voorbereiding op en bestrijding van crises en rampen.
+",,,,
+"Cbs.OData.Topic",70,46,69,"Topic","Code_46","Code","Codes van de veiligheidsregio's.","String","code",0,"Impossible"
+"Cbs.OData.Topic",71,47,69,"Topic","Naam_47","Naam","Namen van de veiligheidsregio's.","String","naam",0,"Impossible"
+"Cbs.OData.TopicGroup",72,,5,"TopicGroup","","Zorgkantoorregio's","ZK = Zorgkantoorregio
+Groepering van gemeenten die samenhangt met de uitvoering van de Algemene Wet Bijzondere Ziektekosten (AWBZ) (tot 2015) of Wet langdurige zorg (vanaf 2017). Een zorgkantoor, nauw gelieerd aan één van de AWBZ/Wlz-verzekeraars, voert de AWBZ/Wlz uit namens alle AWBZ/Wlz-verzekeraars voor alle verzekerden in zijn regio, dus ook voor verzekerden die bij andere AWBZ/Wlz-verzekeraars staan ingeschreven. De indeling is voor het laatst herzien op 1 januari 2016 en telt vanaf die datum 31 gebieden.
+
+
+",,,,
+"Cbs.OData.Topic",73,48,72,"Topic","Code_48","Code","Codes van de zorgkantoorregio's.","String","code",0,"Impossible"
+"Cbs.OData.Topic",74,49,72,"Topic","Naam_49","Naam","Namen van de zorgkantoorregio's.","String","naam",0,"Impossible"
+"Cbs.OData.TopicGroup",75,,,"TopicGroup","","Grootte en stedelijkheid van gemeenten","Dit onderdeel bevat de indeling van gemeenten naar gemeentegrootte, op basis van inwonertal, en de indeling naar stedelijkheid, op basis van de omgevingsadressendichtheid.",,,,
+"Cbs.OData.TopicGroup",76,,75,"TopicGroup","","Gemeentegrootte","De toedeling naar gemeentegrootte gebeurt op basis van het inwonertal van de gemeente.",,,,
+"Cbs.OData.Topic",77,50,76,"Topic","Code_50","Code","Codes (1 t/m 8) van de grootteklassen van gemeenten. De volgende klassen worden onderscheiden:
+minder dan 5 000 inwoners (code 1)
+5 000 tot 10 000 inwoners (code 2)
+10 000 tot 20 000 inwoners (code 3)
+20 000 tot 50 000 inwoners (code 4)
+50 000 tot 100 000 inwoners (code 5)
+100 000 tot 150 000 inwoners (code 6)
+150 000 tot 250 000 inwoners (code 7)
+250 000 inwoners of meer (code 8)
+","String","code",0,"Impossible"
+"Cbs.OData.Topic",78,51,76,"Topic","Omschrijving_51","Omschrijving","Omschrijving van de grootteklassen van gemeenten naar inwonertal.","String","omschrijving",0,"Impossible"
+"Cbs.OData.TopicGroup",79,,75,"TopicGroup","","Stedelijkheid","De indeling van gemeenten naar stedelijkheid is gebaseerd op de omgevingsadressendichtheid van de gemeente. Allereerst is voor ieder adres binnen een gemeente de adressendichtheid vastgesteld van een gebied met een straal van 1 km rondom dat adres. De omgevingsadressendichtheid van een gemeente is de gemiddelde waarde hiervan voor alle adressen binnen die gemeente. De vijf stedelijkheidsklassen zijn gebaseerd op klassegrenzen van 2500, 1500, 1000 en 500 adressen per km².
+De volgende klassen worden onderscheiden:
+Zeer sterk stedelijk (omgevingsadressendichtheid van 2500 of meer, code 1)
+Sterk stedelijk (omgevingsadressendichtheid van 1500 tot 2500, code 2)
+Matig stedelijk (omgevingsadressendichtheid van 1000 tot 1500, code 3)
+Weinig stedelijk (omgevingsadressendichtheid van 500 tot 1000, code 4)
+Niet stedelijk (omgevingsadressendichtheid van minder dan 500, code 5)
+Meer informatie is opgenomen in de Maandstatistiek van de bevolking, juli 1992, en het Statistisch magazine nr. 3, 1992.
+",,,,
+"Cbs.OData.Topic",80,52,79,"Topic","Code_52","Code","Codes van de stedelijkheidsklassen van gemeenten.","String","code",0,"Impossible"
+"Cbs.OData.Topic",81,53,79,"Topic","Omschrijving_53","Omschrijving","Omschrijvingen van de stedelijkheidsklassen van gemeenten.","String","omschrijving",0,"Impossible"
+"Cbs.OData.TopicGroup",82,,,"TopicGroup","","Statistische gegevens","In dit onderdeel zijn cijfers opgenomen over inwonertal en omgevingsadressendichtheid.",,,,
+"Cbs.OData.Topic",83,54,82,"Topic","Inwonertal_54","Inwonertal","Aantal inwoners op 1 januari van het verslagjaar.","Long","aantal",0,"Impossible"
+"Cbs.OData.Topic",84,55,82,"Topic","Omgevingsadressendichtheid_55","Omgevingsadressendichtheid","De omgevingsadressendichtheid op 1 januari van het verslagjaar.
+De omgevingsadressendichtheid (Oad) is het gemiddeld aantal adressen per km2 dat een adres binnen zijn omgeving heeft. Als omgeving van een adres wordt een cirkel aangehouden met een straal van 1 km rondom dat adres. Het CBS heeft in 1992 de omgevingsadressendichtheid ontwikkeld als een nieuwe maatstaf voor stedelijkheid in de statistiek. De maatstaf beoogt de mate van concentratie van menselijke activiteiten (wonen, werken, schoolgaan, winkelen, uitgaan, etc.) in een gebied weer te geven.
+","Long","per km2",0,"Impossible"

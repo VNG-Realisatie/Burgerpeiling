@@ -114,6 +114,11 @@ k<-8
 
 # Visualising cluster results
 #use hierarchical clustering to assign each neuron to a cluster.
+
+#Ideally, the clusters found are contiguous on the map surface. However, this may not be the case,
+#depending on the underlying distribution of variables. To obtain contiguous cluster,
+#a hierachical clustering algorithm can be used that only combines nodes that are similar 
+#AND beside each other on the SOM grid. 
 som_cluster <- cutree(hclust(dist(som_data)), k)
 
 #-----------------------------------------------------------------------------------------------

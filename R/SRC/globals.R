@@ -83,6 +83,9 @@ aspect_ratio <- 1
 dpi <- 300 #retina(320)
 sub_title<-''
 
+#pointer weight variable
+weight.exists<-FALSE
+
 #set color pallettes
 coolBlueHotRed <- function(n, alpha = 1) {rainbow(n, end=4/6, alpha=alpha)[n:1]}
 
