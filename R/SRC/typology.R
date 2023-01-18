@@ -5,10 +5,10 @@
 
 #-----------------------------------------------------------------------------------------------
 
-#boundaries are based on all Burgerpeilingen during the last 3 years 
+#boundaries are based on all Burgerpeilingenof the past 3 years 
 #optimal binning 
-#qol_bin <- optbin(df_ss$qol_score, 4,na.rm = T, metric=c('mse'), max.cache=6^31)
-#part_bin <- optbin(df_ss$part_score, 4,na.rm = T, metric=c('mse'), max.cache=6^31)
+#qol_bin <- optbin::optbin(df_ss$qol_score, 4,na.rm = T, metric=c('mse'), max.cache=6^31)
+#part_bin <- optbin::optbin(df_ss$part_score, 4,na.rm = T, metric=c('mse'), max.cache=6^31)
 
 #hist(qol_bin)
 #summary(qol_bin)
@@ -99,5 +99,3 @@ df_ss_vital<-df_ss_weight %>%
          typology_pin4=ifelse(is.na(typology_pin1),NA,typology_pin4),
          zorgwekkend_pin1=ifelse(is.na(typology_pin1),NA,zorgwekkend_pin1)
          )
-
-

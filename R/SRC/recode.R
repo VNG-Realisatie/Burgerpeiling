@@ -43,4 +43,3 @@ df<- df %>%
                                 ifelse(ch02==5, 3,
                                        ifelse(ch02==6, 4, NA)))))
   ) 
-

@@ -376,7 +376,6 @@ df_ss<-  df %>%
     #_______________________________________________________________________
     #Schaalscore voorzieningenniveau.
     
-    
     vz01_1_wei=ifelse(vz01_1==1, 4,
                       ifelse(vz01_1==2, 3,
                              ifelse(vz01_1==3, 2,

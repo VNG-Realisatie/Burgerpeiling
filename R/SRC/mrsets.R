@@ -5,17 +5,17 @@
 
 #-----------------------------------------------------------------------------------------------
 
-
+#identifier of municipality and year
 df$GEOYR<-paste0(df$GEOITEM,'-',df$PERIOD)
 gy<-unique(df$GEOYR)
   
-
 iter_vw <- list()
 iter_vl <- list()
 iter_bh <- list()
 
+#iteration 
 for(i in gy) {
-  
+
 print(i)
 
 #-----------------------------------------------------------------------------------------------
@@ -83,9 +83,6 @@ colnames(bh)<-c("zw13_0","zw13_1","zw13_2","zw13_3","zw13_4","zw13_5","zw13_6","
 bh<-as_tibble(bh)
 
 iter_bh[[i]]<-bh
-
-
-
 }
 
 #append 
@@ -95,5 +92,3 @@ bh_set<-do.call(rbind,iter_bh)
 
 #merge
 mr_sets<-cbind(vw_set,vl_set,bh_set) 
-
-

@@ -5,7 +5,7 @@
 
 #-----------------------------------------------------------------------------------------------
 
-#eliminate previous generated variables
+#eliminate previous generated variables (in case of re-run)
 df$GEOITEM<-NULL
 df$PERIOD<-NULL
 
@@ -17,7 +17,9 @@ var.loc<-here::here("DATA/REF/var_df.RData")
 #var_df<-as_tibble(var_nms)
 #save(var_df,file="DATA/REF/var_df.RData")
 
-#if(var_len>194) { stop("dataframe contains illegal variables!") }
+#vector with valid variables
+load(var.loc)
+var_vec<-as.vector(var_df)
 
 #get duplicates
 #get_dupes(df,-c(id,respondent))

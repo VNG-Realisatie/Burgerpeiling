@@ -15,7 +15,6 @@ Sys.getlocale()
 
 #getOption("encoding")
 
-
 #turn-off R’s automatic conversion of strings into factors
 #prevent exponential / scientific notation.
 #decimal delimiter
@@ -25,7 +24,6 @@ Sys.getlocale()
 
 options(scipen = 999, digits = 4, OutDec=",", stringsAsFactors = FALSE, encoding = "UTF-8",
         warn = 0, dplyr.summarise.inform = FALSE)
-
 
 #R root
 r_root <- here::here()
@@ -81,12 +79,11 @@ graph_height <- 6
 png_height <- 960
 aspect_ratio <- 1
 dpi <- 300 #retina(320)
-sub_title<-''
+sub_title<-'' #empty unless specified
 
-#pointer weight variable
+#pointer weight variable exists
 weight.exists<-FALSE
 
 #set color pallettes
 coolBlueHotRed <- function(n, alpha = 1) {rainbow(n, end=4/6, alpha=alpha)[n:1]}
-
 pretty_palette <- c("#1f77b4","#ff7f0e","#2ca02c", "#d62728","#9467bd","#8c564b","#e377c2")

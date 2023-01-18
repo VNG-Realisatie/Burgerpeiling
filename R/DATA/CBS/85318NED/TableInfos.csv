@@ -1,0 +1,122 @@
+"ID","Title","ShortTitle","Identifier","Summary","Modified","ReasonDelivery","ExplanatoryText","Language","Catalog","Frequency","Period","ShortDescription","Description","DefaultPresentation","DefaultSelection","GraphTypes","OutputStatus","Source","MetaDataModified","SearchPriority"
+0,"Kerncijfers wijken en buurten 2022","Kerncijfers wijken en buurten 2022","85318NED","Kerncijfers over demografische en sociaal-economische kenmerken
+Uitgesplitst naar gemeenten, wijken en buurten","2022-12-22T02:00:00","ActualiseringBijzonder","","nl","CBS","Onregelmatig","2022","
+Overzicht van statistische gegevens van gemeenten, wijken en buurten in Nederland. 
+
+Gegevens beschikbaar over: 2022.
+
+Status van de cijfers:
+Definitief, tenzij in de toelichting bij het onderwerp expliciet is vermeld dat het voorlopige cijfers betreft.
+
+Wijzigingen per december 2022
+Binnen de thema’s wonen en motorvoertuigen zijn nieuwe cijfers toegevoegd. 
+De cijfers over motorvoertuigen zijn vanaf 2020 berekend op basis van een nieuwe verbeterde selectiemethode, waarbij alleen voertuigen zijn meegenomen, die op basis van verzekering deel mochten nemen aan het verkeer. Voorheen werden ook enkele niet-verzekerde voertuigen meegenomen. In paragraaf 4 staat een koppeling naar het methoderapport waarin de verschillen tussen de oude en nieuwe selectiemethode worden uitgelegd en gekwantificeerd.
+
+
+Wanneer komen er nieuwe cijfers?
+Elk kwartaal worden er nieuwe cijfers toegevoegd indien deze beschikbaar zijn.
+
+","INHOUDSOPGAVE
+
+1. Toelichting
+2. Definities en verklaring van symbolen
+3. Koppelingen naar relevante tabellen en artikelen
+4. Bronnen en methoden
+5. Meer informatie 
+
+
+1. TOELICHTING
+
+Overzicht van statistische gegevens van gemeenten, wijken en buurten in Nederland. 
+
+Gegevens beschikbaar over: 2022.
+
+Status van de cijfers:
+Definitief, tenzij in de toelichting bij het onderwerp expliciet is vermeld dat het voorlopige cijfers betreft.
+
+Wijzigingen per december 2022
+Binnen de thema’s wonen en motorvoertuigen zijn nieuwe cijfers toegevoegd. 
+De cijfers over motorvoertuigen zijn vanaf 2020 berekend op basis van een nieuwe verbeterde selectiemethode, waarbij alleen voertuigen zijn meegenomen, die op basis van verzekering deel mochten nemen aan het verkeer. Voorheen werden ook enkele niet-verzekerde voertuigen meegenomen. In paragraaf 4 staat een koppeling naar het methoderapport waarin de verschillen tussen de oude en nieuwe selectiemethode worden uitgelegd en gekwantificeerd.
+
+
+Wanneer komen er nieuwe cijfers?
+Elk kwartaal worden er nieuwe cijfers toegevoegd indien deze beschikbaar zijn.
+
+
+2. DEFINITIES EN VERKLARING VAN SYMBOLEN
+
+Definities:
+
+Regio:
+De gemeenten in Nederland zijn onderverdeeld in wijken en buurten. Buurten vormen het laagste regionale niveau. Wijken zijn optellingen van één of meer aaneengesloten buurten. De gemeente bepaalt zelf de indeling in wijken en buurten. Het CBS coördineert landelijk deze indeling.
+
+Wijk:
+Onderdeel van een gemeente, bestaande uit één of meerdere buurten. Vaak komt een wijk overeen met een woonplaats of een deel van een grotere woonplaats.
+
+Buurt:
+Onderdeel van een wijk, die vanuit bebouwingsoogpunt of sociaaleconomische structuur homogeen is afgebakend. Homogeen wil zeggen dat één functie dominant is, bijvoorbeeld woonfunctie (woongebied), werkfunctie (industriegebied) of recreatieve functie (natuurgebied). Functies kunnen echter ook gemengd voorkomen.
+
+Verklaring van symbolen:
+
+niets (blanco)	: het cijfer kan op logische gronden niet voorkomen
+. 		: het cijfer is onbekend, onvoldoende betrouwbaar of geheim
+*		: voorlopige cijfers
+**		: nader voorlopige cijfers
+
+
+3. KOPPELINGEN NAAR RELEVANTE TABELLEN EN ARTIKELEN
+
+Relevante tabellen:
+
+Meer cijfers over wijken en buurten zijn te vinden in de StatLinetabellen:
+<a href='https://opendata.cbs.nl/#/CBS/nl/dataset/85039NED/table?dl=6A2DB'>Kerncijfers wijken en buurten 2021</a>
+<a href='https://opendata.cbs.nl/#/CBS/nl/dataset/84799NED/table?dl=50222'>Kerncijfers wijken en buurten 2020</a>
+<a href='https://opendata.cbs.nl/statline/#/CBS/nl/dataset/84583NED/table?dl=3A1E8'>Kerncijfers wijken en buurten 2019</a>
+<a href='https://opendata.cbs.nl/statline/#/CBS/nl/dataset/84286NED/table?dl=1C622'>Kerncijfers wijken en buurten 2018</a>
+<a href='https://opendata.cbs.nl/statline/#/CBS/nl/dataset/83765NED/table?dl=C3D2'>Kerncijfers wijken en buurten 2017</a>
+<a href='https://opendata.cbs.nl/statline/#/CBS/nl/dataset/83487NED/table?dl=3E45'>Kerncijfers wijken en buurten 2016</a>
+<a href='https://opendata.cbs.nl/statline/#/CBS/nl/dataset/83220NED/table?dl=4A5F'>Kerncijfers wijken en buurten 2015</a>
+<a href='https://opendata.cbs.nl/statline/#/CBS/nl/dataset/82931NED/table?dl=5F5A'>Kerncijfers wijken en buurten 2014</a>
+<a href='https://opendata.cbs.nl/statline/#/CBS/nl/dataset/82339NED/table?dl=5F5B'>Kerncijfers wijken en buurten 2013</a>
+<a href='https://opendata.cbs.nl/statline/#/CBS/nl/dataset/70904ned/table?dl=5F5D'>Kerncijfers wijken en buurten 2009-2012</a>
+
+Data uit bovengenoemde StatLinetabellen zijn ook als <a href='https://www.cbs.nl/nl-nl/dossier/nederland-regionaal/wijk-en-buurtstatistieken'>Excelbestand</a> beschikbaar.
+
+Wijk- en buurtcijfers per thema op StatLine:
+<a href='https://opendata.cbs.nl/statline/#/CBS/nl/navigatieScherm/thema?themaNr=82400'>Energie</a>
+<a href='https://opendata.cbs.nl/statline/#/CBS/nl/navigatieScherm/thema?themaNr=83370'>Opleidingsniveau</a>
+<a href='https://opendata.cbs.nl/statline/#/CBS/nl/navigatieScherm/thema?themaNr=81015'>Sociale Zekerheid</a>
+<a href='https://opendata.cbs.nl/statline/#/CBS/nl/navigatieScherm/thema?themaNr=82173'>Zorg</a>
+<a href='https://opendata.cbs.nl/statline/#/CBS/nl/navigatieScherm/thema?themaNr=80314'>Nabijheid voorzieningen</a>
+<a href='https://opendata.cbs.nl/statline/#/CBS/nl/navigatieScherm/thema?themaNr=52000'>Bodemgebruik</a>
+<a href='https://opendata.cbs.nl/statline/#/CBS/nl/navigatieScherm/thema?themaNr=82138'>Motorvoertuigen</a>
+
+Overige publicaties met regionale kerncijfers:
+<a href='https://www.cbs.nl/nl-nl/dossier/nederland-regionaal/wegwijzer/cbs-in-uw-buurt'>CBS in uw buurt</a>
+<a href='https://www.cbs.nl/nl-nl/dossier/nederland-regionaal/cartografische-toegang/geoservices-bij-het-cbs'>Geoservices bij het CBS</a>
+<a href='https://opendata.cbs.nl/#/CBS/nl/dataset/70072ned/table?dl=40544'>Regionale kerncijfers Nederland</a>
+
+De wijk- en buurtkaart bevat de digitale geometrie van de grenzen van de buurten, wijken en gemeenten en wordt <a href='https://www.cbs.nl/nl-nl/reeksen/geografische-data'>op de CBS-website</a>  en op <a href='https://www.pdok.nl/'>pdok.nl</a> beschikbaar gesteld. 
+
+Het CBS geeft elk kwartaal een <a href='https://www.cbs.nl/nl-nl/dossier/nederland-regionaal/gemeente/nieuwsbrief-regionaal'>Nieuwsbrief Regionaal</a> uit, waarin een overzicht wordt gegeven van de nieuwste cijfers en publicaties op lokaal niveau en overige ontwikkelingen op het gebied van regionale en ruimtelijke statistieken. Hierop kunt u zich abonneren via de volgende link <a href='https://www.cbs.nl/nl-nl/dossier/nederland-regionaal/gemeente/nieuwsbrief-regionaal'>Nieuwsbrief Regionaal</a>.
+
+Meer informatie is te vinden op de themapagina <a href='https://www.cbs.nl/nl-nl/dossier/nederland-regionaal'>Nederland regionaal</a>.
+
+
+4. BRONNEN EN METHODEN
+
+De onderzoeksmethode van deze tabel is te vinden in de onderzoeksbeschrijving: <a href='https://www.cbs.nl/nl-nl/onze-diensten/methoden/onderzoeksomschrijvingen/korte-onderzoeksbeschrijvingen/kerncijfers-wijken-en-buurten'>Kerncijfers Wijken en Buurten</a>.
+
+De herziene methode voor de selectie van motorvoertuigen wordt uitgelegd in het <a href='https://www.cbs.nl/nl-nl/longread/rapportages/2022/methoderapport-motorvoertuigenpark-2019-2022'>methoderapport motorvoertuigenpark, 2019-2022</a>.
+
+De gemiddelde WOZ-waarde van woningen is vanaf 2020 op basis van de BAG woningvoorraadpopulatie berekend in plaats van de WOZ woningvoorraad. De verschillen zijn in kaart gebracht in de <a href='https://www.cbs.nl/nl-nl/longread/diversen/2021/verschillenanalyse-gemiddelde-woz-waarde-van-woningen'>verschillenanalyse gemiddelde WOZ-waarde van woningen</a>.
+
+De oppervlaktes land en water per regio zijn bepaald door het combineren van het meest recente Bestand Bodemgebruik (BBG) met het digitale bestand van gemeente-, wijk- en buurtgrenzen. Bij de productie van een nieuwe BBG-editie worden geconstateerde fouten en verbeterde interpretaties op basis van nieuwe bronnen bij eerdere BBG-edities vastgesteld (gecorrigeerd bodemgebruik). Na publicatie van een nieuw BBG worden de arealen land en water per regio voor eerdere verslagjaren van Kerncijfers wijken en buurten (KWB) echter niet herzien. Zie de definities van ‘oppervlakte land’ en ‘oppervlakte water’ voor de toegepaste BBG-edities per verslagjaar van de KWB. Zie de webpagina <a href='https://www.cbs.nl/nl-nl/dossier/nederland-regionaal/geografische-data/natuur-en-milieu/bestand-bodemgebruik'>Bestand Bodemgebruik</a> voor een nadere toelichting op gecorrigeerd bodemgebruik en beschikbare publicaties.
+
+
+5. MEER INFORMATIE
+
+<a href='https://www.cbs.nl/nl-nl/over-ons/contact/infoservice'>Infoservice</a> 
+
+Copyright © Centraal Bureau voor de Statistiek, Den Haag/Heerlen 
+Verveelvoudiging is toegestaan, mits het CBS als bron wordt vermeld.","ts=1671117192072&graphtype=Table&r=WijkenEnBuurten&k=Topics&_gu=WK","$filter=((WijkenEnBuurten eq 'NL00      ') or (WijkenEnBuurten eq 'GM1680    ') or (WijkenEnBuurten eq 'WK168000  ') or (WijkenEnBuurten eq 'BU16800000') or (WijkenEnBuurten eq 'GM0358    ') or (WijkenEnBuurten eq 'WK035800  ') or (WijkenEnBuurten eq 'BU03580000'))&$select=WijkenEnBuurten, SoortRegio_2, Woningvoorraad_34, GemiddeldeWoningwaarde_35, PercentageEengezinswoning_36, PercentageMeergezinswoning_37, Koopwoningen_40, HuurwoningenTotaal_41, PersonenautoSBrandstofBenzine_101, PersonenautoSOverigeBrandstof_102, PersonenautoSPerHuishouden_103, PersonenautoSNaarOppervlakte_104, Motorfietsen_105","Table,Map","Regulier","CBS.","2022-12-22T02:00:00","2"

@@ -27,9 +27,9 @@ df_aggr_mn<- df_weight %>%
     sa03=survey_mean(sa01_2,na.rm=TRUE, vartype=vt)
   ) %>% 
   mutate_at(.,vars(-group_cols()),~ifelse(is.nan(.) | is.infinite(.), NA, .)) %>%
-  mutate_at(.,vars(-group_cols()),~replace(., .<2, NA))  
+  mutate_at(.,vars(-group_cols()),~replace(., .<1, NA))  
 
-#df_aggr_mn2<- df_weight %>%
+#df_aggr_mn<- df_weight %>%
 #group_by(GEOITEM,PERIOD) %>%
 #srvyr::summarize(
 #bp_respons=n(),

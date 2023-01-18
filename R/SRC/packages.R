@@ -44,7 +44,7 @@ packages <- c(
   'data.table',
   #spss
   'haven', 
-  #
+  #Read Rectangular Text Data
   'readr',
   #statistical calculations
   'stats',

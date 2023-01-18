@@ -225,6 +225,10 @@ df_aggr_pin<- df_weight %>%
     mm01_4=(survey_mean((mm01_4<3), na.rm=TRUE,vartype=vt) *100),
     mm02_0=(survey_mean((mm02_0<3), na.rm=TRUE,vartype=vt) *100),
     wl13=(survey_mean((wl13==1), na.rm=TRUE,vartype=vt) *100),
+   #new 23-01-03
+    wl13_pin2=(survey_mean((wl13==2), na.rm=TRUE,vartype=vt) *100),
+   #new 23-01-03
+    wl13_pin3=(survey_mean((wl13==3), na.rm=TRUE,vartype=vt) *100), 
     dv02=(survey_mean((dv02==1), na.rm=TRUE,vartype=vt) *100),
     zw05_rc=(survey_mean((zw05_4==0), na.rm=TRUE,vartype=vt) *100),
     dv06_pin=(survey_mean((dv06>=1 & dv06<=5), na.rm=TRUE,vartype=vt) *100),

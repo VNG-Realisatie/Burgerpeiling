@@ -6,13 +6,13 @@
 #-----------------------------------------------------------------------------------------------
 
 #this procedure is to check the results of the Burgerpeiling as (will be) presented on
-#Waarstaatjegemeente.nl (VNG), as well as to generate additional visualisations
+#Waarstaatjegemeente.nl (VNG). Moreover it enables you to generate additional visualizations
 
 #see'Beschrijving' directory for specification of the variables.
 
-#last update 2022-12-12 (alpha version)
+#last update 2023-01-18 (beta version)
 
-#questions? contact Mark Henry Gremmen mark.gremmen@vng.nl
+#questions? contact Mark Henry Gremmen mark.gremmen@vng.nl (VNG)
 
 #-----------------------------------------------------------------------------------------------
 
@@ -20,7 +20,7 @@
 
 #-----------------------------------------------------------------------------------------------
 
-#Run in project environment (to avoid package conflicts)
+#Run in an isolated project environment (to avoid package conflicts)
 proj_env<-FALSE #default (F)
 
 #packages
@@ -76,18 +76,16 @@ source(here::here('SRC/preperation.R'))
 
 message("Subsetting...")
 
-#vector with valid variables
-load(var.loc)
-var_vec<-as.vector(var_df)
-
 df<-df %>% 
   #municipality id exists
   filter(!is.na(gemnr)) %>%
+  #municipality
+  #filter(gemnr==1955) %>%
+  #year
+  filter(jr>=2020) %>%
   #Weight lower than 5
   filter(weging<5) %>%
-  #year
-  filter(jr>2019) %>%
-  #valid variables
+  #valid variables (see SRC>preparation.R)
   select(any_of((var_vec[["value"]])))
 
 #identify numeric variables
@@ -176,7 +174,7 @@ source(here::here('SRC/mrsets.R'))
 
 #-----------------------------------------------------------------------------------------------
 
-message("Weight...")
+message("apply Weight...")
 
 #apply weight to df
 df_weight<- df %>% 
@@ -201,7 +199,7 @@ message("Mean...")
 source(here::here('SRC/mean.R'))
 
 #-----------------------------------------------------------------------------------------------
-#PIN (gemeente, jaar)
+#PERCENTAGE IN (gemeente, jaar)
 
 message("Distribution...")
 
@@ -215,10 +213,10 @@ source(here::here('SRC/pin.R'))
 
 message("Scale scores...")
 
-#scalescore definitions
+#scale score definitions
 #https://www.waarstaatjegemeente.nl/Jive/ViewerReportContents.ashx?report=wsjg_bp_bijlage
  
-#rowwise operations
+#row wise operations
 #parallel processing
 
 cluster <- multidplyr::new_cluster(parallel::detectCores() - 1)
@@ -265,8 +263,6 @@ df_munic<-cbind(df_munic,mr_sets)
 
 #df_munic <- list(df_aggr_mn,df_aggr_pin,df_ss_aggr,df_ss_type_aggr,df_ss_age_aggr,df_ss_vital) |> purrr::reduce(rbind)
 
-#keep valid columns (remove indicators by age where age is missing)
-#df_munic<-df_munic %>% select(-contains(c("_cy0", "_cyNA", ".NA")))
 
 #-----------------------------------------------------------------------------------------------
 
