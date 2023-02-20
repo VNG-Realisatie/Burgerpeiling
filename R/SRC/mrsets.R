@@ -57,8 +57,8 @@ vl<-as_tibble(vl_mr[1:6,2]) %>%
   t()
 
 
-colnames(vl)<-c("zw05_0_pin","zw05_1_pin","zw05_2_pin","zw05_3_pin",
-                "zw05_4_pin","zw05_5_pin")
+colnames(vl)<-c("zw05_pin0","zw05_pin1","zw05_pin2","zw05_pin3",
+                "zw05_pin4","zw05_pin5")
 
 
 vl<-as_tibble(vl)
@@ -78,7 +78,7 @@ bh_mr<-df %>%
 bh<-as_tibble(bh_mr[1:9,2]) %>%
   t()
 
-colnames(bh)<-c("zw13_0","zw13_1","zw13_2","zw13_3","zw13_4","zw13_5","zw13_6","zw13_7","zw13_8")
+colnames(bh)<-c("zw13_0_pin","zw13_1_pin","zw13_2_pin","zw13_3_pin","zw13_4_pin","zw13_5_pin","zw13_6_pin","zw13_7_pin","zw13_8_pin")
 
 bh<-as_tibble(bh)
 

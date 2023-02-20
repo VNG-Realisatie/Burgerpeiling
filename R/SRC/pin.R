@@ -191,14 +191,14 @@ df_aggr_pin<- df_weight %>%
     #wl12n_2=(survey_mean((wl12_2<3), na.rm=TRUE,vartype=vt) *100),
     vz01_0=(survey_mean((vz01_0<3), na.rm=TRUE,vartype=vt) *100),
     vz01_1=(survey_mean((vz01_1<3), na.rm=TRUE,vartype=vt) *100),
-    vz02_0=(survey_mean((vz02_0<3), na.rm=TRUE,vartype=vt) *100),
-    vz02_1=(survey_mean((vz02_1<3), na.rm=TRUE,vartype=vt) *100),
+    #vz02_0=(survey_mean((vz02_0<3), na.rm=TRUE,vartype=vt) *100),
+    #vz02_1=(survey_mean((vz02_1<3), na.rm=TRUE,vartype=vt) *100),
     bo02_0=(survey_mean((bo02_0<3), na.rm=TRUE,vartype=vt) *100),
     bo02_1=(survey_mean((bo02_1<3), na.rm=TRUE,vartype=vt) *100),
     bo02_2=(survey_mean((bo02_2<3), na.rm=TRUE,vartype=vt) *100),
     bo03_0=(survey_mean((bo03_0<3), na.rm=TRUE,vartype=vt) *100),
     bo03_1=(survey_mean((bo03_1<3), na.rm=TRUE,vartype=vt) *100),
-    bo04_0=(survey_mean((bo04_0<3), na.rm=TRUE,vartype=vt) *100),
+    #bo04_0=(survey_mean((bo04_0<3), na.rm=TRUE,vartype=vt) *100),
     dv07_1=(survey_mean((dv07_1<3), na.rm=TRUE,vartype=vt) *100),
     dv07_2=(survey_mean((dv07_2<3), na.rm=TRUE,vartype=vt) *100), 
     dv07_3=(survey_mean((dv07_3<3), na.rm=TRUE,vartype=vt) *100),
@@ -275,8 +275,8 @@ df_rev_aggr_pin<- df_weight %>%
     wl12_2_rv=(survey_mean((wl12_2 %in% c(4,5)), na.rm=TRUE,vartype=vt) *100),
     vz01_0_rv=(survey_mean((vz01_0 %in% c(4,5)), na.rm=TRUE,vartype=vt) *100),
     vz01_1_rv=(survey_mean((vz01_1 %in% c(4,5)), na.rm=TRUE,vartype=vt) *100),
-    vz02_0_rv=(survey_mean((vz02_0 %in% c(4,5)), na.rm=TRUE,vartype=vt) *100),
-    vz02_1_rv=(survey_mean((vz02_1 %in% c(4,5)), na.rm=TRUE,vartype=vt) *100),
+    #vz02_0_rv=(survey_mean((vz02_0 %in% c(4,5)), na.rm=TRUE,vartype=vt) *100),
+    #vz02_1_rv=(survey_mean((vz02_1 %in% c(4,5)), na.rm=TRUE,vartype=vt) *100),
     vz03_0_rv=(survey_mean((vz03_0 %in% c(4,5)), na.rm=TRUE,vartype=vt) *100),
     vz03_1_rv=(survey_mean((vz03_1 %in% c(4,5)), na.rm=TRUE,vartype=vt) *100),
     vz03_2_rv=(survey_mean((vz03_2 %in% c(4,5)), na.rm=TRUE,vartype=vt) *100),
@@ -298,7 +298,7 @@ df_rev_aggr_pin<- df_weight %>%
     bo02_1_rv=(survey_mean((bo02_1 %in% c(4,5)), na.rm=TRUE,vartype=vt) *100),
     bo02_2_rv=(survey_mean((bo02_2 %in% c(4,5)), na.rm=TRUE,vartype=vt) *100),
     bo03_0_rv=(survey_mean((bo03_0 %in% c(4,5)), na.rm=TRUE,vartype=vt) *100),
-    bo03_1_rv=(survey_mean((bo03_1 %in% c(4,5)), na.rm=TRUE,vartype=vt) *100),
-    bo04_0_rv=(survey_mean((bo04_0 %in% c(4,5)), na.rm=TRUE,vartype=vt) *100)
+    bo03_1_rv=(survey_mean((bo03_1 %in% c(4,5)), na.rm=TRUE,vartype=vt) *100)
+    #bo04_0_rv=(survey_mean((bo04_0 %in% c(4,5)), na.rm=TRUE,vartype=vt) *100)
   )
 

@@ -82,11 +82,11 @@ df<-df %>%
   #municipality
   #filter(gemnr==1955) %>%
   #year
-  filter(jr>=2020) %>%
+  filter(jr>=2021) %>%
   #Weight lower than 5
-  filter(weging<5) %>%
+  filter(weging<5) #%>%
   #valid variables (see SRC>preparation.R)
-  select(any_of((var_vec[["value"]])))
+  #select(any_of((var_vec[["value"]])))
 
 #identify numeric variables
 numeric_cols<- unlist(lapply(df, is.numeric))         
@@ -147,6 +147,16 @@ munic.active<-levels(factor(df$GEMEENTE))
 geoitem.active<-as.numeric(levels(factor(df$GEOITEM)))
 
 cat("reporting municipalities: ", munic.active)
+
+#-----------------------------------------------------------------------------------------------
+
+#isolate form merged file
+#geoitem.sep<-geoitem.active
+
+#df_clean<- df %>%
+#  filter(!GEOITEM %in% geoitem.sep)
+
+#write_sav(df_clean, "BP-unique2122.sav") 
 
 #-----------------------------------------------------------------------------------------------
 

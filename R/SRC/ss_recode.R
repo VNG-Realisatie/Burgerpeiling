@@ -234,12 +234,12 @@ df_ss<-  df %>%
                                           ifelse(wl03_1==4, 1,
                                                  ifelse(wl03_1==5, 0,
                                                         ifelse(is.na(wl03_1), NA, NA)))))),
-    wl11_0_cross_wei=ifelse(wl11==1, 4,
-                            ifelse(wl11==2, 3,
-                                   ifelse(wl11==3, 2,
-                                          ifelse(wl11==4, 1,
-                                                 ifelse(wl11==5, 0,
-                                                        ifelse(is.na(wl11), NA, NA)))))),
+    #wl11_0_cross_wei=ifelse(wl11==1, 4,
+    #                        ifelse(wl11==2, 3,
+    #                               ifelse(wl11==3, 2,
+    #                                      ifelse(wl11==4, 1,
+    #                                             ifelse(wl11==5, 0,
+    #                                                    ifelse(is.na(wl11), NA, NA)))))),
     wl12_0_cross_wei=ifelse(wl12_0==1, 4,
                             ifelse(wl12_0==2, 3,
                                    ifelse(wl12_0==3, 2,
@@ -261,7 +261,9 @@ df_ss<-  df %>%
                                    ifelse(zw10_1==3, 0,
                                           ifelse(is.na(zw10_1), NA, NA)))),
     
-    samenredzaam_ss=mean(c(wl03_1_cross_wei,wl11_0_cross_wei,wl12_0_cross_wei,wl13_cross_wei, zw06_1_cross_wei, zw10_1_cross_wei),na.rm=TRUE) * (10/4),
+    samenredzaam_ss=mean(c(wl03_1_cross_wei,
+                           #wl11_0_cross_wei,
+                           wl12_0_cross_wei,wl13_cross_wei, zw06_1_cross_wei, zw10_1_cross_wei),na.rm=TRUE) * (10/4),
     
     
     #_______________________________________________________________________
@@ -376,26 +378,26 @@ df_ss<-  df %>%
     #_______________________________________________________________________
     #Schaalscore voorzieningenniveau.
     
-    vz01_1_wei=ifelse(vz01_1==1, 4,
-                      ifelse(vz01_1==2, 3,
-                             ifelse(vz01_1==3, 2,
-                                    ifelse(vz01_1==4, 1,
-                                           ifelse(vz01_1==5, 0,
-                                                  ifelse(is.na(vz01_1), NA, NA)))))),
+    #vz01_1_wei=ifelse(vz01_1==1, 4,
+    #                  ifelse(vz01_1==2, 3,
+    #                         ifelse(vz01_1==3, 2,
+    #                                ifelse(vz01_1==4, 1,
+    #                                       ifelse(vz01_1==5, 0,
+    #                                              ifelse(is.na(vz01_1), NA, NA)))))),
     
-    vz02_0_wei=ifelse(vz02_0==1, 4,
-                      ifelse(vz02_0==2, 3,
-                             ifelse(vz02_0==3, 2,
-                                    ifelse(vz02_0==4, 1,
-                                           ifelse(vz02_0==5, 0,
-                                                  ifelse(is.na(vz02_0), NA, NA)))))),
+    #vz02_0_wei=ifelse(vz02_0==1, 4,
+    #                  ifelse(vz02_0==2, 3,
+    #                         ifelse(vz02_0==3, 2,
+    #                                ifelse(vz02_0==4, 1,
+    #                                       ifelse(vz02_0==5, 0,
+    #                                              ifelse(is.na(vz02_0), NA, NA)))))),
     
-    vz02_1_wei=ifelse(vz02_1==1, 4,
-                      ifelse(vz02_1==2, 3,
-                             ifelse(vz02_1==3, 2,
-                                    ifelse(vz02_1==4, 1,
-                                           ifelse(vz02_1==5, 0,
-                                                  ifelse(is.na(vz02_1), NA, NA)))))),
+    #vz02_1_wei=ifelse(vz02_1==1, 4,
+    #                  ifelse(vz02_1==2, 3,
+    #                         ifelse(vz02_1==3, 2,
+    #                                ifelse(vz02_1==4, 1,
+    #                                       ifelse(vz02_1==5, 0,
+    #                                              ifelse(is.na(vz02_1), NA, NA)))))),
     
     vz03_0_wei=ifelse(vz03_0==1, 4,
                       ifelse(vz03_0==2, 3,
@@ -432,7 +434,25 @@ df_ss<-  df %>%
                                            ifelse(vz03_4==5, 0,
                                                   ifelse(is.na(vz03_4), NA, NA)))))),
     
-    voorzieningen_ss=mean(c(vz01_0_wei, vz01_1_wei, vz02_0_wei,vz02_1_wei, vz03_0_wei, vz03_1_wei, vz03_2_wei, vz03_3_wei, vz03_4_wei),na.rm=TRUE) * (35/14),
+    
+    vz03_5_wei=ifelse(vz03_5==1, 4,
+                      ifelse(vz03_5==2, 3,
+                             ifelse(vz03_5==3, 2,
+                                    ifelse(vz03_5==4, 1,
+                                           ifelse(vz03_5==5, 0,
+                                                  ifelse(is.na(vz03_5), NA, NA)))))),
+    
+    vz03_6_wei=ifelse(vz03_6==1, 4,
+                      ifelse(vz03_6==2, 3,
+                             ifelse(vz03_6==3, 2,
+                                    ifelse(vz03_6==4, 1,
+                                           ifelse(vz03_6==5, 0,
+                                                  ifelse(is.na(vz03_6), NA, NA)))))),
+    
+    voorzieningen_ss=mean(c(vz01_0_wei, 
+                            #vz01_1_wei, 
+                            vz03_5_wei,vz03_6_wei, 
+                            vz03_0_wei, vz03_1_wei, vz03_2_wei, vz03_3_wei, vz03_4_wei),na.rm=TRUE) * (35/14),
     
     
     #_______________________________________________________________________
@@ -515,12 +535,12 @@ df_ss<-  df %>%
                                            ifelse(bo03_1==5, 0,
                                                   ifelse(is.na(bo03_1), NA, NA)))))),
     
-    bo04_0_wei=ifelse(bo04_0==1, 4,
-                      ifelse(bo04_0==2, 3,
-                             ifelse(bo04_0==3, 2,
-                                    ifelse(bo04_0==4, 1,
-                                           ifelse(bo04_0==5, 0,
-                                                  ifelse(is.na(bo04_0), NA, NA)))))),
+    #bo04_0_wei=ifelse(bo04_0==1, 4,
+    #                  ifelse(bo04_0==2, 3,
+    #                         ifelse(bo04_0==3, 2,
+    #                                ifelse(bo04_0==4, 1,
+    #                                       ifelse(bo04_0==5, 0,
+    #                                              ifelse(is.na(bo04_0), NA, NA)))))),
     
     wl12_0_wei=ifelse(wl12_0==1, 4,
                       ifelse(wl12_0==2, 3,
@@ -536,7 +556,9 @@ df_ss<-  df %>%
                                            ifelse(wl12_2==5, 0,
                                                   ifelse(is.na(wl12_2), NA, NA)))))),
     
-    betrouwbaar_ss=mean(c(bo02_0_wei,bo02_1_wei,bo02_2_wei,bo03_0_wei,bo03_1_wei,bo04_0_wei, wl12_0_wei, wl12_2_wei),na.rm=TRUE) * (10/4),
+    betrouwbaar_ss=mean(c(bo02_0_wei,bo02_1_wei,bo02_2_wei,bo03_0_wei,bo03_1_wei,
+                          #bo04_0_wei,
+                          wl12_0_wei, wl12_2_wei),na.rm=TRUE) * (10/4),
     
     
     #_______________________________________________________________________
