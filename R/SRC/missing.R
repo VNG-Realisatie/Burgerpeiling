@@ -14,9 +14,21 @@ df[,9:ncol(df)][df[,9:ncol(df)]== -1]<- NA
 colMax<- function(df) sapply(df, max, na.rm=TRUE)
 cols<-ifelse(colMax(df)==6,TRUE,FALSE)
 
-#except for leeftijd and opleiding
-cols[102]<-FALSE
-cols[103]<-FALSE
+#handle exceptions
+#leeftijd and opleiding
+get_var_position <- function(df, var_name) {
+  var_position <- which(names(df) == var_name)
+  return(var_position)
+}
+
+#leeftijd
+lft_pos<-get_var_position(df, "ch02")
+
+#opleiding
+opl_pos<-get_var_position(df, "ch03")
+
+cols[lft_pos]<-FALSE
+cols[opl_pos]<-FALSE
 
 df[,cols][df[,cols]== 6]<- NA
 

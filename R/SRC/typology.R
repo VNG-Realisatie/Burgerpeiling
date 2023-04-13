@@ -5,13 +5,14 @@
 
 #-----------------------------------------------------------------------------------------------
 
-#boundaries are based on all Burgerpeilingenof the past 3 years 
+#boundaries are based on all Burgerpeilingen of the past 2 years, update 13 april 2023 
 #optimal binning 
 #qol_bin <- optbin::optbin(df_ss$qol_score, 4,na.rm = T, metric=c('mse'), max.cache=6^31)
-#part_bin <- optbin::optbin(df_ss$part_score, 4,na.rm = T, metric=c('mse'), max.cache=6^31)
 
 #hist(qol_bin)
 #summary(qol_bin)
+
+#part_bin <- optbin::optbin(df_ss$part_score, 4,na.rm = T, metric=c('mse'), max.cache=6^31)
 
 #hist(part_bin)
 #summary(part_bin)
@@ -19,22 +20,27 @@
 #access to threshold
 #qol_bin[["thr"]][1]
 
+#crosstab <- xtabs(~ qol_score + part_score, data = df_ss)
+#groups <- split(crosstab, rownames(crosstab))
+#crosstab
+
+#-----------------------------------------------------------------------------------------------
 
 df_ss<-df_ss %>%
   mutate(
     qol_score_bin=ifelse(qol_score<=3, 1,
-                         ifelse(qol_score<=5, 2,
-                                ifelse(qol_score<=6, 3,
+                         ifelse(qol_score<=4, 2,
+                                ifelse(qol_score<=5, 3,
                                        ifelse(is.na(qol_score), NA, 4)))),
-    part_score_bin=ifelse(part_score<=2, 1,
+    part_score_bin=ifelse(part_score<=1, 1,
                           ifelse(part_score<=3, 2,
                                  ifelse(part_score<=4, 3,
                                         ifelse(is.na(part_score), NA, 4)))),
     
-    typology=ifelse(part_score_bin>2 & qol_score_bin>2, 1,
-                    ifelse(part_score_bin<3 & qol_score_bin>2, 2,
-                           ifelse(part_score_bin>2 & qol_score_bin<3 , 3,
-                                  ifelse(part_score_bin<3 & qol_score_bin<3 , 4,
+    typology=ifelse(part_score_bin>2 & qol_score_bin>2, 1, #weerbaren
+                    ifelse(part_score_bin<3 & qol_score_bin>2, 2, #buitenstaanders
+                           ifelse(part_score_bin>2 & qol_score_bin<3 , 3, #compenseerders
+                                  ifelse(part_score_bin<3 & qol_score_bin<3 , 4, #kwetsbaren
                                          ifelse(is.na(part_score_bin), NA, NA))))),
     
     zorwekkend=ifelse(part_score_bin<2 & qol_score_bin<2, 1,
@@ -91,6 +97,7 @@ df_ss_vital<-df_ss_weight %>%
     typology_pin2=(survey_mean((typology==2), na.rm=T, vartype=vt) *100),
     typology_pin3=(survey_mean((typology==3), na.rm=T, vartype=vt) *100),
     typology_pin4=(survey_mean((typology==4), na.rm=T, vartype=vt) *100),
+    #typology_pin5=(survey_mean((typology==5), na.rm=T, vartype=vt) *100),
     zorgwekkend_pin1=(survey_mean((zorwekkend==1), na.rm=T, vartype=vt) *100)   
   ) %>%
   mutate_at(.,vars(-group_cols()),~replace(., .== 0, NA)) %>%

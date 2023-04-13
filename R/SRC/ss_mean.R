@@ -73,8 +73,8 @@ df_ss_type_aggr<- df_ss_weight %>%
     #welzijn_ss=survey_mean(welzijn_ss,na.rm=TRUE, vartype=vt),
     gezond_mean=survey_mean(zw02,na.rm=TRUE, vartype=vt),
     geluk_mean=survey_mean(zw00,na.rm=TRUE, vartype=vt),
-    wl01_mean=survey_mean(wl01,na.rm=TRUE, vartype=vt),
-    gelukkig_mean=survey_mean(gelukkig,na.rm=TRUE, vartype=vt)*100
+    wl01_mean=survey_mean(wl01,na.rm=TRUE, vartype=vt)
+    #gelukkig_mean=survey_mean(gelukkig,na.rm=TRUE, vartype=vt)*100
   ) %>%
   pivot_wider(names_from=typology, values_from=-names(.)[1:3],names_sep="b") %>%
   mutate_at(.,vars(-group_cols()),~ifelse(is.nan(.) | is.infinite(.), NA, .)) %>%
@@ -100,7 +100,7 @@ df_ss_age_aggr<- df_ss_weight %>%
     #mz=survey_mean(zw06_0,na.rm=TRUE, vartype=vt),
     #bh=survey_mean(zw06_1,na.rm=TRUE, vartype=vt),
     #vw=survey_mean(zw06_3,na.rm=TRUE, vartype=vt),
-    gelukkig_mean=survey_mean(gelukkig,na.rm=TRUE, vartype=vt)*100,
+    #gelukkig_mean=survey_mean(gelukkig,na.rm=TRUE, vartype=vt)*100,
     health=survey_mean(zw02,na.rm=TRUE, vartype=vt),
     happy=survey_mean(zw00,na.rm=TRUE, vartype=vt)
   ) %>%

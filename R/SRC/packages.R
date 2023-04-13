@@ -43,7 +43,7 @@ packages <- c(
   #datafraem extension
   'data.table',
   #spss
-  'haven', 
+  'haven', 'labelled',
   #Read Rectangular Text Data
   'readr',
   #statistical calculations

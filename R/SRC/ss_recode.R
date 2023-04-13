@@ -5,6 +5,9 @@
 
 #-----------------------------------------------------------------------------------------------
 
+
+df[] <- lapply(df, function(x) if("haven_labelled" %in% class(x)) unclass(x) else x)
+
 df_ss<-  df %>% 
   rowwise(id) %>% 
   multidplyr::partition(cluster) %>% 
@@ -746,6 +749,7 @@ df_ss<-  df %>%
     vitaliteitwelzijn_ss=mean(c(welzijn_ss,vitaliteit_ss), na.rm=TRUE),  
     
     #_______________________________________________________________________
+    
     #maatschappelijke participatie (breedte-maat)
     part_score=sum(c(act_ver,act_vw,act_neigh,act_opl,act_arb,act_soc,act_ih,act_hlp), na.rm=TRUE),
     #individueel welzijn (breedte-maat)

@@ -6,11 +6,12 @@
 #-----------------------------------------------------------------------------------------------
 
 #this procedure is to check the results of the Burgerpeiling as (will be) presented on
-#Waarstaatjegemeente.nl (VNG). Moreover it enables you to generate additional visualizations
+#Waarstaatjegemeente.nl (VNG). Moreover it enables you to generate additional indicators and
+#visualizations
 
 #see'Beschrijving' directory for specification of the variables.
 
-#last update 2023-01-18 (beta version)
+#last update 2023-04-12 (beta version)
 
 #questions? contact Mark Henry Gremmen mark.gremmen@vng.nl (VNG)
 
@@ -84,9 +85,9 @@ df<-df %>%
   #year
   filter(jr>=2021) %>%
   #Weight lower than 5
-  filter(weging<5) #%>%
+  filter(weging<5) %>%
   #valid variables (see SRC>preparation.R)
-  #select(any_of((var_vec[["value"]])))
+  select(any_of(var_vec))
 
 #identify numeric variables
 numeric_cols<- unlist(lapply(df, is.numeric))         

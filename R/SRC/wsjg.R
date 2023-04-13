@@ -18,8 +18,8 @@ typology_check<-c("typology_pin1","typology_pin2","typology_pin3","typology_pin4
 which(is.na(df_export[,typology_check]), arr.ind=TRUE)
 
 #remove records that failed typology
-df_export<-df_export %>%
-  drop_na(all_of(typology_check))
+#df_export<-df_export %>%
+#  drop_na(all_of(typology_check))
 
 #-----------------------------------------------------------------------------------------------
 
