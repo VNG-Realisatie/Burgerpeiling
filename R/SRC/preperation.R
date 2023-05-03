@@ -5,10 +5,9 @@
 
 #-----------------------------------------------------------------------------------------------
 
-#eliminate previous generated variables (in case of re-run)
-#df$GEOITEM<-NULL
-#df$PERIOD<-NULL
+message("Validation and preperation...")
 
+#eliminate previous generated variables (in case of re-run)
 remove_vars <- function(df, vars_to_remove) {
   # Find which variables in the data frame match the names in the list
   matching_vars <- intersect(names(df), vars_to_remove)

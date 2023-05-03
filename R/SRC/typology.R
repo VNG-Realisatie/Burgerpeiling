@@ -5,6 +5,8 @@
 
 #-----------------------------------------------------------------------------------------------
 
+message("Typology...")
+
 #boundaries are based on all Burgerpeilingen of the past 2 years, update 13 april 2023 
 #optimal binning 
 #qol_bin <- optbin::optbin(df_ss$qol_score, 4,na.rm = T, metric=c('mse'), max.cache=6^31)

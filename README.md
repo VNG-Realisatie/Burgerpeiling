@@ -17,4 +17,4 @@ Als u de burgerpeiling gaat of laat uitvoeren, moet u ook beslissen of u de mode
 
 Aanvullende informatie
 
-Meer informatie over de Burgerpeiling is beschikbaar op de webiste van VNG Realisatie (https://www.vngrealisatie.nl/producten/burgerpeiling).
+Meer informatie over de Burgerpeiling is beschikbaar op de webiste van VNG (https://vng.nl/projecten/burgerpeiling).

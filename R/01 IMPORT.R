@@ -65,8 +65,6 @@ if(weight.exists==FALSE) { stop("no weight available!") }
 
 #-----------------------------------------------------------------------------------------------
 
-message("Validation and preperation...")
-
 source(here::here('SRC/preperation.R'))
 
 #-----------------------------------------------------------------------------------------------
@@ -85,7 +83,7 @@ df<-df %>%
   #year
   filter(jr>=2021) %>%
   #Weight lower than 5
-  filter(weging<5) %>%
+  filter(!is.na(weging) & weging<5) %>%
   #valid variables (see SRC>preparation.R)
   select(any_of(var_vec))
 
@@ -107,11 +105,6 @@ ncol(df)
 
 #-----------------------------------------------------------------------------------------------
 
-message("Missing values...")
-
-#missing values analysis
-colSums(is.na(df))
-
 source(here::here('SRC/missing.R'))
 
 #-----------------------------------------------------------------------------------------------
@@ -119,8 +112,6 @@ source(here::here('SRC/missing.R'))
 # FACTORS AND LEVELS
 
 #-----------------------------------------------------------------------------------------------
-
-message("Factors and levels...")
 
 source(here::here('SRC/factors.R'))
 
@@ -165,8 +156,6 @@ cat("reporting municipalities: ", munic.active)
 
 #-----------------------------------------------------------------------------------------------
 
-message("Recode...")
-
 source(here::here('SRC/recode.R'))
 
 #-----------------------------------------------------------------------------------------------
@@ -174,8 +163,6 @@ source(here::here('SRC/recode.R'))
 # Multiple response sets
 
 #-----------------------------------------------------------------------------------------------
-
-message("Multiple response sets...")
 
 source(here::here('SRC/mrsets.R'))
 
@@ -205,14 +192,11 @@ vt<-NULL
 
 #MEAN (gemeente, jaar)
 
-message("Mean...")
-
 source(here::here('SRC/mean.R'))
 
 #-----------------------------------------------------------------------------------------------
-#PERCENTAGE IN (gemeente, jaar)
 
-message("Distribution...")
+#PERCENTAGE IN (gemeente, jaar)
 
 source(here::here('SRC/pin.R'))
 
@@ -222,13 +206,13 @@ source(here::here('SRC/pin.R'))
 
 #-----------------------------------------------------------------------------------------------
 
-message("Scale scores...")
-
 #scale score definitions
 #https://www.waarstaatjegemeente.nl/Jive/ViewerReportContents.ashx?report=wsjg_bp_bijlage
  
 #row wise operations
 #parallel processing
+
+message("Init parallel processing")
 
 cluster <- multidplyr::new_cluster(parallel::detectCores() - 1)
 multidplyr::cluster_library(cluster, c('tidyverse', 'furrr'))
@@ -243,14 +227,10 @@ source(here::here('SRC/ss_recode.R'))
 
 #-----------------------------------------------------------------------------------------------
 
-message("Typology...")
-
 source(here::here('SRC/typology.R'))
 
 #-----------------------------------------------------------------------------------------------
 #MEAN scales cores 
-
-message("Mean...")
 
 source(here::here('SRC/ss_mean.R'))
 
@@ -280,8 +260,6 @@ df_munic<-cbind(df_munic,mr_sets)
 # WSJG 
 
 #-----------------------------------------------------------------------------------------------
-
-message("WSJG...")
 
 source(here::here('SRC/wsjg.R'))
 
@@ -331,10 +309,11 @@ save(df_export, file = wsjg.df)
 
 #----------------------------------------------------------------------------------------------
 
-rlang::last_error()
-rlang::last_trace()
-
 end_time<-Sys.time()
 process_time<-end_time - start_time
 
 message("Finished, in ",process_time,"...")
+
+rlang::last_error()
+rlang::last_trace()
+

@@ -5,7 +5,7 @@
 
 #-----------------------------------------------------------------------------------------------
 
-message("set globals and constants")
+message("Globals and constants")
 
 #OS
 system <- Sys.info()['sysname']
@@ -21,9 +21,17 @@ Sys.getlocale()
 #encoding
 #warnings
 #turn-off dplyr's summarise notifications
+#skip computations with missings and pass over missing values 
+#use all cores 
+#truncate output
 
-options(scipen = 999, digits = 4, OutDec=",", stringsAsFactors = FALSE, encoding = "UTF-8",
-        warn = 0, dplyr.summarise.inform = FALSE)
+options(scipen = 10, digits = 4, OutDec=",", stringsAsFactors = FALSE, encoding = "UTF-8",
+        warn = 0, dplyr.summarise.inform = FALSE,na.action = "na.pass",mc.cores = parallel::detectCores(),
+        max.print = 50)
+
+
+#-----------------------------------------------------------------------------------------------
+
 
 #R root
 r_root <- here::here()

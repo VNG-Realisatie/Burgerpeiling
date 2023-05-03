@@ -11,7 +11,7 @@ cat("\014")
 #garbage collection
 gc(verbose = FALSE, full = TRUE)
 
-#Ncpus: The number of parallel processes to use for a parallel install of more than one source package.
+#Ncpus: The number of parallel processes to use for a parallel install of multiple packages.
 options(Ncpus = 8) #we use 8 instead of 1
 #getOption("Ncpus", 1L)
 
@@ -40,7 +40,7 @@ packages <- c(
   'here',
   #sssentials
   'tidyverse','janitor','scales',
-  #datafraem extension
+  #dataframe extension
   'data.table',
   #spss
   'haven', 'labelled',
@@ -88,12 +88,9 @@ packages <- c(
 has_available   <- packages %in% rownames(installed.packages())
 if(any(!has_available)) install.packages(packages[!has_available])
 
-lapply(packages,library,character.only = TRUE
-       ,quietly = TRUE
-)
+lapply(packages,library,character.only = TRUE,quietly = TRUE)
 
 #combine purrr’s family of mapping functions with future’s parallel processing capabilities
-#furr is not (yet) available for the most recent R version
 install.packages("furr")
 #devtools::install_github("DavisVaughan/furrr")
 library(furrr)

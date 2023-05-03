@@ -5,6 +5,8 @@
 
 #-----------------------------------------------------------------------------------------------
 
+message("Factors and levels...")
+
 #read municipality names (year 2021)
 file_type<-'xlsx'
 qry<-paste0("*",file_type)

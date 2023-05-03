@@ -5,6 +5,8 @@
 
 #-----------------------------------------------------------------------------------------------
 
+message("Multiple response sets...")
+
 #identifier of municipality and year
 df$GEOYR<-paste0(df$GEOITEM,'-',df$PERIOD)
 gy<-unique(df$GEOYR)

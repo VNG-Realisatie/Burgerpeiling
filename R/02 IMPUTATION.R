@@ -54,7 +54,7 @@ ss_len<-length(vars_som)
 ss_len
 
 #filter by municipality ids
-#all municipalities in dataframe
+#all municipalities in data frame
 munics<-unique(df_respond$GEOITEM)
 #or, subset
 #munics<-c(147,384)
