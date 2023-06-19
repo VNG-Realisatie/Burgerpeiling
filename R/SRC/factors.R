@@ -7,7 +7,7 @@
 
 message("Factors and levels...")
 
-#read municipality names (year 2021)
+#read municipality names 
 file_type<-'xlsx'
 qry<-paste0("*",file_type)
 files<- fs::dir_ls(glob=qry, path=cbs.dir)

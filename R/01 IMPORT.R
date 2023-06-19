@@ -11,7 +11,7 @@
 
 #see'Beschrijving' directory for specification of the variables.
 
-#last update 2023-04-12 (beta version)
+#last update 2023-06-19 (beta version)
 
 #questions? contact Mark Henry Gremmen mark.gremmen@vng.nl (VNG)
 
@@ -191,6 +191,9 @@ vt<-NULL
 #-----------------------------------------------------------------------------------------------
 
 #MEAN (gemeente, jaar)
+mean_cols<-c("wl01","wl16","bo06","dv01","dv06","dv10","zw00","zw02","zw12","sc02"
+             #,"sa01","sa02","sa03"
+)
 
 source(here::here('SRC/mean.R'))
 
@@ -232,6 +235,7 @@ source(here::here('SRC/typology.R'))
 #-----------------------------------------------------------------------------------------------
 #MEAN scales cores 
 
+
 source(here::here('SRC/ss_mean.R'))
 
 #-----------------------------------------------------------------------------------------------
@@ -246,13 +250,14 @@ message("Merge...")
 df_respond<- cbind(df,df_ss)
 
 #gemeente level
-df_munic<- Reduce(function(x, y) merge(x, y, all=TRUE), 
-                 list(df_aggr_mn,df_aggr_pin,df_rev_aggr_pin,df_ss_aggr,df_ss_type_aggr,df_ss_age_aggr,df_ss_vital))
-df_munic[complete.cases(df_munic), ]
 
-df_munic<-cbind(df_munic,mr_sets)
+df_list<-list(df_aggr_mn,df_aggr_pin,df_ss_aggr,df_ss_type_aggr,df_ss_age_aggr,df_ss_vital)
+merge_key <- c("GEOITEM","PERIOD")
 
-#df_munic <- list(df_aggr_mn,df_aggr_pin,df_ss_aggr,df_ss_type_aggr,df_ss_age_aggr,df_ss_vital) |> purrr::reduce(rbind)
+# Merge data frames using reduce
+merged_df <- reduce(df_list, function(x, y) merge(x, y, by = merge_key, all = TRUE))
+
+df_munic<-cbind(merged_df,mr_sets)
 
 
 #-----------------------------------------------------------------------------------------------
