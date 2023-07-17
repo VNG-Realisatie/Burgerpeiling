@@ -11,8 +11,8 @@ message("Missing values...")
 colSums(is.na(df))
 
 #create missing values for assigned values (77,88,99,-1), including 11 (weet niet/geen mening)
-df[,9:ncol(df)][df[,9:ncol(df)]>10]<- NA
-df[,9:ncol(df)][df[,9:ncol(df)]== -1]<- NA
+df[,8:ncol(df)][df[,8:ncol(df)]>10]<- NA
+df[,8:ncol(df)][df[,8:ncol(df)]<= -1]<- NA
 
 #missing cat located at 6th position
 #recode 6th cat (weet niet/geen mening) to NA for variables with exact 6 cats 

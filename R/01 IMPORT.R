@@ -42,18 +42,27 @@ start_time<-Sys.time()
 
 message("Import Burgerpeiling(en)...")
 
-#read multiple Spss sav-files
-file_type<-'sav'
+#read multiple Spss sav and RData-files
+file_types <- c("sav", "RData")  # Specify the file types to import
 
-qry<-paste0("*",file_type)
-files<- fs::dir_ls(glob=qry, path=data.dir)
+files <- fs::dir_ls(path = data.dir, recurse=FALSE) %>%
+  `[`(tools::file_ext(.) %in% file_types)
 
-df<- map_df(set_names(files), function(file) {
-  file %>% 
-    map_df(
-      ~ haven::read_sav(file) %>% as_tibble()
-    ) 
-})
+
+df <- map_df(files, function(file) {
+  ext <- tools::file_ext(file)
+  
+  if (ext == "sav") {
+    haven::read_sav(file) %>% as_tibble()
+  } else if (ext == "RData") {
+    data <- get(load(file))
+    # Assuming the RData file contains a single data frame
+    as_tibble(data)
+  } else {
+    NULL  # Ignore files with unsupported extensions
+  }
+}, .id = "file_id")  # Add a column to identify the source file
+
 
 #weight available?
 weight.exists<-any(colnames(df) == "weging")

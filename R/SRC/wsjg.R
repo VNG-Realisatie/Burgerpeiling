@@ -31,7 +31,7 @@ which(is.na(df_export[,typology_check]), arr.ind=TRUE)
 df_export <- df_export %>% replace(is.na(.), -99998)
 
 #geolevel
-df_export$GEOLEVEL<-"gemeente344"
+df_export$GEOLEVEL<-"gemeente"
 
 #report buurten
 df_export$bp_wijk<-0

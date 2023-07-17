@@ -36,6 +36,8 @@ packages <- c(
   'devtools',
   #Functions for Base Types and Core R and 'Tidyverse' Features
   'rlang',
+  #tools
+  'tools',
   #Relative paths
   'here',
   #sssentials

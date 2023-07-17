@@ -45,6 +45,8 @@ r_root <- here::here()
 #location data
 data.dir <- here::here("DATA")
 
+ref.dir <- here::here("DATA","REF")
+
 #location output
 output.dir <- here::here("OUTPUT")
 
