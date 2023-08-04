@@ -69,6 +69,7 @@ lapply(locations, function(x) {
   if (!dir.exists(x)) {dir.create(x)}
 })
 
+
 #clear plots and data directory
 #clear_locations <- c(plots.loc,data.loc,report.loc)
 
@@ -94,6 +95,6 @@ sub_title<-'' #empty unless specified
 #pointer weight variable exists
 weight.exists<-FALSE
 
-#set color pallettes
+#set color palettes
 coolBlueHotRed <- function(n, alpha = 1) {rainbow(n, end=4/6, alpha=alpha)[n:1]}
 pretty_palette <- c("#1f77b4","#ff7f0e","#2ca02c", "#d62728","#9467bd","#8c564b","#e377c2")

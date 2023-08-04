@@ -5,7 +5,6 @@
 
 #-----------------------------------------------------------------------------------------------
 
-
 toc <- cbs_get_toc("Language" = "nl") %>% 
   filter(grepl('gemeente', ShortDescription))
 View(toc)

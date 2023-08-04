@@ -99,7 +99,6 @@ df_ss_vital<-df_ss_weight %>%
     typology_pin2=(survey_mean((typology==2), na.rm=T, vartype=vt) *100),
     typology_pin3=(survey_mean((typology==3), na.rm=T, vartype=vt) *100),
     typology_pin4=(survey_mean((typology==4), na.rm=T, vartype=vt) *100),
-    #typology_pin5=(survey_mean((typology==5), na.rm=T, vartype=vt) *100),
     zorgwekkend_pin1=(survey_mean((zorwekkend==1), na.rm=T, vartype=vt) *100)   
   ) %>%
   mutate_at(.,vars(-group_cols()),~replace(., .== 0, NA)) %>%

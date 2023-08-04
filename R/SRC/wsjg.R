@@ -19,6 +19,13 @@ df_export %>%
 typology_check<-c("typology_pin1","typology_pin2","typology_pin3","typology_pin4")
 which(is.na(df_export[,typology_check]), arr.ind=TRUE)
 
+
+# Check for NA or values above 80% in any column
+if (any(is.na(df_export[, typology_check])) || any(df_export[, typology_check] >= 80)) {
+  df_export[, typology_check] <- NA
+}
+
+
 #remove records that failed typology
 #df_export<-df_export %>%
 #  drop_na(all_of(typology_check))

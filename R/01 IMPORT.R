@@ -9,9 +9,9 @@
 #Waarstaatjegemeente.nl (VNG). Moreover it enables you to generate additional indicators and
 #visualizations
 
-#see'Beschrijving' directory for specification of the variables.
+#see 'Beschrijving' directory for specification of the variables.
 
-#last update 2023-06-19 (beta version)
+#last update 2023-08-04 (alpha version)
 
 #questions? contact Mark Henry Gremmen mark.gremmen@vng.nl (VNG)
 
