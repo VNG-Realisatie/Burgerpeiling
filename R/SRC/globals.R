@@ -25,9 +25,19 @@ Sys.getlocale()
 #use all cores 
 #truncate output
 
-options(scipen = 10, digits = 4, OutDec=",", stringsAsFactors = FALSE, encoding = "UTF-8",
-        warn = 0, dplyr.summarise.inform = FALSE,na.action = "na.pass",mc.cores = parallel::detectCores(),
-        max.print = 50)
+options_list <- list(
+  scipen = 10,
+  digits = 4,
+  OutDec = ",",
+  stringsAsFactors = FALSE,
+  encoding = "UTF-8",
+  warn = 0,
+  dplyr.summarise.inform = FALSE,
+  na.action = "na.pass",
+  mc.cores = parallel::detectCores(),
+  max.print = 50
+)
+options(options_list)
 
 
 #-----------------------------------------------------------------------------------------------
@@ -89,7 +99,7 @@ seed<-90210
 graph_height <- 6
 png_height <- 960
 aspect_ratio <- 1
-dpi <- 300 #retina(320)
+dpi <- 300 # You can consider 'retina(320)' here
 sub_title<-'' #empty unless specified
 
 #pointer weight variable exists

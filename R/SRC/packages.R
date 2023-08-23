@@ -30,8 +30,8 @@ if(proj_env == TRUE) {
 
 #-----------------------------------------------------------------------------------------------
 
-# load CRAN packages
-packages <- c(
+# load required libraries
+libraries <- c(
   #external packages (not-being from cran-repo or similar)
   'devtools',
   #Functions for Base Types and Core R and 'Tidyverse' Features
@@ -86,15 +86,19 @@ packages <- c(
   'optbin'
 )
 
-#install packages which are not available on the computing setup
-has_available   <- packages %in% rownames(installed.packages())
-if(any(!has_available)) install.packages(packages[!has_available])
+# Install and load missing packages
+missing_libraries <- libraries[!libraries %in% installed.packages()]
+if (length(missing_libraries) > 0) {
+  install.packages(missing_libraries)
+}
+lapply(libraries, library, character.only = TRUE, quietly = TRUE)
 
-lapply(packages,library,character.only = TRUE,quietly = TRUE)
 
-#combine purrr’s family of mapping functions with future’s parallel processing capabilities
-install.packages("furr")
-#devtools::install_github("DavisVaughan/furrr")
+# Load the furrr package for parallel processing
+if (!requireNamespace("furrr", quietly = TRUE)) {
+  #install.packages("furrr")
+  devtools::install_github("DavisVaughan/furrr")
+}
 library(furrr)
 
 #-----------------------------------------------------------------------------------------------

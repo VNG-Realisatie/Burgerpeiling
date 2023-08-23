@@ -8,17 +8,15 @@
 message("WSJG...")
 
 #VNG use only...
-
 df_export <- df_munic
 
-#report features with values above 99
-df_export %>% 
-  transmute_if(~ any(.x > 99), I)
+# Report features with values above 99
+features_above_99 <- df_export %>%
+  select_if(~ any(. > 99))
 
-#check na's in typology
-typology_check<-c("typology_pin1","typology_pin2","typology_pin3","typology_pin4")
-which(is.na(df_export[,typology_check]), arr.ind=TRUE)
-
+# Check NA's in typology
+typology_check <- c("typology_pin1", "typology_pin2", "typology_pin3", "typology_pin4")
+na_typology_rows <- which(is.na(df_export[, typology_check]), arr.ind = TRUE)
 
 # Check for NA or values above 80% in any column
 if (any(is.na(df_export[, typology_check])) || any(df_export[, typology_check] >= 80)) {
@@ -44,4 +42,6 @@ df_export$GEOLEVEL<-"gemeente"
 df_export$bp_wijk<-0
 
 #remove temporary variables
-df_export$GEOYR<-NULL
+if ("GEOYR" %in% names(df_export)) {
+  df_export$GEOYR <- NULL
+}

@@ -9,9 +9,11 @@
 #Waarstaatjegemeente.nl (VNG). Moreover it enables you to generate additional indicators and
 #visualizations
 
+#this procedure is not intended to prepare data for publishing on Waarstaatjegemeente.nl
+
 #see 'Beschrijving' directory for specification of the variables.
 
-#last update 2023-08-04 (alpha version)
+#last update 2023-08-23 (alpha version)
 
 #questions? contact Mark Henry Gremmen mark.gremmen@vng.nl (VNG)
 
@@ -24,14 +26,15 @@
 #Run in an isolated project environment (to avoid package conflicts)
 proj_env<-FALSE #default (F)
 
-#packages
+# Load necessary libraries
 source('SRC/packages.R')
 
+# Load global variables
 source(here::here('SRC/globals.R'))
 
 #-----------------------------------------------------------------------------------------------
 
-#pipeline timer
+# Set pipeline timer
 start_time<-Sys.time()
 
 #-----------------------------------------------------------------------------------------------
@@ -47,7 +50,6 @@ file_types <- c("sav", "RData")  # Specify the file types to import
 
 files <- fs::dir_ls(path = data.dir, recurse=FALSE) %>%
   `[`(tools::file_ext(.) %in% file_types)
-
 
 df <- map_df(files, function(file) {
   ext <- tools::file_ext(file)
@@ -66,7 +68,7 @@ df <- map_df(files, function(file) {
 
 #weight available?
 weight.exists<-any(colnames(df) == "weging")
-if(weight.exists==FALSE) { stop("no weight available!") }
+if(weight.exists==FALSE) { stop("column weging does not exist!") }
 
 #-----------------------------------------------------------------------------------------------
 
@@ -151,7 +153,7 @@ cat("reporting municipalities: ", munic.active)
 
 #-----------------------------------------------------------------------------------------------
 
-#isolate form merged file
+#isolate from merged file
 #geoitem.sep<-geoitem.active
 
 #df_clean<- df %>%
@@ -242,8 +244,10 @@ source(here::here('SRC/ss_recode.R'))
 source(here::here('SRC/typology.R'))
 
 #-----------------------------------------------------------------------------------------------
+
 #MEAN scales cores 
 
+#-----------------------------------------------------------------------------------------------
 
 source(here::here('SRC/ss_mean.R'))
 
@@ -302,8 +306,11 @@ save(df_respond, file = resp.df)
 #csv
 wsjg.csv<-paste0(output.dir,"/BP_WSJG.csv")
 write.table(df_export, file=wsjg.csv,quote=TRUE, sep=";", dec = ",", row.names=FALSE)
+#alternative version without quotes
+wsjg.csv2<-paste0(output.dir,"/BP_WSJG_NOQUOTES.csv")
+write.table(df_export, file = wsjg.csv2,quote=FALSE, sep=";", dec = ",", row.names=TRUE)
 
-#rdata
+#RData
 wsjg.df<-paste0(output.dir,"/BP_WSJG.RData")
 save(df_export, file = wsjg.df)
 
@@ -330,4 +337,3 @@ message("Finished, in ",process_time,"...")
 
 rlang::last_error()
 rlang::last_trace()
-
