@@ -13,7 +13,7 @@
 
 #see 'Beschrijving' directory for specification of the variables.
 
-#last update 2023-08-23 (alpha version)
+#last update 2023-10-18 (alpha version)
 
 #questions? contact Mark Henry Gremmen mark.gremmen@vng.nl (VNG)
 
@@ -45,8 +45,11 @@ start_time<-Sys.time()
 
 message("Import Burgerpeiling(en)...")
 
-#read multiple Spss sav and RData-files
-file_types <- c("sav", "RData")  # Specify the file types to import
+#read multiple Spss sav, RData and csv-files
+#specify the file types to import
+file_types <- c("sav", "RData"
+                #,"csv"
+                )  
 
 files <- fs::dir_ls(path = data.dir, recurse=FALSE) %>%
   `[`(tools::file_ext(.) %in% file_types)
@@ -60,11 +63,12 @@ df <- map_df(files, function(file) {
     data <- get(load(file))
     # Assuming the RData file contains a single data frame
     as_tibble(data)
+  } else if (ext == "csv") {
+    read.csv(file, header = TRUE) %>% as_tibble()
   } else {
     NULL  # Ignore files with unsupported extensions
   }
 }, .id = "file_id")  # Add a column to identify the source file
-
 
 #weight available?
 weight.exists<-any(colnames(df) == "weging")
@@ -92,9 +96,9 @@ df<-df %>%
   #municipality
   #filter(gemnr==1955) %>%
   #year
-  filter(jr>=2021) %>%
+  filter(jr>=2022) %>%
   #Weight lower than 5
-  filter(!is.na(weging) & weging<5) %>%
+  filter(!is.na(weging) & weging<6) %>%
   #valid variables (see SRC>preparation.R)
   select(any_of(var_vec))
 
@@ -149,7 +153,7 @@ df$id<-paste0("BP",df$GEOITEM,"Y",df$PERIOD,"S",df$seq)
 munic.active<-levels(factor(df$GEMEENTE))
 geoitem.active<-as.numeric(levels(factor(df$GEOITEM)))
 
-cat("reporting municipalities: ", munic.active)
+cat("reporting municipalities: ", munic.active, "\n")
 
 #-----------------------------------------------------------------------------------------------
 
@@ -159,7 +163,7 @@ cat("reporting municipalities: ", munic.active)
 #df_clean<- df %>%
 #  filter(!GEOITEM %in% geoitem.sep)
 
-#write_sav(df_clean, "BP-unique2122.sav") 
+#write_sav(df_clean, "BP-unique1922.sav") 
 
 #-----------------------------------------------------------------------------------------------
 
@@ -203,6 +207,7 @@ vt<-NULL
 
 #MEAN (gemeente, jaar)
 mean_cols<-c("wl01","wl16","bo06","dv01","dv06","dv10","zw00","zw02","zw12","sc02"
+             #aanvullende module tevredenheid met het leven
              #,"sa01","sa02","sa03"
 )
 
@@ -272,7 +277,6 @@ merged_df <- reduce(df_list, function(x, y) merge(x, y, by = merge_key, all = TR
 
 df_munic<-cbind(merged_df,mr_sets)
 
-
 #-----------------------------------------------------------------------------------------------
 
 # WSJG 
@@ -313,6 +317,11 @@ write.table(df_export, file = wsjg.csv2,quote=FALSE, sep=";", dec = ",", row.nam
 #RData
 wsjg.df<-paste0(output.dir,"/BP_WSJG.RData")
 save(df_export, file = wsjg.df)
+
+#RData
+#all vars + schaalscore per respondent
+wsjg.ss.df<-paste0(output.dir,"/BP_WSJG_SS.RData")
+save(df_ss, file = wsjg.ss.df)
 
 #----------------------------------------------------------------------------------------------
 

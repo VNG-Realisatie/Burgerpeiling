@@ -14,6 +14,10 @@ message("Multiple response sets...")
 df$GEOYR<-paste0(df$GEOITEM,'-',df$PERIOD)
 gy<-unique(df$GEOYR)
   
+
+
+
+
 iter_vw <- list()
 iter_vl <- list()
 iter_bh <- list()
@@ -27,8 +31,7 @@ print(i)
 #vrijwilligerswerk
 
 vw_valid <- c("zw08_0_pin","zw08_1_pin","zw08_2_pin","zw08_3_pin",
-              "zw08_4_pin","zw08_5_pin","zw08_6_pin","zw08_7_pin"
-)
+              "zw08_4_pin","zw08_5_pin","zw08_6_pin","zw08_7_pin")
 
 vw_len <- length(vw_valid)
 

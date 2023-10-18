@@ -39,9 +39,12 @@ df<- df %>%
                           ifelse(zw06_3==3 & zw07_dum<3, 3,
                                  ifelse(zw06_3==3 & zw07_dum==3, 4, 0)))),
     #leeftijd
-    lft_cy=ifelse(ch02==2, 1,
-                  ifelse(ch02==3, 2,
+    lft_cy=ifelse(ch02==1, 1,
+                  ifelse(ch02==2, 1,
+                    ifelse(ch02==3, 2,
                          ifelse(ch02==4, 2,
                                 ifelse(ch02==5, 3,
-                                       ifelse(ch02==6, 4, NA)))))
+                                       ifelse(ch02==6, 4, NA))))))
+
+    
   ) 

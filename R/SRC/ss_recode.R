@@ -131,8 +131,13 @@ df_ss<-  df %>%
     safeguard=ifelse(safeguard_fam==1 | safeguard_neigh==1 | safeguard_friend==1, 1,
                      ifelse(is.na(zw10_0) & is.na(zw10_1) & is.na(zw10_2), NA, 0)),
     
-    #eenzaamheid
+    #eenzaamheid (heel) vaak
     alone=ifelse(zw04<3, 0,
+                 ifelse(zw04==5, NA,
+                        ifelse(is.na(zw04), NA, 1))),
+    
+    #eenzaamheid soms, (heel) vaak
+    alone_full=ifelse(zw04<2, 0,
                  ifelse(zw04==5, NA,
                         ifelse(is.na(zw04), NA, 1))),
     
