@@ -18,4 +18,7 @@ Als u de burgerpeiling gaat of laat uitvoeren, moet u ook beslissen of u de mode
 
 Aanvullende informatie
 
-Meer informatie over de Burgerpeiling is beschikbaar op de webiste van VNG (https://vng.nl/projecten/burgerpeiling).
+Meer informatie over de Burgerpeiling is beschikbaar op de webiste van VNG: 
+[Projectpagina Burgerpeiling Waarstaatjegemeente.nl op VNG](https://vng.nl/projecten/burgerpeiling)
+
+Voor vragen over de Burgerpeiling neem contact op met [Mark Henry Gremmen](mailto:mark.gremmen@vng.nl)

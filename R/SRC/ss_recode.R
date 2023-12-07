@@ -16,9 +16,13 @@ df_ss<-  df %>%
     act_neigh=ifelse(wl13==1, 1,
                      ifelse(is.na(wl13), NA, 0)),
     #actief in de mantelzorg
-    act_mz=ifelse(zw06_0==1, 1,
-                  ifelse(zw06_0==2, 1,
-                         ifelse(is.na(zw06_0), NA, 0))),
+    act_mz=ifelse((zw06_0==1 | zw06_2==1), 1,
+                  ifelse((zw06_0==2 | zw06_2==2), 1,
+                         ifelse((is.na(zw06_0) & is.na(zw06_2)), NA, 0))),
+    #actief in de mantelzorg - vaak
+    act_mz_vaak=ifelse((zw06_0==1), 1,
+                  ifelse((zw06_2==1), 1,
+                         ifelse((is.na(zw06_0) & is.na(zw06_2)), NA, 0))),
     #actief in hulp aan buren
     act_hlp=ifelse(zw06_1==1, 1,
                    ifelse(zw06_1==2, 1,
@@ -75,8 +79,8 @@ df_ss<-  df %>%
                    ifelse(is.na(zw01_6), NA, 0)),
     
     #mantelzorg overbelasting
-    mz_ob=ifelse(zw09==4 | act_mz==1, 1,
-                 ifelse(is.na(zw09), NA, 0)),
+    mz_ob=ifelse(((zw09==3 | zw09==4) & act_mz==1), 1,
+                 ifelse(act_mz==1, 0, NA)),
     
     #niveau sociale beperkingen
     mb_soc=sum(c(bep_men,bep_cul,bep_ink,bep_uit,mz_ob),na.rm=TRUE),
@@ -165,7 +169,7 @@ df_ss<-  df %>%
     #niveau sociale veerkracht
     sv=sum(sv_0,sv_1,sv_2,sv_3,sv_4,na.rm=TRUE),
     
-    #veerkrachtige inwoner
+    #veerkrachtige inwoner (3 out of 5 items)
     sv_pos=ifelse(sv>2, 1,
                   ifelse(is.na(sv), NA, 0)),
     #_______________________________________________________________________

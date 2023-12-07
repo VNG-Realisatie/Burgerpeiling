@@ -13,7 +13,7 @@
 
 #see 'Beschrijving' directory for specification of the variables.
 
-#last update 2023-10-18 (alpha version)
+#last update 2023-12-07 (alpha version)
 
 #questions? contact Mark Henry Gremmen mark.gremmen@vng.nl (VNG)
 
@@ -307,6 +307,9 @@ save(df_respond, file = resp.df)
 #-----------------------------------------------------------------------------------------------
 
 #wsjg export
+
+#df_export<-df_export %>% filter(PERIOD>2021)
+
 #csv
 wsjg.csv<-paste0(output.dir,"/BP_WSJG.csv")
 write.table(df_export, file=wsjg.csv,quote=TRUE, sep=";", dec = ",", row.names=FALSE)
