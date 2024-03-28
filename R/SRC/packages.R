@@ -11,21 +11,27 @@ cat("\014")
 #garbage collection
 gc(verbose = FALSE, full = TRUE)
 
-#Ncpus: The number of parallel processes to use for a parallel install of multiple packages.
-options(Ncpus = 8) #we use 8 instead of 1
-#getOption("Ncpus", 1L)
+#detect the number of available CPU cores minus one core for system stability
+cpu_cores <- parallel::detectCores() - 1
+options(Ncpus = cpu_cores)
+cat(sprintf("CPU cores dedicated to this pipeline: %d\n", getOption("Ncpus", 1L)),"\n")
+
+#package repository platform
+options(repos = c(CRAN = "https://cran.r-project.org"))
 
 message("deploy packages")
 
-if(proj_env == TRUE) {
-  #containerized packages (in case you encounter issue with the current version of packages within your computing set-up)
-  if (!require("renv")) install.packages("renv")
-  library("renv")
-  renv::upgrade() # upgrades renv, if new version is available
-  renv::update() # updates packages from CRAN and GitHub, within the project
-  renv::hydrate(update = "all") # populates the renv cache with copies of-up-to-date packages
-  renv::snapshot() # inspect the message before confirming to overwrite renv.lock
-  renv::init() #let's go!
+if (use_renv) {
+  #install and load the renv package (if not already installed)
+  if (!requireNamespace("renv", quietly = TRUE)) {
+    utils::install.packages("renv")
+  }
+  library(renv)
+  
+  #initialize or create an renv.lock file
+  if (!file.exists("renv.lock")) {
+    renv::init()
+  }
 }
 
 #-----------------------------------------------------------------------------------------------
@@ -100,6 +106,14 @@ if (!requireNamespace("furrr", quietly = TRUE)) {
   devtools::install_github("DavisVaughan/furrr")
 }
 library(furrr)
+
+#update the renv.lock file with the package dependencies
+if (use_renv) {
+  renv::snapshot()
+}
+
+#optionally restore the environment with the specified packages
+# renv::restore()
 
 #-----------------------------------------------------------------------------------------------
 

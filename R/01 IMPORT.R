@@ -6,14 +6,14 @@
 #-----------------------------------------------------------------------------------------------
 
 #this procedure is to check the results of the Burgerpeiling as (will be) presented on
-#Waarstaatjegemeente.nl (VNG). Moreover it enables you to generate additional indicators and
+#Waarstaatjegemeente.nl Moreover it enables you to generate additional indicators and
 #visualizations
 
 #this procedure is not intended to prepare data for publishing on Waarstaatjegemeente.nl
 
 #see 'Beschrijving' directory for specification of the variables.
 
-#last update 2023-12-07 (alpha version)
+#last update 2024-03-28 (alpha version)
 
 #questions? contact Mark Henry Gremmen mark.gremmen@vng.nl (VNG)
 
@@ -23,8 +23,8 @@
 
 #-----------------------------------------------------------------------------------------------
 
-#Run in an isolated project environment (to avoid package conflicts)
-proj_env<-FALSE #default (F)
+#package isolation in project-specific environment
+use_renv <- FALSE #change to TRUE to use renv (default: FALSE)
 
 # Load necessary libraries
 source('SRC/packages.R')
@@ -80,7 +80,7 @@ if(weight.exists==FALSE) { stop("column weging does not exist!") }
 
 #-----------------------------------------------------------------------------------------------
 
-source(here::here('SRC/preperation.R'))
+source(here::here('SRC/preparation.R'))
 
 #-----------------------------------------------------------------------------------------------
 
@@ -92,15 +92,15 @@ message("Subsetting...")
 
 df<-df %>% 
   #municipality id exists
-  filter(!is.na(gemnr)) %>%
+  filter(!is.na(GEOITEM)) %>%
   #municipality
   #filter(gemnr==1955) %>%
   #year
-  filter(jr>=2022) %>%
+  filter(PERIOD>=2022) %>%
   #Weight lower than 5
-  filter(!is.na(weging) & weging<6) %>%
+  filter(!is.na(weging) & weging<6) #%>%
   #valid variables (see SRC>preparation.R)
-  select(any_of(var_vec))
+  #select(any_of(var_vec))
 
 #identify numeric variables
 numeric_cols<- unlist(lapply(df, is.numeric))         
@@ -216,7 +216,6 @@ source(here::here('SRC/mean.R'))
 #-----------------------------------------------------------------------------------------------
 
 #PERCENTAGE IN (gemeente, jaar)
-
 source(here::here('SRC/pin.R'))
 
 #-----------------------------------------------------------------------------------------------

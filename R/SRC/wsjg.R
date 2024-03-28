@@ -11,7 +11,7 @@ message("WSJG...")
 df_export <- df_munic
 
 # Report features with values above 99
-features_above_99 <- df_export %>%
+features_above_99 <- df_export[,4:399] %>%
   select_if(~ any(. > 99))
 
 # Check NA's in typology
@@ -60,7 +60,7 @@ identify_outliers <- function(data) {
   num_outliers <- numeric(nrow(data))
   
   for (i in 1:nrow(data)) {
-    record <- unlist(data[i, 3:ncol(data), drop = FALSE])  # Extract columns starting from the third column
+    record <- unlist(data[i, 222:399, drop = FALSE])  # Extract columns starting from the third column
     record <- as.numeric(record)
     record <- na.omit(record)
     if (length(record) == 0) {
@@ -83,7 +83,7 @@ identify_outliers <- function(data) {
   }
   
   # Return the first two columns for records with the most outliers
-  return(data[records_with_max_outliers, 1:401, drop = FALSE])
+  return(data[records_with_max_outliers, 1:nrow(data), drop = FALSE])
 }
 
 
@@ -92,5 +92,21 @@ identify_outliers <- function(data) {
 suspect_outlier <- identify_outliers(df_export)
 
 # Print the record(s) with the most outliers and the number of outliers
-cat("Gemeente record(s) with the most outliers:", suspect_outlier[[1]], "\n")
-cat("CBS ID(s) of outliers:", suspect_outlier[[2]], "\n")
+cat("Gemeente id with the most outliers:", suspect_outlier[[1]], "\n")
+cat("Period:", suspect_outlier[[2]], "\n")
+
+
+suspect<-suspect_outlier$GEOITEM
+
+
+# Assuming suspect is already defined with some GEOITEMS
+# and you want to add more GEOITEMS manually
+suspect <- unique(c(suspect, 321,310,1721,1904))  
+
+# List of variables you want to recode
+variables_to_recode <- c("typology_pin1", "typology_pin2", "typology_pin3", "typology_pin4", "zorgwekkend_pin1",
+                         "vitaliteit_ss", "welzijn_ss", "socrel_ss_mean", "kunnen_ss_mean")
+
+df_export <- df_export %>%
+  mutate(across(all_of(variables_to_recode), ~if_else(GEOITEM %in% suspect, -99998, .)))
+

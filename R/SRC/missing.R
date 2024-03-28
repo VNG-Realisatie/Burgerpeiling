@@ -16,7 +16,7 @@ message("Missing values...")
 
 # Replace values greater than 10 and less than or equal to -1 with NA for columns 8 to last column
 df <- df %>%
-  mutate(across(7:ncol(df), ~ifelse(. > 10 | . <= -1, NA, .)))
+  mutate(across(length(research_params):ncol(df), ~ifelse(. > 10 | . <= -1, NA, .)))
 
 #missing cat located at 6th position
 #recode 6th cat (weet niet/geen mening) to NA for variables with exact 6 cats 
@@ -39,6 +39,7 @@ opl_pos<-get_var_position(df, "ch03")
 cols[lft_pos]<-FALSE
 cols[opl_pos]<-FALSE
 
+#missing cat located at 6th position
 df[,cols][df[,cols]== 6]<- NA
 
 #missing cat located at 7th position
@@ -64,8 +65,3 @@ mr_dich<-c("zw13_0","zw13_1","zw13_10","zw13_2","zw13_3","zw13_4",
 #df[,mr_dich][df[,mr_dich]>1]<- NA
 df <- df %>% mutate(across(all_of(mr_dich), ~ ifelse(. > 1, NA, .)))
 
-#reorder variables for readability
-df<- df %>%
-  select(sort(names(.))) %>% 
-  relocate(any_of(c('gemnr', 'jr', 'weging', 'kw', 'veldwerkmodus', 'wijk', 'org')), .before=bo01) %>% 
-  rename(PERIOD=jr, GEOITEM=gemnr)
