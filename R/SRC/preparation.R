@@ -41,8 +41,10 @@ load(var.loc)
 
 var_vec<-as.vector(var_df$value)
 
-#add variables 
-add_vars<-c("vz03_5","vz03_6")
+#add variables (if not there)
+add_vars<-c("vz03_5","vz03_6","vz03_7"
+            #,"sa01","sa02","sa03"
+            )
 
 #reorder variables for readability
 research_params<-c('gemnr', 'jr', 'weging', 'kw', 'veldwerkmodus', 'wijk', 'org', 'file_id')
@@ -53,9 +55,11 @@ var_vec<-unique(c(var_vec,add_vars,research_params))
 #get_dupes(df,-c(id,respondent))
 
 #keep relevant variables and nothing else
-df <- remove_vars(df, var_vec, keep_only = TRUE)
+#df <- remove_vars(df, var_vec, keep_only = TRUE)
 
+# Keep only relevant variables, sort data frame, place research params at the beginning
 df<- df %>%
+  select(any_of(var_vec)) %>% 
   select(sort(names(.))) %>% 
   relocate(any_of(research_params), .before=bo01) %>% 
   rename(PERIOD=jr, GEOITEM=gemnr)

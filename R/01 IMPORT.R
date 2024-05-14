@@ -13,7 +13,7 @@
 
 #see 'Beschrijving' directory for specification of the variables.
 
-#last update 2024-03-28 (alpha version)
+#last update 2024-05-14 (alpha version)
 
 #questions? contact Mark Henry Gremmen mark.gremmen@vng.nl (VNG)
 
@@ -96,7 +96,7 @@ df<-df %>%
   #municipality
   #filter(gemnr==1955) %>%
   #year
-  filter(PERIOD>=2022) %>%
+  filter(PERIOD>=2017) %>%
   #Weight lower than 5
   filter(!is.na(weging) & weging<6) #%>%
   #valid variables (see SRC>preparation.R)
@@ -205,7 +205,7 @@ vt<-NULL
 
 #-----------------------------------------------------------------------------------------------
 
-#MEAN (gemeente, jaar)
+#MEAN (group by gemeente, jaar)
 mean_cols<-c("wl01","wl16","bo06","dv01","dv06","dv10","zw00","zw02","zw12","sc02"
              #aanvullende module tevredenheid met het leven
              #,"sa01","sa02","sa03"
@@ -215,7 +215,7 @@ source(here::here('SRC/mean.R'))
 
 #-----------------------------------------------------------------------------------------------
 
-#PERCENTAGE IN (gemeente, jaar)
+#PERCENTAGE IN (group by  gemeente, jaar)
 source(here::here('SRC/pin.R'))
 
 #-----------------------------------------------------------------------------------------------

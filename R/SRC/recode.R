@@ -20,31 +20,38 @@ df<-df %>% mutate(across(any_of(mr), ~replace_na(.,0)))
 #2:nu maar niet in de toekomst.
 #3:nu niet maar wellicht wel in de toekomst.
 #4:niet nu en niet in de toekomst
+# Recode variables
 
-df<- df %>% 
-  mutate(wl14_dum=ifelse(
-    wl14== 4,NA,wl14),
-    zw07_dum=ifelse(
-      zw07== 4,NA,zw07),
-    zw05_rc= ifelse(
-      zw05_4== 0,1,NA),
-    #buurtparticipatie
-    part_brt=ifelse(wl13<3 & wl14_dum<3, 1,
-                    ifelse(wl13<3 & wl14_dum==3, 2,
-                           ifelse(wl13==3 & wl14_dum<3, 3,
-                                  ifelse(wl13==3 & wl14_dum==3, 4, 0)))),
-    #vrijwilligerswerk
-    part_vw=ifelse(zw06_3<3 & zw07_dum<3, 1,
-                   ifelse(zw06_3<3 & zw07_dum==3, 2,
-                          ifelse(zw06_3==3 & zw07_dum<3, 3,
-                                 ifelse(zw06_3==3 & zw07_dum==3, 4, 0)))),
-    #leeftijd
-    lft_cy=ifelse(ch02==1, 1,
-                  ifelse(ch02==2, 1,
-                    ifelse(ch02==3, 2,
-                         ifelse(ch02==4, 2,
-                                ifelse(ch02==5, 3,
-                                       ifelse(ch02==6, 4, NA))))))
-
+df <- df %>%
+  mutate(
+    wl14_dum = ifelse(wl14 == 4, NA, wl14),
+    zw07_dum = ifelse(zw07 == 4, NA, zw07),
+    zw05_rc = ifelse(zw05_4 == 0, 1, NA),
     
-  ) 
+    # Buurtparticipatie
+    part_brt = case_when(
+      wl13 < 3 & wl14_dum < 3 ~ 1,
+      wl13 < 3 & wl14_dum == 3 ~ 2,
+      wl13 == 3 & wl14_dum < 3 ~ 3,
+      wl13 == 3 & wl14_dum == 3 ~ 4,
+      TRUE ~ 0
+    ),
+    
+    # Vrijwilligerswerk
+    part_vw = case_when(
+      zw06_3 < 3 & zw07_dum < 3 ~ 1,
+      zw06_3 < 3 & zw07_dum == 3 ~ 2,
+      zw06_3 == 3 & zw07_dum < 3 ~ 3,
+      zw06_3 == 3 & zw07_dum == 3 ~ 4,
+      TRUE ~ 0
+    ),
+    
+    # Leeftijd
+    lft_cy = case_when(
+      ch02 %in% c(1, 2) ~ 1,
+      ch02 %in% c(3, 4) ~ 2,
+      ch02 == 5 ~ 3,
+      ch02 == 6 ~ 4,
+      TRUE ~ NA_real_
+    )
+  )

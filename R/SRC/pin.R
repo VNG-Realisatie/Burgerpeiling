@@ -174,6 +174,9 @@ df_aggr_pin<- df_weight %>%
     vz03_2=(survey_mean((vz03_2<3), na.rm=TRUE,vartype=vt) *100),
     vz03_3=(survey_mean((vz03_3<3), na.rm=TRUE,vartype=vt) *100),
     vz03_4=(survey_mean((vz03_4<3), na.rm=TRUE,vartype=vt) *100),
+    vz03_5=(survey_mean((vz03_5<3), na.rm=TRUE,vartype=vt) *100),
+    vz03_6=(survey_mean((vz03_6<3), na.rm=TRUE,vartype=vt) *100),
+    vz03_7=(survey_mean((vz03_7<3), na.rm=TRUE,vartype=vt) *100),
     wl02_0=(survey_mean((wl02_0<3), na.rm=TRUE,vartype=vt) *100),
     wl02_1=(survey_mean((wl02_1<3), na.rm=TRUE,vartype=vt) *100),
     #wl02_2=(survey_mean((wl02_2<3), na.rm=TRUE,vartype=vt) *100),
@@ -242,7 +245,12 @@ df_aggr_pin<- df_weight %>%
     zw04_rv=(survey_mean((zw04==1), na.rm=TRUE,vartype=vt) *100),
     zw04=(survey_mean((zw04>=3 & zw04<=4), na.rm=TRUE,vartype=vt) *100),
     zw04n=(survey_mean((zw04>=2 & zw04<=4), na.rm=TRUE,vartype=vt) *100),
-    sc02_pin=(survey_mean((sc02>=1 & sc02<=5), na.rm=TRUE,vartype=vt) *100)  
+    sc02_pin=(survey_mean((sc02>=1 & sc02<=5), na.rm=TRUE,vartype=vt) *100),
+   wl18_pin1=(survey_mean((wl18==1), na.rm=TRUE,vartype=vt) *100),
+   wl18_pin2=(survey_mean((wl18==2), na.rm=TRUE,vartype=vt) *100),
+   wl18_pin3=(survey_mean((wl18==3), na.rm=TRUE,vartype=vt) *100),
+   wl18_pin4=(survey_mean((wl18==4), na.rm=TRUE,vartype=vt) *100),
+   wl18_pin5=(survey_mean((wl18==5), na.rm=TRUE,vartype=vt) *100),
   ) %>%
   mutate_at(.,vars(-group_cols()),~ifelse(is.nan(.) | is.infinite(.), NA, .)) %>%
   mutate_at(.,vars(-group_cols()),~replace(., .== 0, NA))
