@@ -1,10 +1,3 @@
-# Burgerpeiling
-
---------------------------------------------------------------------------------------------------------------------------------------
-
-Let op: Vanaf 28 juli 2022 is er een bijgewerkte versie beschikbaar van de Burgerpeiling modelvragenlijst (versie 2022). Deze vernieuwde vragenlijst is meer afgestemd op taalniveau B1 en bevat optimalisaties om de leesbaarheid en toegankelijkheid te verbeteren. De vragenlijst van 2019 komt hiermee te vervallen. Alleen onderzoeksresultaten die voortkomen uit deze nieuwe versie zullen worden gepubliceerd op WaarStaatjeGemeente.nl.
-
---------------------------------------------------------------------------------------------------------------------------------------
 
 ![VNG](https://vng.nl/themes/custom/vng/logo.svg "VNG Burgerpeiling")
 
@@ -41,3 +34,8 @@ Meer informatie over de Burgerpeiling is beschikbaar op de webiste van VNG:
 [Projectpagina Burgerpeiling Waarstaatjegemeente.nl op VNG](https://vng.nl/projecten/burgerpeiling)
 
 Voor vragen over de Burgerpeiling neem contact op met [Mark Henry Gremmen](mailto:mark.gremmen@vng.nl)
+
+## Belangrijke mededeling
+
+**Let op:** Vanaf 28 juli 2022 is er een nieuwe versie van de Burgerpeiling modelvragenlijst beschikbaar (versie 2022). Deze bijgewerkte vragenlijst is afgestemd op taalniveau B1 en bevat verbeteringen om de leesbaarheid en toegankelijkheid te optimaliseren. De versie van 2019 is hiermee komen te vervallen. Alleen onderzoeksresultaten gebaseerd op deze nieuwe versie zullen worden gepubliceerd op WaarStaatjeGemeente.nl.
+
