@@ -8,15 +8,34 @@ Let op: Vanaf 28 juli 2022 is er een bijgewerkte versie beschikbaar van de Burge
 
 ![VNG](https://vng.nl/themes/custom/vng/logo.svg "VNG Burgerpeiling")
 
-Als gemeente wilt u uw beleid en dienstverlening zo goed mogelijk afstemmen op de wensen van uw inwoners. Daarvoor is het van belang dat u weet wat er leeft in de gemeenschap. Om hier inzicht in te krijgen kunt u gebruik maken van de Burgerpeiling.
+# Burgerpeiling 'Waar staat je gemeente'
 
-De Burgerpeiling geeft u inzicht in de mogelijkheden van inwoners om volwaardig deel te nemen aan het maatschappelijk leven, en de behoefte om een betekenisvolle bijdrage te leveren aan de leefbaarheid van hun buurt en het welzijn van anderen. U ontdekt daarnaast in hoeverre uw gemeente erin slaagt aan te sluiten bij de leefwereld van inwoners.
+## Overzicht
 
-U kunt als gemeente de Burgerpeiling zelf uitvoeren of uitbesteden aan een onderzoeksbureau. U bepaalt zelf welk bureau u eventueel hiervoor inschakelt. Inmiddels hebben meer dan vijftien onderzoeksbureaus de Burgerpeiling opgenomen in hun portfolio. Ieder bureau voorziet in een andere behoefte. Denk bijvoorbeeld aan de wijze waarop de vragenlijst wordt voorgelegd aan uw inwoners en hoe de rapportage is opgezet. Ons advies is om drie offertes op te vragen bij verschillende bureaus en kritisch te kijken welk bureau het beste bij uw gemeente past.
+Als gemeente wilt u graag dat uw beleid en ondersteuning goed aansluiten bij de wensen van uw inwoners. Om te weten wat er speelt in uw gemeenschap, kunt u gebruik maken van de Burgerpeiling.
 
-Als u de burgerpeiling gaat of laat uitvoeren, moet u ook beslissen of u de modelvragenlijst wilt gebruiken of dat u deze wilt aanvullen met de modules 'dienstverlening met de menselijke maat', 'tevredenheid met het leven' en 'samenredzaamheid' of met eigen vragen. Daarnaast is het van belang dat u een keuze maakt voor het al dan niet uitvoeren van het onderzoek in de kernen en wijken van uw gemeente. Laat u goed adviseren over de keuzemogelijkheden in de Burgerpeiling.
+## Wat is de Burgerpeiling?
 
-Aanvullende informatie
+De Burgerpeiling geeft inzicht in hoe inwoners kunnen deelnemen aan het maatschappelijke leven en hun behoefte om bij te dragen aan hun buurt en het welzijn van anderen. Het laat ook zien hoe goed uw gemeente aansluit bij de leefwereld van haar inwoners.
+
+## Uitvoeren van de Burgerpeiling
+
+U kunt ervoor kiezen om de Burgerpeiling zelf uit te voeren of dit uit te besteden aan een onderzoeksbureau. Er zijn meer dan vijftien bureaus die de Burgerpeiling in hun dienstenpakket hebben. Elk bureau biedt iets anders, zoals de manier waarop de vragenlijst wordt voorgelegd en hoe de rapportage eruitziet. Het is verstandig om drie offertes op te vragen en goed te kijken welk bureau het beste bij uw gemeente past.
+
+## Keuzes bij de Burgerpeiling
+
+Bij het uitvoeren van de Burgerpeiling kunt u kiezen voor de standaard vragenlijst of deze aanvullen met extra modules, zoals:
+
+- **Dienstverlening met de menselijke maat**
+- **Tevredenheid met het leven**
+- **Samenredzaamheid**
+
+U kunt ook eigen vragen toevoegen. Daarnaast is het belangrijk om te beslissen of u het onderzoek in alle wijken en kernen van uw gemeente wilt uitvoeren. Laat u goed adviseren over de mogelijkheden van de Burgerpeiling.
+
+Met de Burgerpeiling krijgt u waardevolle informatie om uw beleid en dienstverlening beter af te stemmen op de wensen en behoeften van uw inwoners.
+
+
+## Aanvullende informatie
 
 Meer informatie over de Burgerpeiling is beschikbaar op de webiste van VNG: 
 [Projectpagina Burgerpeiling Waarstaatjegemeente.nl op VNG](https://vng.nl/projecten/burgerpeiling)
