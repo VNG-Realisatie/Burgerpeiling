@@ -7,44 +7,63 @@
 
 message("Typology...")
 
-#boundaries are based on all Burgerpeilingen of the past 2 years, update 13 april 2023 
+#Quality of life
+#boundaries are based on all Burgerpeilingen of the past 2 years
 #optimal binning 
-#qol_bin <- optbin::optbin(df_ss$qol_score, 4,na.rm = T, metric=c('mse'), max.cache=6^31)
+# Perform optimal binning with 4 bins, removing NA values, using mean squared error as the metric
+qol_bin <- optbin::optbin(df_ss$qol_score, 4, na.rm = TRUE, metric = c('mse'), max.cache = 6^31)
 
-#hist(qol_bin)
-#summary(qol_bin)
+# Extract the bin thresholds
+qol_bin_breaks <- c(-Inf, qol_bin$thr, Inf)
 
-#part_bin <- optbin::optbin(df_ss$part_score, 4,na.rm = T, metric=c('mse'), max.cache=6^31)
+# Assign each qol_score to a bin
+df_ss$qol_score_bin <- cut(df_ss$qol_score, breaks = qol_bin_breaks, labels = FALSE, include.lowest = TRUE)
 
-#hist(part_bin)
-#summary(part_bin)
+# Plot the histogram of the binned data
+hist(as.numeric(df_ss$qol_score_bin), main = "Histogram of Quality of Life Scores", xlab = "Bins", ylab = "Frequency", col = "blue")
 
-#access to threshold
-#qol_bin[["thr"]][1]
 
-#crosstab <- xtabs(~ qol_score + part_score, data = df_ss)
-#groups <- split(crosstab, rownames(crosstab))
-#crosstab
+
+
+#Participation
+# Perform optimal binning on part_score with 4 bins
+part_bin <- optbin::optbin(df_ss$part_score, 4, na.rm = TRUE, metric = c('mse'), max.cache = 6^31)
+
+# Extract the bin thresholds for part_score
+part_bin_breaks <- c(-Inf, part_bin$thr, Inf)
+
+# Assign each part_score to a bin
+df_ss$part_score_bin <- cut(df_ss$part_score, breaks = part_bin_breaks, labels = FALSE, include.lowest = TRUE)
+
+# Plot the histogram of the binned part_score data
+hist(as.numeric(df_ss$part_score_bin), main = "Histogram of Participation Scores", xlab = "Bins", ylab = "Frequency", col = "green")
+
+
+# Create a crosstab of part_bin and qol_bin
+crosstab <- xtabs(~ qol_score_bin + part_score_bin, data = df_ss)
+groups <- split(crosstab, rownames(crosstab))
+crosstab
 
 #-----------------------------------------------------------------------------------------------
 
 # Recode variables using case_when for readability
 df_ss <- df_ss %>%
   mutate(
-    qol_score_bin = case_when(
-      is.na(qol_score) ~ NA_integer_,
-      qol_score <= 3 ~ 1,
-      qol_score <= 4 ~ 2,
-      qol_score <= 5 ~ 3,
-      TRUE ~ 4
-    ),
-    part_score_bin = case_when(
-      is.na(part_score) ~ NA_integer_,
-      part_score <= 1 ~ 1,
-      part_score <= 3 ~ 2,
-      part_score <= 4 ~ 3,
-      TRUE ~ 4
-    ),
+    #since 2023-05-15 we use optimal binning (past 2 years)
+   # qol_score_bin = case_when(
+  #    is.na(qol_score) ~ NA_integer_,
+   #   qol_score <= 3 ~ 1,
+    #  qol_score <= 4 ~ 2,
+    #  qol_score <= 5 ~ 3,
+    #  TRUE ~ 4
+  #  ),
+  #  part_score_bin = case_when(
+   #   is.na(part_score) ~ NA_integer_,
+   #   part_score <= 1 ~ 1,
+  #    part_score <= 3 ~ 2,
+   #   part_score <= 4 ~ 3,
+   #   TRUE ~ 4
+   # ),
     typology = case_when(
       part_score_bin > 2 & qol_score_bin > 2 ~ 1, # weerbaren
       part_score_bin < 3 & qol_score_bin > 2 ~ 2, # buitenstaanders
@@ -77,6 +96,21 @@ df_ss <- df_ss %>%
       TRUE ~ 0
     )
   )
+
+
+# Get the current date
+current_date <- Sys.Date()
+
+# Define the filename with the current date
+filename <- paste0("PLOTS/typology_histogram_", current_date, ".png")
+
+# Save the histogram to the specified file
+png(filename)
+hist(df_ss$typology, main = paste0("Histogram of Typology\n",current_date), xlab = "Typology", ylab = "Frequency", col = "blue")
+dev.off()
+
+# Optional: Print the filename to confirm the file was saved
+print(paste("Histogram saved to", filename))
 
 # Convert to survey design
 df_ss_weight <- df_ss %>%

@@ -7,7 +7,6 @@
 
 message("Validation and preparation...")
 
-
 remove_vars <- function(df, vars_to_remove, keep_only = FALSE) {
   if(keep_only) {
     # Keep only the variables in the list
@@ -46,9 +45,10 @@ add_vars<-c("vz03_5","vz03_6","vz03_7"
             #,"sa01","sa02","sa03"
             )
 
-#reorder variables for readability
+#research parameters
 research_params<-c('gemnr', 'jr', 'weging', 'kw', 'veldwerkmodus', 'wijk', 'org', 'file_id')
 
+#extend valid variables with research parameters
 var_vec<-unique(c(var_vec,add_vars,research_params))
   
 #get duplicates
@@ -59,7 +59,10 @@ var_vec<-unique(c(var_vec,add_vars,research_params))
 
 # Keep only relevant variables, sort data frame, place research params at the beginning
 df<- df %>%
+  #valid vars only
   select(any_of(var_vec)) %>% 
+  #reorder variables for readability
   select(sort(names(.))) %>% 
+  #research params to the front
   relocate(any_of(research_params), .before=bo01) %>% 
   rename(PERIOD=jr, GEOITEM=gemnr)
