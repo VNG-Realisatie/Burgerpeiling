@@ -179,7 +179,7 @@ df_aggr_pin<- df_weight %>%
     vz03_7=(survey_mean((vz03_7<3), na.rm=TRUE,vartype=vt) *100),
     wl02_0=(survey_mean((wl02_0<3), na.rm=TRUE,vartype=vt) *100),
     wl02_1=(survey_mean((wl02_1<3), na.rm=TRUE,vartype=vt) *100),
-    #wl02_2=(survey_mean((wl02_2<3), na.rm=TRUE,vartype=vt) *100),
+    wl02_2=(survey_mean((wl02_2<3), na.rm=TRUE,vartype=vt) *100),
     wl03_0=(survey_mean((wl03_0<3), na.rm=TRUE,vartype=vt) *100),
     wl03_1=(survey_mean((wl03_1<3), na.rm=TRUE,vartype=vt) *100),
     wl03_2=(survey_mean((wl03_2<3), na.rm=TRUE,vartype=vt) *100),

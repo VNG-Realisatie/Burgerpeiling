@@ -484,6 +484,13 @@ df_ss<-  df %>%
                                            ifelse(wl02_1==5, 0,
                                                   ifelse(is.na(wl02_1), NA, NA)))))),
     
+    wl02_2_wei=ifelse(wl02_2==1, 4,
+                      ifelse(wl02_2==2, 3,
+                             ifelse(wl02_2==3, 2,
+                                    ifelse(wl02_2==4, 1,
+                                           ifelse(wl02_2==5, 0,
+                                                  ifelse(is.na(wl02_2), NA, NA)))))),
+    
     wl03_0_wei=ifelse(wl03_0==1, 4,
                       ifelse(wl03_0==2, 3,
                              ifelse(wl03_0==3, 2,
@@ -498,7 +505,15 @@ df_ss<-  df %>%
                                            ifelse(wl03_1==5, 0,
                                                   ifelse(is.na(wl03_1), NA, NA)))))),
     
-    verbonden_ss=mean(c(wl02_0_wei,wl02_1_wei,wl03_0_wei,wl03_1_wei),na.rm=TRUE) * (10/4),
+    wl03_2_wei=ifelse(wl03_2==1, 4,
+                      ifelse(wl03_2==2, 3,
+                             ifelse(wl03_2==3, 2,
+                                    ifelse(wl03_2==4, 1,
+                                           ifelse(wl03_2==5, 0,
+                                                  ifelse(is.na(wl03_2), NA, NA)))))),
+    
+    
+    verbonden_ss=mean(c(wl02_0_wei,wl02_1_wei,wl02_2_wei,wl03_0_wei,wl03_1_wei, wl03_2_wei),na.rm=TRUE) * (10/4),
     
     #_______________________________________________________________________
     #Schaalscore vertrouwen in de gemeente
