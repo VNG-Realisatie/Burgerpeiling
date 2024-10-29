@@ -23,8 +23,8 @@
 
 #-----------------------------------------------------------------------------------------------
 
-#package isolation in project-specific environment
-use_renv <- FALSE #change to TRUE to use renv (default: FALSE)
+# Package isolation in project-specific environment
+use_renv <- TRUE 
 
 # Load necessary libraries
 source('SRC/packages.R')

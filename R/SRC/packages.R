@@ -1,121 +1,107 @@
 
 #-----------------------------------------------------------------------------------------------
 
-#Setup and packages
+# Setup and packages
 
 #-----------------------------------------------------------------------------------------------
 
-#clear console
+# Clear console
 cat("\014")
 
-#garbage collection
+# Garbage collection
 gc(verbose = FALSE, full = TRUE)
 
-#detect the number of available CPU cores minus one core for system stability
+# Detect the number of available CPU cores minus one core for system stability
 cpu_cores <- parallel::detectCores() - 1
 options(Ncpus = cpu_cores)
 cat(sprintf("CPU cores dedicated to this pipeline: %d\n", getOption("Ncpus", 1L)),"\n")
 
-#package repository platform
-options(repos = c(CRAN = "https://cran.r-project.org"))
+# Set package repository platform
+if (!use_renv)
+  options(repos = c(CRAN = "https://cran.r-project.org"))
 
-message("deploy packages")
+message("Loading packages...")
 
 if (use_renv) {
-  #install and load the renv package (if not already installed)
+  # Install and load the 'renv' package (if not already installed)
   if (!requireNamespace("renv", quietly = TRUE)) {
     utils::install.packages("renv")
   }
-  library(renv)
   
-  #initialize or create an renv.lock file
-  if (!file.exists("renv.lock")) {
-    renv::init()
-  }
+  # Restore packages as recorded in the lockfile
+  renv::restore()
 }
 
 #-----------------------------------------------------------------------------------------------
 
-# load required libraries
+# Define vector of all to-be-loaded packages:
 libraries <- c(
-  #external packages (not-being from cran-repo or similar)
-  'devtools',
-  #Functions for Base Types and Core R and 'Tidyverse' Features
+  # Functions for base types, core R, and 'tidyverse' features:
   'rlang',
-  #tools
+  # Tools:
   'tools',
-  #Relative paths
+  # Relative paths:
   'here',
-  #sssentials
+  # Essentials:
   'tidyverse','janitor','scales',
-  #dataframe extension
+  # Dataframe extension:
   'data.table',
-  #spss
+  # SPSS
   'haven', 'labelled',
-  #Read Rectangular Text Data
+  # Read rectangular text data:
   'readr',
-  #statistical calculations
+  # Statistical calculations:
   'stats',
-  #multiuple response sets
+  # Multiple response sets:
   'expss',
-  #colour scheme
+  # Colour scheme
   'viridis',
-  #layout plots
+  # Layout plots (not used):
   #'patchwork',
-  #read and write xlsx
+  # Read and write .xlsx files:
   'openxlsx', 
-  #publication-ready analytical and summary tables
+  # Publication-ready analysis and summary tables:
   'gtsummary',
-  #survey data-processing
+  # Survey data-processing:
   'survey',
   'srvyr',
-  #file system operations
+  # File system operations:
   'fs',
-  #CBS api
+  # CBS API:
   'cbsodataR',
-  #scales
+  # Scales:
   'scales',
-  #chart creation
+  # Chart creation:
   'esquisse',
-  #parallel processing
+  # Parallel processing:
   'multidplyr', 
-  #mapping functions for parallel processing
-  #'furr',
+  # Mapping functions for parallel processing:
+  'furrr',
   'parallel',
-  #imputation
+  # Multiple imputation for missing values:
   'mice',
-  #self-organised maps
+  # Self-organised maps:
   'kohonen',
-  #ensemble clustering
+  # Ensemble clustering:
   'diceR',
-  #optimal binning
+  # Optimal binning:
   'optbin'
 )
 
 # Install and load missing packages
-missing_libraries <- libraries[!libraries %in% installed.packages()]
-if (length(missing_libraries) > 0) {
-  install.packages(missing_libraries)
+if (!use_renv) {
+  missing_libraries <- libraries[!libraries %in% installed.packages()]
+  if (length(missing_libraries) > 0) {
+    install.packages(missing_libraries)
+  }
 }
+
+# Load packages
 lapply(libraries, library, character.only = TRUE, quietly = TRUE)
-
-
-# Load the furrr package for parallel processing
-if (!requireNamespace("furrr", quietly = TRUE)) {
-  #install.packages("furrr")
-  devtools::install_github("DavisVaughan/furrr")
-}
-library(furrr)
-
-#update the renv.lock file with the package dependencies
-if (use_renv) {
-  renv::snapshot()
-}
-
-#optionally restore the environment with the specified packages
-# renv::restore()
 
 #-----------------------------------------------------------------------------------------------
 
-#review packages loaded (store active-packages set-up)
+# Review packages loaded and write to file (i.e., store active-packages set-up)
 sessionInfo() %>% capture.output(file="session_info.txt")
+
+message("Done loading packages.")
