@@ -13,7 +13,7 @@
 
 #see 'Beschrijving' directory for specification of the variables.
 
-#last update 2024-05-14 (alpha version)
+#last update 2024-12-04 (alpha version)
 
 #questions? contact Mark Henry Gremmen mark.gremmen@vng.nl (VNG)
 
@@ -51,6 +51,8 @@ file_types <- c("sav", "RData"
                 #,"csv"
                 )  
 
+excluded_vars <- c("ch08") 
+
 files <- fs::dir_ls(path = data.dir, recurse=FALSE) %>%
   `[`(tools::file_ext(.) %in% file_types)
 
@@ -58,7 +60,8 @@ df <- map_df(files, function(file) {
   ext <- tools::file_ext(file)
   
   if (ext == "sav") {
-    haven::read_sav(file) %>% as_tibble()
+    haven::read_sav(file) %>% as_tibble() %>% 
+      select(-any_of(excluded_vars)) 
   } else if (ext == "RData") {
     data <- get(load(file))
     # Assuming the RData file contains a single data frame
@@ -93,11 +96,11 @@ message("Subsetting...")
 df<-df %>% 
   #municipality id exists
   filter(!is.na(GEOITEM)) %>%
-  #municipality
+  #filter specific municipality
   #filter(gemnr==1955) %>%
   #year
-  filter(PERIOD>=2017) %>%
-  #Weight lower than 5
+  filter(PERIOD>=2020) %>%
+  #Weight lower than 6
   filter(!is.na(weging) & weging<6) #%>%
   #valid variables (see SRC>preparation.R)
   #select(any_of(var_vec))

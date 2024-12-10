@@ -1,6 +1,11 @@
 .Rproj.user
 .Rhistory
-.RData?
+.RData
 .Ruserdata
 **/STORE
 *.log
+*.sav
+*.txt
+**/DATA
+**/PLOTS
+**/OUTPUT

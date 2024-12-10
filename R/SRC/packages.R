@@ -113,7 +113,7 @@ if (use_renv) {
 }
 
 #optionally restore the environment with the specified packages
-# renv::restore()
+#renv::restore()
 
 #-----------------------------------------------------------------------------------------------
 

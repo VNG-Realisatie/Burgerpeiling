@@ -42,7 +42,6 @@ options(options_list)
 
 #-----------------------------------------------------------------------------------------------
 
-
 #R root
 r_root <- here::here()
 
@@ -78,7 +77,6 @@ locations <- c(data.dir,
 lapply(locations, function(x) {
   if (!dir.exists(x)) {dir.create(x)}
 })
-
 
 #clear plots and data directory
 #clear_locations <- c(plots.loc,data.loc,report.loc)

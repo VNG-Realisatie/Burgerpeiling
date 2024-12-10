@@ -41,7 +41,7 @@ load(var.loc)
 var_vec<-as.vector(var_df$value)
 
 #add variables (if not there)
-add_vars<-c("vz03_5","vz03_6","vz03_7"
+add_vars<-c("vz03_5","vz03_6","vz03_7", "wl02_2"
             #,"sa01","sa02","sa03"
             )
 

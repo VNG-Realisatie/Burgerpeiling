@@ -86,8 +86,6 @@ identify_outliers <- function(data) {
   return(data[records_with_max_outliers, 1:nrow(data), drop = FALSE])
 }
 
-
-
 # Identify records with the most 95% interval outliers
 suspect_outlier <- identify_outliers(df_export)
 
@@ -95,9 +93,7 @@ suspect_outlier <- identify_outliers(df_export)
 cat("Gemeente id with the most outliers:", suspect_outlier[[1]], "\n")
 cat("Period:", suspect_outlier[[2]], "\n")
 
-
 suspect<-suspect_outlier$GEOITEM
-
 
 # Assuming suspect is already defined with some GEOITEMS
 # and you want to add more GEOITEMS manually
@@ -109,4 +105,3 @@ variables_to_recode <- c("typology_pin1", "typology_pin2", "typology_pin3", "typ
 
 df_export <- df_export %>%
   mutate(across(all_of(variables_to_recode), ~if_else(GEOITEM %in% suspect, -99998, .)))
-

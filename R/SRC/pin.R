@@ -7,6 +7,7 @@
 
 message("Distribution...")
 
+
 df_aggr_pin<- df_weight %>%
   group_by(GEOITEM,PERIOD) %>%
   srvyr::summarise(
@@ -150,10 +151,6 @@ df_aggr_pin<- df_weight %>%
     zw09_pin2=(survey_mean((zw09==2), na.rm=TRUE,vartype=vt) *100),
     zw09_pin3=(survey_mean((zw09==3), na.rm=TRUE,vartype=vt) *100), 
     zw09_pin4=(survey_mean((zw09==4), na.rm=TRUE,vartype=vt) *100),
-    #zw09n_pin1=(survey_mean((zw09==1), na.rm=TRUE,vartype=vt) *100),
-    #zw09n_pin2=(survey_mean((zw09==2), na.rm=TRUE,vartype=vt) *100),
-    #zw09n_pin3=(survey_mean((zw09==3), na.rm=TRUE,vartype=vt) *100), 
-    #zw09n_pin4=(survey_mean((zw09==4), na.rm=TRUE,vartype=vt) *100),
     mz_lev1=(survey_mean((zw06_0==1), na.rm=TRUE,vartype=vt) *100),
     mz_lev2=(survey_mean((zw06_0==2), na.rm=TRUE,vartype=vt) *100),
     mz_lev3=(survey_mean((zw06_0==3), na.rm=TRUE,vartype=vt) *100),
@@ -190,9 +187,6 @@ df_aggr_pin<- df_weight %>%
     wl12_0=(survey_mean((wl12_0<3), na.rm=TRUE,vartype=vt) *100),
     wl12_1=(survey_mean((wl12_1<3), na.rm=TRUE,vartype=vt) *100),
     wl12_2=(survey_mean((wl12_2<3), na.rm=TRUE,vartype=vt) *100),
-    #wl12n_0=(survey_mean((wl12_0<3), na.rm=TRUE,vartype=vt) *100),
-    #wl12n_1=(survey_mean((wl12_1<3), na.rm=TRUE,vartype=vt) *100),
-    #wl12n_2=(survey_mean((wl12_2<3), na.rm=TRUE,vartype=vt) *100),
     vz01_0=(survey_mean((vz01_0<3), na.rm=TRUE,vartype=vt) *100),
     vz01_1=(survey_mean((vz01_1<3), na.rm=TRUE,vartype=vt) *100),
     #vz02_0=(survey_mean((vz02_0<3), na.rm=TRUE,vartype=vt) *100),
@@ -213,16 +207,13 @@ df_aggr_pin<- df_weight %>%
     wl04=(survey_mean((wl04<3), na.rm=TRUE,vartype=vt) *100),
     wl05=(survey_mean((wl05<3), na.rm=TRUE,vartype=vt) *100),
     wl06=(survey_mean((wl06<3), na.rm=TRUE,vartype=vt) *100),
-    #wl06n=(survey_mean((wl06<4), na.rm=TRUE,vartype=vt) *100), 
     wl09_rv=(survey_mean((wl09==4 | wl09==5), na.rm=TRUE,vartype=vt) *100),
     wl09=(survey_mean((wl09<3), na.rm=TRUE,vartype=vt) *100),
-    #wl11_0=(survey_mean((wl11<3), na.rm=TRUE,vartype=vt) *100),
     wl14=(survey_mean((wl14<3), na.rm=TRUE,vartype=vt) *100),
     bo01_rv=(survey_mean((bo01==4 | bo01==5), na.rm=TRUE,vartype=vt) *100),
     bo01=(survey_mean((bo01<3), na.rm=TRUE,vartype=vt) *100),
     zw00_pin=(survey_mean((zw00 >6), na.rm=TRUE,vartype=vt) *100),
     zw07=(survey_mean((zw07<3), na.rm=TRUE,vartype=vt) *100),
-    #zw18_0_pin=(survey_mean((zw18<3), na.rm=TRUE,vartype=vt) *100),
     mm01_0=(survey_mean((mm01_0<3), na.rm=TRUE,vartype=vt) *100),
     mm01_1=(survey_mean((mm01_1<3), na.rm=TRUE,vartype=vt) *100),
     mm01_2=(survey_mean((mm01_2<3), na.rm=TRUE,vartype=vt) *100),
@@ -279,14 +270,11 @@ df_rev_aggr_pin<- df_weight %>%
     wl07_1_rv=(survey_mean((wl07_1 %in% c(4,5)), na.rm=TRUE,vartype=vt) *100),
     wl08_0_rv=(survey_mean((wl08_0 %in% c(4,5)), na.rm=TRUE,vartype=vt) *100),
     wl08_1_rv=(survey_mean((wl08_1 %in% c(4,5)), na.rm=TRUE,vartype=vt) *100),
-    #wl11_0_rv=(survey_mean((wl11_0 %in% c(4,5)), na.rm=TRUE,vartype=vt) *100),
     wl12_0_rv=(survey_mean((wl12_0 %in% c(4,5)), na.rm=TRUE,vartype=vt) *100),
     wl12_1_rv=(survey_mean((wl12_1 %in% c(4,5)), na.rm=TRUE,vartype=vt) *100),
     wl12_2_rv=(survey_mean((wl12_2 %in% c(4,5)), na.rm=TRUE,vartype=vt) *100),
     vz01_0_rv=(survey_mean((vz01_0 %in% c(4,5)), na.rm=TRUE,vartype=vt) *100),
     vz01_1_rv=(survey_mean((vz01_1 %in% c(4,5)), na.rm=TRUE,vartype=vt) *100),
-    #vz02_0_rv=(survey_mean((vz02_0 %in% c(4,5)), na.rm=TRUE,vartype=vt) *100),
-    #vz02_1_rv=(survey_mean((vz02_1 %in% c(4,5)), na.rm=TRUE,vartype=vt) *100),
     vz03_0_rv=(survey_mean((vz03_0 %in% c(4,5)), na.rm=TRUE,vartype=vt) *100),
     vz03_1_rv=(survey_mean((vz03_1 %in% c(4,5)), na.rm=TRUE,vartype=vt) *100),
     vz03_2_rv=(survey_mean((vz03_2 %in% c(4,5)), na.rm=TRUE,vartype=vt) *100),
@@ -309,6 +297,5 @@ df_rev_aggr_pin<- df_weight %>%
     bo02_2_rv=(survey_mean((bo02_2 %in% c(4,5)), na.rm=TRUE,vartype=vt) *100),
     bo03_0_rv=(survey_mean((bo03_0 %in% c(4,5)), na.rm=TRUE,vartype=vt) *100),
     bo03_1_rv=(survey_mean((bo03_1 %in% c(4,5)), na.rm=TRUE,vartype=vt) *100)
-    #bo04_0_rv=(survey_mean((bo04_0 %in% c(4,5)), na.rm=TRUE,vartype=vt) *100)
   )
 

@@ -98,10 +98,6 @@ df_ss_age_aggr<- df_ss_weight %>%
     safe=survey_mean(safe_ss,na.rm=TRUE, vartype=vt),
     ses=survey_mean(ses_ss,na.rm=TRUE, vartype=vt),
     sv=survey_mean(sv_ss,na.rm=TRUE, vartype=vt),
-    #ver=survey_mean(zw05_rc,na.rm=TRUE, vartype=vt),
-    #mz=survey_mean(zw06_0,na.rm=TRUE, vartype=vt),
-    #bh=survey_mean(zw06_1,na.rm=TRUE, vartype=vt),
-    #vw=survey_mean(zw06_3,na.rm=TRUE, vartype=vt),
     #gelukkig_mean=survey_mean(gelukkig,na.rm=TRUE, vartype=vt)*100,
     health=survey_mean(zw02,na.rm=TRUE, vartype=vt),
     happy=survey_mean(zw00,na.rm=TRUE, vartype=vt)

@@ -9,6 +9,11 @@ message("Typology...")
 
 #Quality of life
 #boundaries are based on all Burgerpeilingen of the past 2 years
+
+#2024-12-04
+#qol_bin_breaks: -Inf    3    4    6    7  Inf
+#part_bin_breaks: -Inf    1    3    4    7  Inf
+
 #optimal binning 
 # Perform optimal binning with 4 bins, removing NA values, using mean squared error as the metric
 qol_bin <- optbin::optbin(df_ss$qol_score, 4, na.rm = TRUE, metric = c('mse'), max.cache = 6^31)
@@ -21,8 +26,6 @@ df_ss$qol_score_bin <- cut(df_ss$qol_score, breaks = qol_bin_breaks, labels = FA
 
 # Plot the histogram of the binned data
 hist(as.numeric(df_ss$qol_score_bin), main = "Histogram of Quality of Life Scores", xlab = "Bins", ylab = "Frequency", col = "blue")
-
-
 
 
 #Participation
@@ -49,21 +52,6 @@ crosstab
 # Recode variables using case_when for readability
 df_ss <- df_ss %>%
   mutate(
-    #since 2023-05-15 we use optimal binning (past 2 years)
-   # qol_score_bin = case_when(
-  #    is.na(qol_score) ~ NA_integer_,
-   #   qol_score <= 3 ~ 1,
-    #  qol_score <= 4 ~ 2,
-    #  qol_score <= 5 ~ 3,
-    #  TRUE ~ 4
-  #  ),
-  #  part_score_bin = case_when(
-   #   is.na(part_score) ~ NA_integer_,
-   #   part_score <= 1 ~ 1,
-  #    part_score <= 3 ~ 2,
-   #   part_score <= 4 ~ 3,
-   #   TRUE ~ 4
-   # ),
     typology = case_when(
       part_score_bin > 2 & qol_score_bin > 2 ~ 1, # weerbaren
       part_score_bin < 3 & qol_score_bin > 2 ~ 2, # buitenstaanders
@@ -97,7 +85,6 @@ df_ss <- df_ss %>%
     )
   )
 
-
 # Get the current date
 current_date <- Sys.Date()
 
@@ -130,6 +117,7 @@ df_ss_vital <- df_ss_weight %>%
   ) %>%
   mutate(across(starts_with("typology_pin"), ~ if_else(. == 0, NA_real_, .))) %>%
   mutate(
+    #handle incorrect or incomplete inclusion of features in typology
     typology_pin2 = if_else(is.na(typology_pin1) | typology_pin1 > 65, NA_real_, typology_pin2),
     typology_pin3 = if_else(is.na(typology_pin1) | typology_pin1 > 65, NA_real_, typology_pin3),
     typology_pin4 = if_else(is.na(typology_pin1) | typology_pin1 > 65, NA_real_, typology_pin4),
