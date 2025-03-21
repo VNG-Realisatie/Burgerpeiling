@@ -51,7 +51,7 @@ file_types <- c("sav", "RData"
                 #,"csv"
                 )  
 
-excluded_vars <- c("ch08") 
+excluded_vars <- c("ch08", "ch09") 
 
 files <- fs::dir_ls(path = data.dir, recurse=FALSE) %>%
   `[`(tools::file_ext(.) %in% file_types)
