@@ -13,7 +13,7 @@
 
 #see 'Beschrijving' directory for specification of the variables.
 
-#last update 2024-12-04 (alpha version)
+#last update 2025-04-04 (alpha version)
 
 #questions? contact Mark Henry Gremmen mark.gremmen@vng.nl (VNG)
 
@@ -47,31 +47,63 @@ message("Import Burgerpeiling(en)...")
 
 #read multiple Spss sav, RData and csv-files
 #specify the file types to import
-file_types <- c("sav", "RData"
-                #,"csv"
-                )  
 
-excluded_vars <- c("ch08", "ch09") 
+# Define paths and variables
+file_types <- c("sav", "RData", "csv")
+excluded_vars <- c("ch08", "ch09", "wijknr")
 
-files <- fs::dir_ls(path = data.dir, recurse=FALSE) %>%
-  `[`(tools::file_ext(.) %in% file_types)
+# List files and filter by extension
+files <- fs::dir_ls(path = data.dir, recurse = FALSE) %>%
+  as.character()
+files <- files[tools::file_ext(files) %in% file_types]
 
-df <- map_df(files, function(file) {
+# Read files
+df_list <- purrr::map(files, function(file) {
   ext <- tools::file_ext(file)
+  dat <- NULL
   
   if (ext == "sav") {
-    haven::read_sav(file) %>% as_tibble() %>% 
-      select(-any_of(excluded_vars)) 
+    dat <- haven::read_sav(file) %>%
+      as_tibble() %>%
+      select(-any_of(excluded_vars))
   } else if (ext == "RData") {
-    data <- get(load(file))
-    # Assuming the RData file contains a single data frame
-    as_tibble(data)
+    tmp <- get(load(file))
+    if (is.data.frame(tmp)) {
+      dat <- as_tibble(tmp) %>%
+        select(-any_of(excluded_vars))
+    }
   } else if (ext == "csv") {
-    read.csv(file, header = TRUE) %>% as_tibble()
-  } else {
-    NULL  # Ignore files with unsupported extensions
+    dat <- read.csv(file, header = TRUE, stringsAsFactors = FALSE) %>%
+      as_tibble() %>%
+      select(-any_of(excluded_vars))
   }
-}, .id = "file_id")  # Add a column to identify the source file
+  
+  if (!is.null(dat)) {
+    dat$file_id <- basename(file)  # add source filename
+  }
+  
+  return(dat)
+})
+
+# Harmonize column names
+all_colnames <- unique(unlist(purrr::map(df_list, names)))
+
+# Align and coerce all to character (including file_id)
+df_aligned <- purrr::map(df_list, function(df) {
+  if (is.null(df)) return(NULL)
+  missing <- setdiff(all_colnames, names(df))
+  df[missing] <- NA
+  df <- df[all_colnames]  # reorder columns
+  mutate(df, across(everything(), as.character))
+})
+
+# Combine all
+df <- bind_rows(df_aligned)
+
+df <- df %>%
+  relocate(file_id, .before = 1)
+
+df_import_merged <- df
 
 #weight available?
 weight.exists<-any(colnames(df) == "weging")
@@ -97,25 +129,53 @@ df<-df %>%
   #municipality id exists
   filter(!is.na(GEOITEM)) %>%
   #filter specific municipality
-  #filter(gemnr==1955) %>%
+  #filter(GEOITEM==1961) %>%
   #year
-  filter(PERIOD>=2020) %>%
+  filter(PERIOD>=2021) %>%
   #Weight lower than 6
   filter(!is.na(weging) & weging<6) #%>%
   #valid variables (see SRC>preparation.R)
   #select(any_of(var_vec))
 
-#identify numeric variables
-numeric_cols<- unlist(lapply(df, is.numeric))         
-numeric_cols
 
-#select string variables
-df_string<-df[,!numeric_cols]
+# Step 1: Identify actual numeric columns
+numeric_cols <- unlist(lapply(df, is.numeric))
 
-#select numeric variables
-df<-df[,numeric_cols]
+# Step 2: Enhanced function to detect numeric-like columns with ',' as decimal
+qualify_numeric <- function(x) {
+  if (is.numeric(x)) return(TRUE)
+  # Replace comma with dot and remove spaces
+  x_clean <- gsub(",", ".", x)
+  x_clean <- gsub("\\s", "", x_clean)
+  x_num <- suppressWarnings(as.numeric(x_clean))
+  prop_numeric <- sum(!is.na(x_num)) / length(x_num)
+  return(prop_numeric >= 0.30)
+}
 
-ncol(df)
+# Step 3: Apply across all columns
+qualified_numeric_cols <- unlist(lapply(df, qualify_numeric))
+
+# Optional: See which variables were upgraded
+upgraded <- names(df)[qualified_numeric_cols & !numeric_cols]
+cat("\nUpgraded to numeric based on content: ", paste(upgraded, collapse = ", "))
+
+# Step 4: Create final boolean vector of numeric-like columns
+final_numeric_cols <- qualified_numeric_cols
+
+# Step 5: Use for subsetting
+df_numeric <- df[, final_numeric_cols]
+df_string  <- df[, !final_numeric_cols]
+
+#convert variables to type : numeric
+df_numeric <- df_numeric %>%
+  mutate(across(everything(), ~ as.numeric(gsub(",", ".", gsub("\\s", "", .)))))
+
+df<-df_numeric
+
+numeric_cols <- sapply(df, is.numeric)
+percentage_numeric <- mean(numeric_cols) * 100
+
+cat("\n", round(percentage_numeric, 1), "% of columns are numeric (", sum(numeric_cols), "out of", ncol(df), ")\n")
 
 #-----------------------------------------------------------------------------------------------
 
