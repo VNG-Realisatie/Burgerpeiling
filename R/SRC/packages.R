@@ -49,7 +49,7 @@ libraries <- c(
   #sssentials
   'tidyverse','janitor','scales',
   #dataframe extension
-  'data.table',
+  'data.table', 'purrr', 
   #spss
   'haven', 'labelled',
   #Read Rectangular Text Data
@@ -71,6 +71,8 @@ libraries <- c(
   'srvyr',
   #file system operations
   'fs',
+  #mapping functions
+  'furrr',
   #CBS api
   'cbsodataR',
   #scales

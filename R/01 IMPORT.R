@@ -47,9 +47,8 @@ message("Import Burgerpeiling(en)...")
 
 #read multiple Spss sav, RData and csv-files
 #specify the file types to import
-
-# Define paths and variables
 file_types <- c("sav", "RData", "csv")
+#nullify certain variables
 excluded_vars <- c("ch08", "ch09", "wijknr")
 
 # List files and filter by extension
@@ -88,7 +87,7 @@ df_list <- purrr::map(files, function(file) {
 # Harmonize column names
 all_colnames <- unique(unlist(purrr::map(df_list, names)))
 
-# Align and coerce all to character (including file_id)
+# Align and coerce all to character (temporarily)
 df_aligned <- purrr::map(df_list, function(df) {
   if (is.null(df)) return(NULL)
   missing <- setdiff(all_colnames, names(df))
@@ -103,6 +102,7 @@ df <- bind_rows(df_aligned)
 df <- df %>%
   relocate(file_id, .before = 1)
 
+#store for reference
 df_import_merged <- df
 
 #weight available?
@@ -137,7 +137,7 @@ df<-df %>%
   #valid variables (see SRC>preparation.R)
   #select(any_of(var_vec))
 
-
+#Differentiate between numeric and non-numeric cols
 # Step 1: Identify actual numeric columns
 numeric_cols <- unlist(lapply(df, is.numeric))
 
@@ -155,7 +155,7 @@ qualify_numeric <- function(x) {
 # Step 3: Apply across all columns
 qualified_numeric_cols <- unlist(lapply(df, qualify_numeric))
 
-# Optional: See which variables were upgraded
+# See which variables were upgraded
 upgraded <- names(df)[qualified_numeric_cols & !numeric_cols]
 cat("\nUpgraded to numeric based on content: ", paste(upgraded, collapse = ", "))
 
