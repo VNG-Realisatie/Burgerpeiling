@@ -212,6 +212,29 @@ df$id<-paste0("BP",df$GEOITEM,"Y",df$PERIOD,"S",df$seq)
 #df<-df %>%
 #  order(id)
 
+#----------------------------------------------------------------------------------------------
+
+# Number of cases per GEOITEM, PERIOD 
+
+#-----------------------------------------------------------------------------------------------
+
+# Create mapping from GEOITEM to GEMEENTE
+geoitem_munic_df <- df %>%
+  select(GEOITEM, GEMEENTE) %>%
+  distinct()
+
+# Count number of cases per GEOITEM and PERIOD
+cases_per_geoitem_period <- df %>%
+  count(GEOITEM, PERIOD, name = "n_cases")
+
+# Join with municipality names
+cases_report <- cases_per_geoitem_period %>%
+  left_join(geoitem_munic_df, by = "GEOITEM") %>%
+  select(GEOITEM, GEMEENTE, PERIOD, n_cases) %>%
+  arrange(GEOITEM, PERIOD)
+
+write.csv(cases_report, file.path(output.dir, "respons_per_municipality.csv"), row.names = FALSE)
+
 #reporting municipalities
 munic.active<-levels(factor(df$GEMEENTE))
 geoitem.active<-as.numeric(levels(factor(df$GEOITEM)))
