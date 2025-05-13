@@ -1,21 +1,29 @@
+#-----------------------------------------------------------------------------------------------
+
+# Burgerpeiling – Waar Staat Je Gemeente
 
 #-----------------------------------------------------------------------------------------------
 
-# Burgerpeiling 'Waar Staat Je Gemeente'
+# Deze procedure is bedoeld om de resultaten van de Burgerpeiling te controleren, zoals deze 
+# (zullen worden) gepresenteerd op Waarstaatjegemeente.nl. Daarnaast biedt de procedure de 
+# mogelijkheid om aanvullende indicatoren en visualisaties te genereren voor intern gebruik 
+# of analyses op maat.
 
-#-----------------------------------------------------------------------------------------------
+# Let op: deze procedure is **niet bedoeld** voor het voorbereiden van gegevens voor 
+# officiële publicatie op Waarstaatjegemeente.nl.
 
-#this procedure is to check the results of the Burgerpeiling as (will be) presented on
-#Waarstaatjegemeente.nl Moreover it enables you to generate additional indicators and
-#visualizations
+# Zie de map 'Beschrijving' voor een overzicht van en toelichting op de gebruikte variabelen.
 
-#this procedure is not intended to prepare data for publishing on Waarstaatjegemeente.nl
+# Laatste update: 13 mei 2025
 
-#see 'Beschrijving' directory for specification of the variables.
+# Vragen of opmerkingen? Neem gerust contact op met:
+# Mark Henry Gremmen – mark.gremmen@vng.nl (VNG)
 
-#last update 2025-04-04 (alpha version)
+# Licentie: Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)
+# Dit betekent dat hergebruik, aanpassing en commercieel gebruik zijn toegestaan,
+# mits correcte bronvermelding én onder dezelfde licentievoorwaarden.
+# Voor details, zie: https://creativecommons.org/licenses/by-sa/4.0/
 
-#questions? contact Mark Henry Gremmen mark.gremmen@vng.nl (VNG)
 
 #-----------------------------------------------------------------------------------------------
 
@@ -129,9 +137,9 @@ df<-df %>%
   #municipality id exists
   filter(!is.na(GEOITEM)) %>%
   #filter specific municipality
-  #filter(GEOITEM==1961) %>%
+  #filter(GEOITEM==166) %>%
   #year
-  filter(PERIOD>=2021) %>%
+  filter(PERIOD>=2023) %>%
   #Weight lower than 6
   filter(!is.na(weging) & weging<6) #%>%
   #valid variables (see SRC>preparation.R)
