@@ -1,22 +1,21 @@
-
 #-----------------------------------------------------------------------------------------------
 
-#Typology
+# Typology
 
 #-----------------------------------------------------------------------------------------------
 
 message("Typology...")
 
-#Quality of life
-#boundaries are based on all Burgerpeilingen of the past 2 years
+# Quality of life
+# boundaries are based on all Burgerpeilingen of the past 2 years
 
-#2024-12-04
-#qol_bin_breaks: -Inf    3    4    6    7  Inf
-#part_bin_breaks: -Inf    1    3    4    7  Inf
+# 2024-12-04
+# qol_bin_breaks: -Inf    3    4    6    7  Inf
+# part_bin_breaks: -Inf    1    3    4    7  Inf
 
-#optimal binning 
+# optimal binning
 # Perform optimal binning with 4 bins, removing NA values, using mean squared error as the metric
-qol_bin <- optbin::optbin(df_ss$qol_score, 4, na.rm = TRUE, metric = c('mse'), max.cache = 6^31)
+qol_bin <- optbin::optbin(df_ss$qol_score, 4, na.rm = TRUE, metric = c("mse"), max.cache = 6^31)
 
 # Extract the bin thresholds
 qol_bin_breaks <- c(-Inf, qol_bin$thr, Inf)
@@ -28,9 +27,9 @@ df_ss$qol_score_bin <- cut(df_ss$qol_score, breaks = qol_bin_breaks, labels = FA
 hist(as.numeric(df_ss$qol_score_bin), main = "Histogram of Quality of Life Scores", xlab = "Bins", ylab = "Frequency", col = "blue")
 
 
-#Participation
+# Participation
 # Perform optimal binning on part_score with 4 bins
-part_bin <- optbin::optbin(df_ss$part_score, 4, na.rm = TRUE, metric = c('mse'), max.cache = 6^31)
+part_bin <- optbin::optbin(df_ss$part_score, 4, na.rm = TRUE, metric = c("mse"), max.cache = 6^31)
 
 # Extract the bin thresholds for part_score
 part_bin_breaks <- c(-Inf, part_bin$thr, Inf)
@@ -93,7 +92,7 @@ filename <- paste0("PLOTS/typology_histogram_", current_date, ".png")
 
 # Save the histogram to the specified file
 png(filename)
-hist(df_ss$typology, main = paste0("Histogram of Typology\n",current_date), xlab = "Typology", ylab = "Frequency", col = "blue")
+hist(df_ss$typology, main = paste0("Histogram of Typology\n", current_date), xlab = "Typology", ylab = "Frequency", col = "blue")
 dev.off()
 
 # Optional: Print the filename to confirm the file was saved
@@ -101,9 +100,11 @@ print(paste("Histogram saved to", filename))
 
 # Convert to survey design
 df_ss_weight <- df_ss %>%
-  as_survey_design(ids = 1, # 1 for no cluster ids 
-                   weights = weging, # weight added
-                   strata = NULL) # sampling was simple (no strata)
+  as_survey_design(
+    ids = 1, # 1 for no cluster ids
+    weights = weging, # weight added
+    strata = NULL
+  ) # sampling was simple (no strata)
 
 # Calculate survey means
 df_ss_vital <- df_ss_weight %>%
@@ -117,7 +118,7 @@ df_ss_vital <- df_ss_weight %>%
   ) %>%
   mutate(across(starts_with("typology_pin"), ~ if_else(. == 0, NA_real_, .))) %>%
   mutate(
-    #handle incorrect or incomplete inclusion of features in typology
+    # handle incorrect or incomplete inclusion of features in typology
     typology_pin2 = if_else(is.na(typology_pin1) | typology_pin1 > 65, NA_real_, typology_pin2),
     typology_pin3 = if_else(is.na(typology_pin1) | typology_pin1 > 65, NA_real_, typology_pin3),
     typology_pin4 = if_else(is.na(typology_pin1) | typology_pin1 > 65, NA_real_, typology_pin4),

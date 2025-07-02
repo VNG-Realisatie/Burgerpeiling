@@ -1,17 +1,16 @@
-
 #-----------------------------------------------------------------------------------------------
 
-#WSJG
+# WSJG
 
 #-----------------------------------------------------------------------------------------------
 
 message("WSJG...")
 
-#VNG use only...
+# VNG use only...
 df_export <- df_munic
 
 # Report features with values above 99
-features_above_99 <- df_export[,4:399] %>%
+features_above_99 <- df_export[, 4:399] %>%
   select_if(~ any(. > 99))
 
 # Check NA's in typology
@@ -19,48 +18,48 @@ typology_check <- c("typology_pin1", "typology_pin2", "typology_pin3", "typology
 na_typology_rows <- which(is.na(df_export[, typology_check]), arr.ind = TRUE)
 
 # Check for NA or values above 80% in any column
-#if (any(is.na(df_export[, typology_check])) || any(df_export[, typology_check] >= 80)) {
+# if (any(is.na(df_export[, typology_check])) || any(df_export[, typology_check] >= 80)) {
 #  df_export[, typology_check] <- NA
-#}
+# }
 
 
-#remove records that failed typology
-#df_export<-df_export %>%
+# remove records that failed typology
+# df_export<-df_export %>%
 #  drop_na(all_of(typology_check))
 
 #-----------------------------------------------------------------------------------------------
 
-#specific notation for WSJG
+# specific notation for WSJG
 
-#missing values
+# missing values
 df_export <- df_export %>% replace(is.na(.), -99998)
 
-#geolevel
-df_export$GEOLEVEL<-"gemeente"
+# geolevel
+df_export$GEOLEVEL <- "gemeente"
 
-#report buurten
-df_export$bp_wijk<-0
+# report buurten
+df_export$bp_wijk <- 0
 
-#remove temporary variables
+# remove temporary variables
 if ("GEOYR" %in% names(df_export)) {
   df_export$GEOYR <- NULL
 }
 
 
 #-------------------------------------------------------------------------------------
-#report suspicious records 
+# report suspicious records
 identify_outliers <- function(data) {
   # Replace -99998 with NA
   data[data == -99998] <- NA
-  
+
   if (nrow(data) == 0) {
     stop("The dataset is empty.")
   }
-  
+
   num_outliers <- numeric(nrow(data))
-  
+
   for (i in 1:nrow(data)) {
-    record <- unlist(data[i, 222:399, drop = FALSE])  # Extract columns starting from the third column
+    record <- unlist(data[i, 222:399, drop = FALSE]) # Extract columns starting from the third column
     record <- as.numeric(record)
     record <- na.omit(record)
     if (length(record) == 0) {
@@ -74,14 +73,14 @@ identify_outliers <- function(data) {
       num_outliers[i] <- sum(record < lower_bound | record > upper_bound, na.rm = TRUE)
     }
   }
-  
+
   max_outliers <- max(num_outliers)
   records_with_max_outliers <- which(num_outliers == max_outliers)
-  
+
   if (length(records_with_max_outliers) == 0) {
     stop("No records with outliers found.")
   }
-  
+
   # Return the first two columns for records with the most outliers
   return(data[records_with_max_outliers, 1:nrow(data), drop = FALSE])
 }
@@ -93,15 +92,17 @@ suspect_outlier <- identify_outliers(df_export)
 cat("Gemeente id with the most outliers:", suspect_outlier[[1]], "\n")
 cat("Period:", suspect_outlier[[2]], "\n")
 
-suspect<-suspect_outlier$GEOITEM
+suspect <- suspect_outlier$GEOITEM
 
 # Assuming suspect is already defined with some GEOITEMS
 # and you want to add more GEOITEMS manually
-suspect <- unique(c(suspect, 321,310,1721,1904))  
+suspect <- unique(c(suspect, 321, 310, 1721, 1904))
 
 # List of variables you want to recode
-variables_to_recode <- c("typology_pin1", "typology_pin2", "typology_pin3", "typology_pin4", "zorgwekkend_pin1",
-                         "vitaliteit_ss", "welzijn_ss", "socrel_ss_mean", "kunnen_ss_mean")
+variables_to_recode <- c(
+  "typology_pin1", "typology_pin2", "typology_pin3", "typology_pin4", "zorgwekkend_pin1",
+  "vitaliteit_ss", "welzijn_ss", "socrel_ss_mean", "kunnen_ss_mean"
+)
 
 df_export <- df_export %>%
-  mutate(across(all_of(variables_to_recode), ~if_else(GEOITEM %in% suspect, -99998, .)))
+  mutate(across(all_of(variables_to_recode), ~ if_else(GEOITEM %in% suspect, -99998, .)))
