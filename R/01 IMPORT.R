@@ -64,13 +64,19 @@ files <- fs::dir_ls(path = data.dir, recurse = FALSE) %>%
   as.character()
 files <- files[tools::file_ext(files) %in% file_types]
 
+# Randomize volgorde
+files <- sample(files)
+
 # Read files
 df_list <- purrr::map(files, function(file) {
   ext <- tools::file_ext(file)
   dat <- NULL
 
   if (ext == "sav") {
-    dat <- haven::read_sav(file) %>%
+   # dat <- haven::read_sav(file) %>%
+        dat <- foreign::read.spss(file, 
+                                  to.data.frame = TRUE, 
+                                  use.value.labels = FALSE) %>%
       as_tibble() %>%
       select(-any_of(excluded_vars))
   } else if (ext == "RData") {

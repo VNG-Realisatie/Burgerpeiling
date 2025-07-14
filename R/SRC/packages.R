@@ -50,7 +50,7 @@ libraries <- c(
   # dataframe extension
   "data.table", "purrr",
   # spss
-  "haven", "labelled",
+  "haven", "foreign", "labelled",
   # Read Rectangular Text Data
   "readr",
   # statistical calculations
