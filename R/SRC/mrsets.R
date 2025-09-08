@@ -4,7 +4,6 @@
 
 #-----------------------------------------------------------------------------------------------
 
-
 message("Processing multiple response sets...")
 
 df$GEOYR <- paste0(df$GEOITEM, "-", df$PERIOD)
@@ -61,6 +60,7 @@ for (i in gy) {
 
   # ------------------------------
   # Verenigingsleven
+  
   vl_valid <- c("zw05_pin0", "zw05_pin1", "zw05_pin2", "zw05_pin3", "zw05_pin4", "zw05_pin5")
   vl_vars <- paste0("zw05_", 0:5)
 
@@ -95,6 +95,7 @@ for (i in gy) {
 
   # ------------------------------
   # Burenhulp
+  
   bh_valid <- c(
     "zw13_0_pin", "zw13_1_pin", "zw13_10_pin", "zw13_2_pin", "zw13_3_pin",
     "zw13_4_pin", "zw13_5_pin", "zw13_6_pin", "zw13_7_pin", "zw13_8_pin", "zw13_9_pin"

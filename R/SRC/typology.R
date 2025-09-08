@@ -26,7 +26,6 @@ df_ss$qol_score_bin <- cut(df_ss$qol_score, breaks = qol_bin_breaks, labels = FA
 # Plot the histogram of the binned data
 hist(as.numeric(df_ss$qol_score_bin), main = "Histogram of Quality of Life Scores", xlab = "Bins", ylab = "Frequency", col = "blue")
 
-
 # Participation
 # Perform optimal binning on part_score with 4 bins
 part_bin <- optbin::optbin(df_ss$part_score, 4, na.rm = TRUE, metric = c("mse"), max.cache = 6^31)
