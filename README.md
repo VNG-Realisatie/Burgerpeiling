@@ -1,3 +1,7 @@
+| Eigenaar | Ingevuld door |
+| --- | --- |
+| Kennis centrum Data | Mark Gremmen |
+<hr/>
 
 ![VNG](https://vng.nl/themes/custom/vng/logo.svg "VNG Burgerpeiling")
 
