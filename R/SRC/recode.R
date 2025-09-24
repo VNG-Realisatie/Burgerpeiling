@@ -10,8 +10,8 @@ message("Recode...")
 #multiple response sets (missings -> 0)
 mr<-c("dv03_0","dv03_1","dv03_2","dv03_3","dv03_4","dv03_5","dv03_6",
       "zw05_0","zw05_1","zw05_2","zw05_3","zw05_4","zw05_5",
-      "zw08_0","zw08_1","zw08_2","zw08_3","zw08_4","zw08_5","zw08_6",#"zw08_7",
-      "zw13_0","zw13_1","zw13_2","zw13_3","zw13_4","zw13_5","zw13_6","zw13_7","zw13_8"
+      "zw08_0","zw08_1","zw08_2","zw08_3","zw08_4","zw08_5","zw08_6","zw08_7",
+      "zw13_0","zw13_1","zw13_2","zw13_3","zw13_4","zw13_5","zw13_6","zw13_7","zw13_8", "zw13_9", "zw13_10"
 )
 df<-df %>% mutate(across(any_of(mr), ~replace_na(.,0)))
 

@@ -146,12 +146,12 @@ message("Subsetting...")
 df <- df %>%
   # municipality id exists
   filter(!is.na(GEOITEM)) %>%
-  # filter specific municipality
-  # filter(GEOITEM==828) %>%
+  # filter specific municipality (uncomment if needed)
+  # filter(GEOITEM == 828) %>%
   # year
   filter(PERIOD >= 2022) %>%
   # Weight lower than 6
-  filter(!is.na(weging) & weging < 6) # %>%
+  filter(!is.na(weging) & weging < 6)
 # valid variables (see SRC>preparation.R)
 # select(any_of(var_vec))
 
