@@ -14,7 +14,7 @@
 
 # Zie de map 'Beschrijving' voor een overzicht van en toelichting op de gebruikte variabelen.
 
-# Laatste update: 2 juli 2025
+# Laatste update: 2025-10-03
 
 # Vragen of opmerkingen? Neem gerust contact op met:
 # Mark Henry Gremmen – mark.gremmen@vng.nl (VNG)

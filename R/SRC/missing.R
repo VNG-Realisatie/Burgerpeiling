@@ -1,61 +1,109 @@
-#-----------------------------------------------------------------------------------------------
 
-# Missing values
+# -----------------------------------------------------------------------------------------------
+# Missing values / categorical recodes (numeric-only)
+# - Out-of-range: >10 or <= -1 -> NA, starting at column named "bo01"
+# - "Sixth category" rule: for numeric columns that (after cleaning) are codes in {1..6},
+#   recode 6 -> NA
+# - Custom recodes: set given code values to NA for listed variables
+# -----------------------------------------------------------------------------------------------
 
-#-----------------------------------------------------------------------------------------------
+
 
 message("Checking for missing values...")
+stopifnot(is.data.frame(df))
+n0 <- nrow(df)  # row-count guard
 
-# 1. Replace values >10 or <= -1 with NA, but only if df has >=8 columns
-if (ncol(df) >= 8) {
-  df <- df %>%
-    mutate(across(8:ncol(df), ~ ifelse(. > 10 | . <= -1, NA, .)))
+# Precompute numeric mask once (faster for big frames)
+.is_num <- vapply(df, is.numeric, TRUE)
+
+# ---- 1) Out-of-range recode starting at column named "bo01" (numeric-only) ----
+start_col <- "bo01"
+start_idx <- match(start_col, names(df))
+
+if (!is.na(start_idx)) {
+  rng_cols <- names(df)[start_idx:ncol(df)]
+  rng_cols <- rng_cols[.is_num[start_idx:ncol(df)]]
+  
+  if (length(rng_cols)) {
+    df <- df %>%
+      mutate(across(
+        all_of(rng_cols),
+        ~ {
+          bad <- . > 10 | . <= -1
+          if (is.integer(.)) replace(., bad, NA_integer_) else replace(., bad, NA_real_)
+        }
+      ))
+  } else {
+    message(sprintf("No numeric columns at/after '%s'. Skipped out-of-range recode.", start_col))
+  }
+} else {
+  message(sprintf("Column '%s' not found. Skipped out-of-range recode.", start_col))
 }
 
-# 2. Helper: Get column position safely
-get_var_position <- function(df, var_name) {
-  match(var_name, names(df))
+# ---- 2) Detect numeric columns that are (now) coded in {1..6} (no zeros) ----
+# We allow "noise" values to have been removed above; if some remain within 7..10 they
+# will disqualify the column (by design). Adjust logic if needed.
+.int_like <- function(x) {
+  nx <- x[!is.na(x)]
+  if (!length(nx)) return(FALSE)
+  all(abs(nx - round(nx)) < 1e-8)
 }
 
-# 3. Max value per column, handle all-NA columns
-colMax <- function(df) sapply(df, function(col) if (all(is.na(col))) NA else max(col, na.rm = TRUE))
+.is_codes_1_to_6 <- function(x) {
+  # assumes numeric
+  nx <- x[!is.na(x)]
+  if (!length(nx)) return(FALSE)
+  .int_like(nx) &&
+    min(nx) >= 1 && max(nx) <= 6 &&
+    any(nx == 6) # must actually contain a 6 to bother recoding it
+}
 
-# 4. Identify variables with exactly 6 categories
-cols_with_6_cats <- which(colMax(df) == 6)
+num_cols <- names(df)[.is_num]
+cols_with_6 <- num_cols[vapply(df[num_cols], .is_codes_1_to_6, logical(1))]
 
-# 5. Exclude specific variables (if they exist)
+# Optional exclusions
 vars_to_exclude <- c("ch02", "ch03")
-exclude_positions <- na.omit(sapply(vars_to_exclude, get_var_position, df = df))
-cols_with_6_cats <- setdiff(cols_with_6_cats, exclude_positions)
+cols_with_6 <- setdiff(cols_with_6, intersect(vars_to_exclude, names(df)))
 
-# 6. Recode category 6 to NA in those columns
-df[cols_with_6_cats] <- lapply(df[cols_with_6_cats], function(x) ifelse(x == 6, NA, x))
+# ---- 3) Recode category 6 -> NA (type-safe numeric) ----
+if (length(cols_with_6)) {
+  df <- df %>%
+    mutate(across(
+      all_of(cols_with_6),
+      ~ if (is.integer(.)) replace(., . == 6L, NA_integer_) else replace(., . == 6, NA_real_)
+    ))
+} else {
+  message("No numeric columns with codes limited to {1..6} found (after exclusions).")
+}
 
-# 7. Recode custom missing categories
+# ---- 4) Custom missing-category recodes (numeric-only on existing targets) ----
 missing_cats <- list(
   "7" = c("ch06"),
   "5" = c("wl06", "zw01_0", "zw01_1", "zw01_2", "zw01_3", "zw01_4", "zw01_5", "zw01_6", "zw04", "zw09"),
-  "4" = c("wl14", "zw03", "zw07", "zw10_0", "zw10_1", "zw10_2") #,
- # "1" = c(
-#    "zw13_0", "zw13_1", "zw13_10", "zw13_2", "zw13_3", "zw13_4", "zw13_5", "zw13_6", "zw13_7", "zw13_8", "zw13_9",
-#    "zw08_0", "zw08_1", "zw08_2", "zw08_3", "zw08_4", "zw08_5", "zw08_6", "zw08_7"
- # )
+  "4" = c("wl14", "zw03", "zw07", "zw10_0", "zw10_1", "zw10_2")
+  # add "1" bucket back when needed
 )
 
-for (cat_val in names(missing_cats)) {
-  target_cols <- missing_cats[[cat_val]]
-  # Only include columns that exist in df
-  existing_cols <- intersect(target_cols, names(df))
-
-  if (length(existing_cols) > 0) {
+if (length(missing_cats)) {
+  for (cat_val in names(missing_cats)) {
+    targets <- intersect(missing_cats[[cat_val]], names(df))
+    if (!length(targets)) {
+      message(sprintf("No matching columns for category %s. Skipped.", cat_val))
+      next
+    }
+    targets <- targets[.is_num[match(targets, names(df))]]  # numeric-only
+    if (!length(targets)) next
+    
+    v <- as.numeric(cat_val)
     df <- df %>%
-      mutate(across(all_of(existing_cols), ~ ifelse(. == as.numeric(cat_val), NA, .)))
-  } else {
-    message(paste0("No matching columns found for category ", cat_val, ". Skipped."))
+      mutate(across(
+        all_of(targets),
+        ~ if (is.integer(.)) replace(., . == as.integer(v), NA_integer_) else replace(., . == v, NA_real_)
+      ))
   }
 }
 
-# Ensure result is a data.frame
+# ---- 5) Safety and finish ----
+stopifnot(nrow(df) == n0)
 df <- as.data.frame(df)
-
 message("Missing value processing complete.")
