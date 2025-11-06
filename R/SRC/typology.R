@@ -13,41 +13,85 @@ message("Typology...")
 # qol_bin_breaks: -Inf    3    4    6    7  Inf
 # part_bin_breaks: -Inf    1    3    4    7  Inf
 
-# optimal binning
-# Perform optimal binning with 4 bins, removing NA values, using mean squared error as the metric
-qol_bin <- optbin::optbin(df_ss$qol_score, 4, na.rm = TRUE, metric = c("mse"), max.cache = 6^31)
+# Flexible binning: fixed breaks OR optbin (MSE)
+# - typol_overrule = TRUE  -> use fixed classes (your case_when thresholds)
+# - typol_overrule = FALSE -> use optbin::optbin(..., metric="mse")
+# You can customize fixed breaks and optbin args if needed.
 
-# Extract the bin thresholds
-qol_bin_breaks <- c(-Inf, qol_bin$thr, Inf)
+apply_typology_binning <- function(df_ss,
+                                   typol_overrule = TRUE,
+                                   fixed_breaks = list(
+                                     qol  = c(-Inf, 3, 4, 5, Inf),
+                                     part = c(-Inf, 1, 3, 4, Inf)
+                                   ),
+                                   optbin_nbins = 4,
+                                   optbin_metric = "mse",
+                                   optbin_max_cache = 6^31) {
+  stopifnot(all(c("qol_score","part_score") %in% names(df_ss)))
+  
+  if (isTRUE(typol_overrule)) {
+    # --- Fixed classes (manual thresholds) ---
+    df_ss <- df_ss %>%
+      mutate(
+        qol_score_bin = case_when(
+          is.na(qol_score)   ~ NA_integer_,
+          qol_score <= fixed_breaks$qol[2] ~ 1,
+          qol_score <= fixed_breaks$qol[3] ~ 2,
+          qol_score <= fixed_breaks$qol[4] ~ 3,
+          TRUE ~ 4
+        ),
+        part_score_bin = case_when(
+          is.na(part_score)  ~ NA_integer_,
+          part_score <= fixed_breaks$part[2] ~ 1,
+          part_score <= fixed_breaks$part[3] ~ 2,
+          part_score <= fixed_breaks$part[4] ~ 3,
+          TRUE ~ 4
+        )
+      )
+    return(df_ss)
+  }
+  
+  # --- Data-driven classes via optbin ---
+  # Helper to run optbin safely and return breaks
+  .opt_breaks <- function(x, nbins = 4, metric = "mse", max_cache = 6^31) {
+    # optbin::optbin(x, nbins, ...) uses positional nbins
+    ob <- tryCatch(
+      optbin::optbin(x, nbins, na.rm = TRUE, metric = metric, max.cache = max_cache),
+      error = function(e) e
+    )
+    if (inherits(ob, "error") || is.null(ob$thr)) {
+      return(NULL)
+    }
+    c(-Inf, ob$thr, Inf)
+  }
+  
+  qol_breaks  <- .opt_breaks(df_ss$qol_score,  nbins = optbin_nbins, metric = optbin_metric, max_cache = optbin_max_cache)
+  part_breaks <- .opt_breaks(df_ss$part_score, nbins = optbin_nbins, metric = optbin_metric, max_cache = optbin_max_cache)
+  
+  # Fallback to fixed if optbin failed for any reason (too few unique values, etc.)
+  if (is.null(qol_breaks))  qol_breaks  <- fixed_breaks$qol
+  if (is.null(part_breaks)) part_breaks <- fixed_breaks$part
+  
+  df_ss$qol_score_bin  <- cut(df_ss$qol_score,  breaks = qol_breaks,  labels = FALSE, include.lowest = TRUE)
+  df_ss$part_score_bin <- cut(df_ss$part_score, breaks = part_breaks, labels = FALSE, include.lowest = TRUE)
+  
+  df_ss
+}
 
-# Assign each qol_score to a bin
-df_ss$qol_score_bin <- cut(df_ss$qol_score, breaks = qol_bin_breaks, labels = FALSE, include.lowest = TRUE)
+# -------------------- Usage --------------------
+# Choose whether to overrule with fixed classes:
+typol_overrule <- TRUE  # set FALSE to use optbin
 
-# Plot the histogram of the binned data
-hist(as.numeric(df_ss$qol_score_bin), main = "Histogram of Quality of Life Scores", xlab = "Bins", ylab = "Frequency", col = "blue")
+# Apply binning
+df_ss <- apply_typology_binning(
+  df_ss,
+  typol_overrule = typol_overrule,
+  # optional tweaks:
+  fixed_breaks = list(qol=c(-Inf,3,4,5,Inf), part=c(-Inf,1,3,4,Inf)),
+  # optbin_nbins = 4, optbin_metric = "mse"
+)
 
-# Participation
-# Perform optimal binning on part_score with 4 bins
-part_bin <- optbin::optbin(df_ss$part_score, 4, na.rm = TRUE, metric = c("mse"), max.cache = 6^31)
-
-# Extract the bin thresholds for part_score
-part_bin_breaks <- c(-Inf, part_bin$thr, Inf)
-
-# Assign each part_score to a bin
-df_ss$part_score_bin <- cut(df_ss$part_score, breaks = part_bin_breaks, labels = FALSE, include.lowest = TRUE)
-
-# Plot the histogram of the binned part_score data
-hist(as.numeric(df_ss$part_score_bin), main = "Histogram of Participation Scores", xlab = "Bins", ylab = "Frequency", col = "green")
-
-
-# Create a crosstab of part_bin and qol_bin
-crosstab <- xtabs(~ qol_score_bin + part_score_bin, data = df_ss)
-groups <- split(crosstab, rownames(crosstab))
-crosstab
-
-#-----------------------------------------------------------------------------------------------
-
-# Recode variables using case_when for readability
+# Continue with your recodes (unchanged)
 df_ss <- df_ss %>%
   mutate(
     typology = case_when(

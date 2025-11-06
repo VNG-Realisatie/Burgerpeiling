@@ -106,3 +106,29 @@ variables_to_recode <- c(
 
 df_export <- df_export %>%
   mutate(across(all_of(variables_to_recode), ~ if_else(GEOITEM %in% suspect, -99998, .)))
+
+# Replace selected values (default: 100 and 0) in numeric columns with -999988,
+# excluding columns listed in `exclude_cols`
+replace_values_with_sentinel <- function(
+    df,
+    old_values = c(100, 0),
+    new_value  = -999988,
+    exclude_cols = c("gemnr", "jr", "weging", "kw",
+                     "veldwerkmodus", "wijk", "org", "file_id")
+) {
+  # target: numeric columns not in exclude list
+  is_num <- vapply(df, is.numeric, logical(1))
+  target_cols <- setdiff(names(df)[is_num], exclude_cols)
+  
+  df[target_cols] <- lapply(df[target_cols], function(x) {
+    x[x %in% old_values] <- new_value
+    x
+  })
+  df
+}
+
+df_export <- replace_values_with_sentinel(df_export, exclude_cols = research_params)
+
+
+
+

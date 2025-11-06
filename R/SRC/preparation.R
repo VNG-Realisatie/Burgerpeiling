@@ -46,7 +46,7 @@ add_vars <- c(
 )
 
 # research parameters
-research_params <- c("gemnr", "jr", "weging", "kw", "veldwerkmodus", "wijk", "org", "file_id")
+research_params <- c("gemnr", "jr", "weging", "kw", "veldwerkmodus", "wijk", "org", "file_id", "bp_wijk")
 
 # extend valid variables with research parameters
 var_vec <- unique(c(var_vec, add_vars, research_params))
