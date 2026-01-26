@@ -1,4 +1,4 @@
-| Eigenaar | Ingevuld door |
+| Eigenaar | Beheerder |
 | --- | --- |
 | Kennis centrum Data | Mark Gremmen |
 <hr/>
